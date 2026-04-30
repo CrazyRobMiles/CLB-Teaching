@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" font-family="monospace" font-size="12">
+  <rect width="600" height="400" fill="#1e1e2e" rx="8"/>
+
+  <!-- Title -->
+  <text x="300" y="28" text-anchor="middle" fill="#cdd6f4" font-size="14" font-weight="bold">Exercise 01: Button Light — Wiring Diagram</text>
+
+  <!-- Pico outline -->
+  <rect x="220" y="60" width="160" height="260" rx="6" fill="#313244" stroke="#89b4fa" stroke-width="1.5"/>
+  <text x="300" y="82" text-anchor="middle" fill="#89b4fa" font-size="11">Raspberry Pi Pico</text>
+
+  <!-- Pico pin labels (left side) -->
+  <text x="216" y="108" text-anchor="end" fill="#a6e3a1" font-size="10">GP14</text>
+  <text x="216" y="168" text-anchor="end" fill="#f38ba8" font-size="10">GND</text>
+  <text x="216" y="228" text-anchor="end" fill="#a6e3a1" font-size="10">GP18</text>
+  <text x="216" y="288" text-anchor="end" fill="#cba6f7" font-size="10">3V3</text>
+
+  <!-- Pin dots on Pico -->
+  <circle cx="220" cy="105" r="4" fill="#a6e3a1"/>
+  <circle cx="220" cy="165" r="4" fill="#f38ba8"/>
+  <circle cx="220" cy="225" r="4" fill="#a6e3a1"/>
+  <circle cx="220" cy="285" r="4" fill="#cba6f7"/>
+
+  <!-- === BUTTON (left side) === -->
+  <text x="60" y="48" text-anchor="middle" fill="#cdd6f4" font-size="11" font-weight="bold">Button</text>
+
+  <!-- Button symbol -->
+  <line x1="60" y1="80" x2="60" y2="108" stroke="#a6e3a1" stroke-width="1.5"/>
+  <line x1="44" y1="108" x2="76" y2="108" stroke="#a6e3a1" stroke-width="2"/>
+  <line x1="44" y1="118" x2="76" y2="118" stroke="#a6e3a1" stroke-width="2"/>
+  <line x1="60" y1="118" x2="60" y2="165" stroke="#f38ba8" stroke-width="1.5"/>
+
+  <!-- Wire: button top → GP14 -->
+  <line x1="60" y1="80" x2="60" y2="65" stroke="#a6e3a1" stroke-width="1.5"/>
+  <line x1="60" y1="65" x2="220" y2="65" stroke="#a6e3a1" stroke-width="1.5"/>
+  <line x1="220" y1="65" x2="220" y2="105" stroke="#a6e3a1" stroke-width="1.5"/>
+
+  <!-- Wire: button bottom → GND -->
+  <line x1="60" y1="165" x2="220" y2="165" stroke="#f38ba8" stroke-width="1.5"/>
+
+  <!-- Labels -->
+  <text x="140" y="60" text-anchor="middle" fill="#a6e3a1" font-size="10">to GP14</text>
+  <text x="140" y="178" text-anchor="middle" fill="#f38ba8" font-size="10">to GND</text>
+  <text x="84" y="115" fill="#fab387" font-size="10">(pull-up in software)</text>
+
+  <!-- === NEOPIXEL STRIP (right side) === -->
+  <text x="510" y="48" text-anchor="middle" fill="#cdd6f4" font-size="11" font-weight="bold">NeoPixel Strip</text>
+
+  <!-- NeoPixel pixels -->
+  <rect x="474" y="90" width="72" height="16" rx="2" fill="#313244" stroke="#f9e2af" stroke-width="1"/>
+  <rect x="476" y="92" width="10" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <rect x="488" y="92" width="10" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <rect x="500" y="92" width="10" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <rect x="512" y="92" width="10" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <rect x="524" y="92" width="10" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <rect x="536" y="92" width="8" height="12" rx="1" fill="#f9e2af" opacity="0.3"/>
+  <text x="510" y="122" text-anchor="middle" fill="#f9e2af" font-size="10">8 × WS2812 / NeoPixel</text>
+
+  <!-- Strip wire labels -->
+  <text x="460" y="145" text-anchor="end" fill="#f38ba8" font-size="10">GND</text>
+  <text x="460" y="165" text-anchor="end" fill="#cba6f7" font-size="10">5V / 3V3</text>
+  <text x="460" y="185" text-anchor="end" fill="#a6e3a1" font-size="10">DIN</text>
+
+  <!-- Strip connector dots -->
+  <circle cx="464" cy="142" r="3" fill="#f38ba8"/>
+  <circle cx="464" cy="162" r="3" fill="#cba6f7"/>
+  <circle cx="464" cy="182" r="3" fill="#a6e3a1"/>
+
+  <!-- Wires from strip to Pico -->
+  <line x1="464" y1="142" x2="380" y2="142" stroke="#f38ba8" stroke-width="1.5"/>
+  <line x1="380" y1="142" x2="380" y2="165" stroke="#f38ba8" stroke-width="1.5"/>
+  <line x1="380" y1="165" x2="380" y2="165" stroke="#f38ba8" stroke-width="1.5"/>
+
+  <line x1="464" y1="162" x2="390" y2="162" stroke="#cba6f7" stroke-width="1.5"/>
+  <line x1="390" y1="162" x2="390" y2="285" stroke="#cba6f7" stroke-width="1.5"/>
+  <line x1="390" y1="285" x2="380" y2="285" stroke="#cba6f7" stroke-width="1.5"/>
+
+  <line x1="464" y1="182" x2="400" y2="182" stroke="#a6e3a1" stroke-width="1.5"/>
+  <line x1="400" y1="182" x2="400" y2="225" stroke="#a6e3a1" stroke-width="1.5"/>
+  <line x1="400" y1="225" x2="380" y2="225" stroke="#a6e3a1" stroke-width="1.5"/>
+
+  <!-- GND junction on Pico -->
+  <line x1="380" y1="165" x2="380" y2="165" stroke="#f38ba8" stroke-width="1.5"/>
+  <!-- Connect strip GND wire to Pico GND pin -->
+  <line x1="380" y1="165" x2="380" y2="165" stroke="#f38ba8" stroke-width="0"/>
+  <!-- Merge strip GND to pico GND horizontal -->
+  <line x1="380" y1="165" x2="220" y2="165" stroke="#f38ba8" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- GP18 label on right side of Pico -->
+  <text x="384" y="228" fill="#a6e3a1" font-size="10">GP18 →</text>
+
+  <!-- Legend -->
+  <rect x="16" y="340" width="568" height="50" rx="4" fill="#181825" opacity="0.7"/>
+  <circle cx="36" cy="358" r="5" fill="#a6e3a1"/>
+  <text x="46" y="362" fill="#a6e3a1" font-size="10">Signal / Data</text>
+  <circle cx="136" cy="358" r="5" fill="#f38ba8"/>
+  <text x="146" y="362" fill="#f38ba8" font-size="10">Ground (GND)</text>
+  <circle cx="236" cy="358" r="5" fill="#cba6f7"/>
+  <text x="246" y="362" fill="#cba6f7" font-size="10">Power (3V3 or 5V)</text>
+  <text x="36" y="382" fill="#6c7086" font-size="10">NeoPixels rated 5V work at 3V3 for short strips at low brightness. Use 5V from VBUS for full brightness.</text>
+</svg>

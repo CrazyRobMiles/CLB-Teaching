@@ -1,0 +1,9 @@
+[
+  {
+    "id": "01_button_light",
+    "title": "Button Light",
+    "phase": 1,
+    "concept": "services and events",
+    "desc": "Light up a NeoPixel strip when a button is pressed"
+  }
+]

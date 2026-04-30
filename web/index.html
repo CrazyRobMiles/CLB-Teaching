@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connected Little Box — Teaching</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- CodeMirror for the editor -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <!-- Marked for Markdown rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+
+<!-- ── TOP BAR ─────────────────────────────────────────────────────── -->
+<header id="topbar">
+  <div id="brand">Connected Little Box</div>
+
+  <div id="device-controls">
+    <button id="btn-connect" class="btn btn-primary">Connect Device</button>
+    <span id="device-status" class="status-badge status-disconnected">Disconnected</span>
+  </div>
+
+  <div id="exercise-controls">
+    <select id="exercise-select" disabled>
+      <option value="">— select an exercise —</option>
+    </select>
+  </div>
+
+  <div id="run-controls">
+    <button id="btn-save-run" class="btn btn-success" disabled>Save &amp; Run</button>
+    <button id="btn-show-solution" class="btn btn-ghost" disabled>Show Solution</button>
+    <button id="btn-install-firmware" class="btn btn-ghost" disabled>Install Firmware</button>
+  </div>
+
+  <div id="font-controls">
+    <button id="btn-font-decrease" class="btn btn-tiny" title="Decrease font size (Ctrl+-)">A−</button>
+    <button id="btn-font-increase" class="btn btn-tiny" title="Increase font size (Ctrl+=)">A+</button>
+  </div>
+</header>
+
+<!-- ── MAIN LAYOUT ────────────────────────────────────────────────── -->
+<main id="layout">
+
+  <!-- LEFT PANEL: exercise description + hints -->
+  <aside id="panel-left">
+    <div id="tabs">
+      <button class="tab active" data-tab="description">Exercise</button>
+      <button class="tab" data-tab="hints">Hints</button>
+    </div>
+
+    <div id="tab-description" class="tab-content active">
+      <div id="description-content">
+        <p class="placeholder">Connect a device to begin.</p>
+      </div>
+    </div>
+
+    <div id="tab-hints" class="tab-content">
+
+      <div id="hints-toolbar">
+        <span class="dim">AI Tutor</span>
+        <button id="btn-hints-config" class="btn btn-tiny" title="Configure AI provider">⚙</button>
+      </div>
+
+      <div id="hints-config" class="hidden">
+        <div class="hints-config-inner">
+          <label class="config-label">Provider</label>
+          <select id="hints-provider">
+            <option value="">— none —</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="groq">Groq</option>
+            <option value="ollama">Ollama (local)</option>
+          </select>
+
+          <div id="hints-config-gemini" class="hidden">
+            <label class="config-label">API Key</label>
+            <input id="hints-gemini-key" type="password" placeholder="AIza…" autocomplete="off">
+            <label class="config-label">Model</label>
+            <input id="hints-gemini-model" type="text" placeholder="gemini-2.0-flash">
+          </div>
+
+          <div id="hints-config-groq" class="hidden">
+            <label class="config-label">API Key</label>
+            <input id="hints-groq-key" type="password" placeholder="gsk_…" autocomplete="off">
+            <label class="config-label">Model</label>
+            <input id="hints-groq-model" type="text" placeholder="llama-3.1-8b-instant">
+          </div>
+
+          <div id="hints-config-ollama" class="hidden">
+            <label class="config-label">Server URL</label>
+            <input id="hints-ollama-url" type="text" placeholder="http://localhost:11434">
+            <label class="config-label">Model</label>
+            <input id="hints-ollama-model" type="text" placeholder="llama3.2">
+          </div>
+
+          <button id="btn-hints-save" class="btn btn-primary btn-tiny">Save</button>
+        </div>
+      </div>
+
+      <div id="hints-messages">
+        <p id="hints-placeholder" class="placeholder">Configure an AI provider (⚙) to ask for hints.</p>
+      </div>
+
+      <div id="hints-input-row">
+        <input id="hints-input" type="text" placeholder="Ask for a hint…" disabled autocomplete="off" spellcheck="false">
+        <button id="btn-hints-send" class="btn btn-tiny" disabled>Send</button>
+      </div>
+
+    </div>
+  </aside>
+
+  <div id="panel-divider"></div>
+
+  <!-- RIGHT PANEL: editor + console -->
+  <section id="panel-right">
+
+    <div id="editor-pane">
+      <div id="editor-tabs">
+        <!-- file tabs injected here when an exercise loads -->
+        <button class="editor-tab editor-tab-static" data-editor-tab="settings">settings.json</button>
+      </div>
+
+      <!-- file editor panes injected here when an exercise loads -->
+      <div id="editor-no-exercise" class="editor-tab-content active">
+        <p class="placeholder" style="padding:16px;">Select an exercise to open the editor.</p>
+      </div>
+
+      <div id="editor-tab-settings" class="editor-tab-content">
+        <div id="settings-toolbar">
+          <span class="dim">/settings.json</span>
+          <span id="settings-status"></span>
+          <button id="btn-settings-reload" class="btn btn-tiny" disabled>Reload</button>
+          <button id="btn-settings-save" class="btn btn-tiny" disabled>Save</button>
+        </div>
+        <textarea id="settings-editor"></textarea>
+      </div>
+    </div>
+
+    <div id="console-divider"></div>
+
+    <div id="console-pane">
+      <div id="console-toolbar">
+        <span>Console</span>
+        <button id="btn-console-clear" class="btn btn-tiny">Clear</button>
+        <button id="btn-console-interrupt" class="btn btn-tiny btn-danger" disabled>Interrupt</button>
+      </div>
+      <div id="console-output"></div>
+      <div id="console-input-row">
+        <span class="prompt">&gt;&gt;&gt;</span>
+        <input id="console-input" type="text" placeholder="type a command..." disabled autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ── MODALS ─────────────────────────────────────────────────────── -->
+<div id="modal-overlay" class="hidden">
+  <div id="modal">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <div id="modal-footer">
+      <button id="modal-ok" class="btn btn-primary">OK</button>
+      <button id="modal-cancel" class="btn btn-ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROGRESS BAR (firmware install) ───────────────────────────── -->
+<div id="progress-bar-container" class="hidden">
+  <div id="progress-bar-label">Installing firmware…</div>
+  <div id="progress-bar-track">
+    <div id="progress-bar-fill"></div>
+  </div>
+</div>
+
+<!-- ── SCRIPTS ───────────────────────────────────────────────────── -->
+<script type="module">
+  import { MicroPythonREPL } from './js/repl.js';
+  import { FirmwareInstaller } from './js/firmware.js';
+  import { ExerciseLoader } from './js/exercises.js';
+  import { App } from './js/app.js';
+
+  window.addEventListener('load', () => {
+    if (!('serial' in navigator)) {
+      document.getElementById('btn-connect').textContent = 'Web Serial not supported';
+      document.getElementById('btn-connect').disabled = true;
+      document.getElementById('device-status').textContent = 'Use Chrome or Edge';
+      return;
+    }
+    const app = new App({ MicroPythonREPL, FirmwareInstaller, ExerciseLoader });
+    app.init();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "id": "01_button_light",
+  "title": "Button Light",
+  "phase": 1,
+  "concept": "services and events",
+  "clb_min_version": "1.0.0",
+  "hardware": ["neopixel_strip", "tactile_button"],
+  "edit_files": [
+    {
+      "label": "App_button_light_start.py",
+      "source": "start.py",
+      "solution": "solution.py",
+      "device_path": "/managers/App_button_light_start_manager.py"
+    }
+  ],
+  "start_file": "App_button_light_start",
+  "solution_file": "App_button_light",
+  "circuit_description": "8 NeoPixels on GPIO 18; button between GPIO 14 and GND (pull-up enabled in software)",
+  "default_settings": {
+    "App_button_light_start": {
+      "enabled": true,
+      "dependencies": []
+    }
+  }
+}

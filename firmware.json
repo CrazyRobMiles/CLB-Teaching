@@ -1,0 +1,9 @@
+{
+  "repo": "CrazyRobMiles/MicroPython-Connected-Little-Box",
+  "version": "main",
+  "firmware_path": "firmware",
+  "exclude": [
+    "settings.json",
+    "app_manifest.py"
+  ]
+}
