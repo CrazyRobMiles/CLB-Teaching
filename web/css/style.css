@@ -2,18 +2,36 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:        #1e1e2e;
-  --surface:   #181825;
-  --surface2:  #313244;
-  --border:    #45475a;
-  --text:      #cdd6f4;
-  --dim:       #6c7086;
-  --green:     #a6e3a1;
-  --red:       #f38ba8;
-  --blue:      #89b4fa;
-  --yellow:    #f9e2af;
   --topbar-h:  48px;
   --base-size: 13px;
+}
+
+/* ── Dark theme (default) ───────────────────────────────────────────── */
+html, html[data-theme="dark"] {
+  --bg:      #1e1e2e;
+  --surface: #181825;
+  --surface2:#313244;
+  --border:  #45475a;
+  --text:    #cdd6f4;
+  --dim:     #6c7086;
+  --green:   #a6e3a1;
+  --red:     #f38ba8;
+  --blue:    #89b4fa;
+  --yellow:  #f9e2af;
+}
+
+/* ── Light theme ────────────────────────────────────────────────────── */
+html[data-theme="light"] {
+  --bg:      #eff1f5;
+  --surface: #e6e9ef;
+  --surface2:#ccd0da;
+  --border:  #bcc0cc;
+  --text:    #4c4f69;
+  --dim:     #9ca0b0;
+  --green:   #40a02b;
+  --red:     #d20f39;
+  --blue:    #1e66f5;
+  --yellow:  #df8e1d;
 }
 
 html, body {
@@ -121,6 +139,26 @@ html, body {
 
 .tab-content { display: none; flex: 1; overflow-y: auto; padding: 16px; }
 .tab-content.active { display: block; }
+
+#tab-description { overflow: hidden; padding: 0; }
+#tab-description.active { display: flex; flex-direction: column; }
+
+#description-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+#description-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  font-size: 11px;
+}
 
 #description-content h1 { font-size: 1.15em; margin-bottom: 12px; color: var(--blue); }
 #description-content h2 { font-size: 1em; margin: 16px 0 6px; color: var(--yellow); }

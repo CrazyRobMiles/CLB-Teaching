@@ -32,13 +32,21 @@ CLB-Teaching/
 │
 ├── exercises/
 │   ├── index.json             ← ordered list of all exercises
+│   ├── 00_getting_started/
+│   │   ├── exercise.json
+│   │   ├── description_p1.md  ← multi-page descriptions
+│   │   ├── description_p2.md
+│   │   ├── description_p3.md
+│   │   ├── description_p4.md
+│   │   └── start.py
 │   └── 01_button_light/
-│       ├── exercise.json      ← metadata: title, hardware, phase
-│       ├── description.md     ← student-facing exercise document
-│       ├── circuit.svg        ← wiring diagram
+│       ├── exercise.json      ← metadata: title, hardware, phase, pages, edit_files
+│       ├── description.md     ← student-facing exercise document (or description_pN.md for multi-page)
+│       ├── circuit.svg        ← wiring diagram (embed in description.md with ![](circuit.svg))
 │       ├── start.py           ← App_ file pushed to device at exercise start
 │       ├── solution.py        ← complete solution (loadable on request)
-│       └── tutor.py           ← AI assistant exercise definition
+│       ├── tutor.json         ← AI tutor configuration (tutor_brief, hints, etc.)
+│       └── tutor.py           ← AI assistant exercise definition (device-side)
 │
 └── web/
     ├── index.html             ← single-page app shell
@@ -167,9 +175,10 @@ See `exercises/01_button_light/tutor.py` for the reference format.
 
 1. Create `exercises/NN_name/` following the format above
 2. Add an entry to `exercises/index.json`
-3. Verify `start.py` loads cleanly with `select-app` and the device reaches `STATE_OK`
-4. Verify `solution.py` produces the correct behaviour
-5. Check `circuit.svg` renders correctly in the browser at 600px
+3. Write description content — either a single `description.md` or multiple pages listed under `pages` in `exercise.json`
+4. Verify `start.py` loads cleanly and the device reaches `STATE_OK`
+5. Verify `solution.py` (if present) produces the correct behaviour
+6. Embed the circuit diagram in the description with `![Circuit Diagram](circuit.svg)` rather than relying on a separate tab
 
 That is all. No web app code changes are needed for a new exercise.
 

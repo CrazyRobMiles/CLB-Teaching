@@ -23,17 +23,21 @@ export class ExerciseLoader {
 
   /**
    * Load all content for one exercise.
-   * Returns { meta, description, files, tutor, base } where files is an array of
-   * { spec, startCode, solutionCode } — one entry per edit_files entry.
+   * Returns { meta, pages, files, tutor, base } where:
+   *   pages — array of markdown strings, one per description page
+   *   files — array of { spec, startCode, solutionCode }, one per edit_files entry
+   * meta.pages lists filenames; falls back to ['description.md'] if absent.
    * Falls back to start_file/solution_file if edit_files is absent.
    */
   async loadExercise(id) {
     if (this._cache[id]) return this._cache[id];
 
     const base = `${EXERCISES_BASE}/${id}`;
-    const [meta, description, tutor] = await Promise.all([
-      fetch(`${base}/exercise.json`).then(r => r.json()),
-      fetch(`${base}/description.md`).then(r => r.text()),
+    const meta = await fetch(`${base}/exercise.json`).then(r => r.json());
+
+    const pageFiles = meta.pages ?? ['description.md'];
+    const [pages, tutor] = await Promise.all([
+      Promise.all(pageFiles.map(f => fetch(`${base}/${f}`).then(r => r.text()))),
       fetch(`${base}/tutor.json`).then(r => r.json()).catch(() => null),
     ]);
 
@@ -54,7 +58,7 @@ export class ExerciseLoader {
       return { spec, startCode, solutionCode };
     }));
 
-    const exercise = { meta, description, files, tutor, base };
+    const exercise = { meta, pages, files, tutor, base };
     this._cache[id] = exercise;
     return exercise;
   }

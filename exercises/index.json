@@ -1,5 +1,12 @@
 [
   {
+    "id": "00_getting_started",
+    "title": "Getting Started",
+    "phase": 0,
+    "concept": "setup and deployment",
+    "desc": "Install MicroPython and the CLB framework, then run a test program"
+  },
+  {
     "id": "01_button_light",
     "title": "Button Light",
     "phase": 1,

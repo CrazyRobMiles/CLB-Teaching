@@ -19,9 +19,13 @@ export class App {
     this._llmProvider = null;
     this._hintMessages = [];
     this._hintBusy = false;
+    this._theme = localStorage.getItem('clb-theme') ?? 'dark';
+    this._pages = [];
+    this._pageIndex = 0;
   }
 
   async init() {
+    this._applyTheme(this._theme);
     this._initSettingsEditor();
     this._initHints();
     this._bindUI();
@@ -33,7 +37,7 @@ export class App {
   _initSettingsEditor() {
     this.settingsEditor = CodeMirror.fromTextArea(document.getElementById('settings-editor'), {
       mode: { name: 'javascript', json: true },
-      theme: 'material-darker',
+      theme: this._theme === 'dark' ? 'material-darker' : 'default',
       lineNumbers: true,
       lineWrapping: true,
       autofocus: false,
@@ -81,7 +85,7 @@ export class App {
 
       const editor = CodeMirror.fromTextArea(textarea, {
         mode: 'python',
-        theme: 'material-darker',
+        theme: this._theme === 'dark' ? 'material-darker' : 'default',
         lineNumbers: true,
         indentUnit: 4,
         tabSize: 4,
@@ -136,11 +140,17 @@ export class App {
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => this._switchTab(tab.dataset.tab));
     });
+    document.getElementById('btn-page-prev').addEventListener('click', () => this._renderPage(this._pageIndex - 1));
+    document.getElementById('btn-page-next').addEventListener('click', () => this._renderPage(this._pageIndex + 1));
 
     document.querySelector('.editor-tab-static').addEventListener('click', () =>
       this._switchEditorTab('settings'));
     document.getElementById('btn-settings-save').addEventListener('click', () => this._saveSettings());
     document.getElementById('btn-settings-reload').addEventListener('click', () => this._loadSettings());
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+      this._applyTheme(this._theme === 'dark' ? 'light' : 'dark');
+    });
 
     document.getElementById('btn-font-decrease').addEventListener('click', () => this._adjustFontSize(-1));
     document.getElementById('btn-font-increase').addEventListener('click', () => this._adjustFontSize(1));
@@ -203,7 +213,8 @@ export class App {
     try {
       const exercise = await this.exercises.loadExercise(id);
       this.currentExercise = exercise;
-      this._renderDescription(exercise.description, exercise.base);
+      this._pages = exercise.pages;
+      this._renderPage(0);
       this._loadExerciseEditors(exercise);
       this._hintMessages = [];
       document.getElementById('hints-messages').innerHTML = '';
@@ -358,6 +369,19 @@ export class App {
     }
   }
 
+  // ── Theme ─────────────────────────────────────────────────────────
+
+  _applyTheme(theme) {
+    this._theme = theme;
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('clb-theme', theme);
+    document.getElementById('btn-theme').textContent = theme === 'dark' ? '☀' : '☾';
+
+    const cmTheme = theme === 'dark' ? 'material-darker' : 'default';
+    this.fileEditors.forEach(({ editor }) => editor.setOption('theme', cmTheme));
+    if (this.settingsEditor) this.settingsEditor.setOption('theme', cmTheme);
+  }
+
   // ── Font size ─────────────────────────────────────────────────────
 
   _adjustFontSize(delta) {
@@ -491,6 +515,21 @@ export class App {
   }
 
   // ── Rendering ─────────────────────────────────────────────────────
+
+  _renderPage(index) {
+    this._pageIndex = index;
+    this._renderDescription(this._pages[index], this.currentExercise.base);
+
+    const nav   = document.getElementById('description-nav');
+    const total = this._pages.length;
+    if (total <= 1) { nav.classList.add('hidden'); return; }
+
+    nav.classList.remove('hidden');
+    document.getElementById('page-indicator').textContent = `${index + 1} / ${total}`;
+    document.getElementById('btn-page-prev').disabled = index === 0;
+    document.getElementById('btn-page-next').disabled = index === total - 1;
+    document.getElementById('description-content').scrollTop = 0;
+  }
 
   _renderDescription(markdown, base) {
     const scratch = document.createElement('div');

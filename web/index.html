@@ -40,6 +40,7 @@
   <div id="font-controls">
     <button id="btn-font-decrease" class="btn btn-tiny" title="Decrease font size (Ctrl+-)">A−</button>
     <button id="btn-font-increase" class="btn btn-tiny" title="Increase font size (Ctrl+=)">A+</button>
+    <button id="btn-theme" class="btn btn-tiny" title="Toggle light/dark theme">☀</button>
   </div>
 </header>
 
@@ -55,7 +56,12 @@
 
     <div id="tab-description" class="tab-content active">
       <div id="description-content">
-        <p class="placeholder">Connect a device to begin.</p>
+        <p class="placeholder">Select an exercise to begin.</p>
+      </div>
+      <div id="description-nav" class="hidden">
+        <button id="btn-page-prev" class="btn btn-tiny">← Prev</button>
+        <span id="page-indicator" class="dim"></span>
+        <button id="btn-page-next" class="btn btn-tiny">Next →</button>
       </div>
     </div>
 
