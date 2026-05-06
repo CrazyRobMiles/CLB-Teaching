@@ -12,5 +12,12 @@
     "phase": 1,
     "concept": "services and events",
     "desc": "Light up a NeoPixel strip when a button is pressed"
+  },
+  {
+    "id": "02_encoder_brightness",
+    "title": "Encoder Brightness",
+    "phase": 1,
+    "concept": "services and events",
+    "desc": "Use a rotary encoder to control NeoPixel brightness"
   }
 ]

@@ -15,7 +15,7 @@ EXERCISE = {
     "objective": (
         "Build an application that lights up a NeoPixel strip when a button "
         "is pressed and turns it off when the button is released, by connecting "
-        "the gpio and pixel device managers through the CLB service and event system."
+        "the gpio and indicator device managers through the CLB service and event system."
     ),
 
     # The specific things the student must discover themselves.
@@ -25,6 +25,7 @@ EXERCISE = {
         "the complete setup_services() implementation",
         "the subscribe() call and its argument signature",
         "the get_service_handle() call by name before the student has found it themselves",
+        "the cmd_fill() method name on the indicator service handle",
     ],
 
     # Ordered ladder — reveal one level at a time, only when the student asks for a hint.
@@ -48,12 +49,12 @@ EXERCISE = {
         # Hint 4
         "Once you have the event object, call .subscribe(handler) on it, where handler "
         "is a method that accepts (self, event, data). Your handler should call "
-        "self.pixels.fill() with the colour from your settings.",
+        "self.indicator.cmd_fill() with the colour from your settings.",
     ],
 
     # What to look for to detect success. The tutor can mention these to prompt observation.
     "success_indicators": [
-        "pixel manager shows STATE_OK in status output",
+        "indicator manager shows STATE_OK in status output",
         "gpio manager shows STATE_OK in status output",
         "pressing the button causes pixels to light up",
         "releasing the button causes pixels to go off",
@@ -63,9 +64,9 @@ EXERCISE = {
     "observation_checklist": [
         "Run 'status' — what state is each manager in?",
         "Is there any error output in the console since the last reboot?",
-        "Try 'pixel.fill 255 0 0' directly — do the pixels respond?",
+        "Try 'indicator.fill 255 0 0' directly — do the pixels respond?",
         "Add print('button pressed') to your handler — does it appear when you press?",
-        "Check app_default_settings — are both 'pixel' and 'gpio' listed, "
+        "Check app_default_settings — are both 'indicator' and 'gpio' listed, "
         "and are they in the 'dependencies' list?",
     ],
 
@@ -110,7 +111,7 @@ is close, say so — "you're one line away" is more motivating than a hint.
 
 WHAT TO CELEBRATE
 When the button works: acknowledge that the student has built a decoupled
-event-driven system — the pixel manager and the gpio manager have no
+event-driven system — the indicator manager and the gpio manager have no
 knowledge of each other, connected only by a name string. This is the same
 pattern used in professional embedded systems at any scale.
 """,

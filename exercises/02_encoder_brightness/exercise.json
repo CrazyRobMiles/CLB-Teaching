@@ -1,0 +1,31 @@
+{
+  "id": "02_encoder_brightness",
+  "title": "Encoder Brightness",
+  "phase": 1,
+  "concept": "services and events",
+  "clb_min_version": "1.0.0",
+  "hardware": ["neopixel_strip", "rotary_encoder"],
+  "pages": [
+    "description_p1.md",
+    "description_p2.md",
+    "description_p3.md",
+    "description_p4.md"
+  ],
+  "edit_files": [
+    {
+      "label": "App_encoder_brightness_start.py",
+      "source": "start.py",
+      "solution": "solution.py",
+      "device_path": "/managers/App_encoder_brightness_start_manager.py"
+    }
+  ],
+  "start_file": "App_encoder_brightness_start",
+  "solution_file": "App_encoder_brightness",
+  "circuit_description": "8 NeoPixels on GPIO 18; rotary encoder with CLK on GPIO 16, DT on GPIO 17",
+  "default_settings": {
+    "App_encoder_brightness_start": {
+      "enabled": true,
+      "dependencies": []
+    }
+  }
+}

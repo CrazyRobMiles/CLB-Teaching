@@ -64,11 +64,11 @@ Every manager stores its configuration in a central file called `settings.json` 
 
 ```json
 {
-    "pixel": {
+    "indicator": {
         "enabled": true,
         "pixelpin": 18,
-        "panel_width": 8,
-        "panel_height": 1
+        "count": 8,
+        "pixeltype": "RGB"
     },
     "gpio": {
         "enabled": true,
@@ -84,7 +84,7 @@ Managers declare their own default settings as a class attribute. When CLB loads
 You can change a setting live from the REPL without editing any file:
 
 ```
-set pixel.panel_width=16
+set indicator.count=16
 ```
 
 The change is saved to `settings.json` immediately and survives reboot.
@@ -93,7 +93,7 @@ The change is saved to `settings.json` immediately and survives reboot.
 
 There are two kinds of manager:
 
-**Device managers** handle one piece of hardware or one system service. The pixel manager drives the NeoPixel strip. The GPIO manager watches input pins. Each lives in a file like `pixel_manager.py` and uses `CLBDeviceManager` as its base class.
+**Device managers** handle one piece of hardware or one system service. The indicator manager drives the NeoPixel strip. The GPIO manager watches input pins. Each lives in a file like `indicator_manager.py` and uses `CLBDeviceManager` as its base class.
 
 **Application managers** define a complete working device configuration. They declare — in a single class attribute called `app_default_settings` — the full `settings.json` template: every device manager the application needs, with all their settings, plus the application's own configuration. They use `CLBAppManager` as their base class and live in files starting with `App_`.
 
@@ -164,74 +164,70 @@ status
 ### Think About It
 
 - Why does only `App_button_light` appear? Look at `app_default_settings` — what does it say to load?
-- What would you need to add to make the `pixel` manager load?
+- What would you need to add to make the `indicator` manager load?
 - The `update()` method currently returns immediately. What would happen if it contained `time.sleep(1)`?
 
 ---
 
-# Part 3: Add the Pixel Manager
+# Part 3: Add the Indicator Manager
 
-The pixel manager drives the NeoPixel strip. To use it, your application needs to do two things:
+The indicator manager drives the NeoPixel strip. To use it, your application needs to do two things:
 
 1. **Declare it** in `app_default_settings` so CLB loads it at boot
 2. **Get a service handle** to it in `setup_services()` so you can call its functions
 
 ### Services
 
-Device managers expose their capabilities as *services* — a dictionary of named functions returned by `get_interface()`. The pixel manager exposes functions like `fill`, `set_rgb`, `show`, and others.
+Device managers expose their capabilities as *services* — a dictionary of named functions returned by `get_interface()`. The indicator manager exposes functions like `fill`, `set`, `fade`, and others.
 
 You access these from another manager using `get_service_handle()`:
 
 ```python
-self.pixels = self.get_service_handle("pixel")
+self.indicator = self.get_service_handle("indicator")
 ```
 
-This returns a proxy object. Calling `self.pixels.fill(255, 100, 0)` is equivalent to calling the pixel manager's `fill` function with those arguments.
+This returns the manager object. Calling `self.indicator.cmd_fill(255, 100, 0)` calls the indicator manager's `cmd_fill` function with those arguments.
 
 ### Modify Your App
 
-Add the pixel section to `app_default_settings`. Your settings block should now look like this:
+Add the indicator section to `app_default_settings`. Your settings block should now look like this:
 
 ```python
 app_default_settings = {
-    "pixel": {
+    "indicator": {
         "enabled": True,
         "pixelpin": 18,
-        "panel_width": 8,
-        "panel_height": 1,
-        "x_panels": 1,
-        "y_panels": 1,
+        "count": 8,
         "pixeltype": "RGB",
-        "animation": "None",
-        "panel_type": "Multi-panels-x"
+        "brightness": 1.0
     },
     "App_button_light": {
         "enabled": True,
         "on_red": 255,
         "on_green": 100,
         "on_blue": 0,
-        "dependencies": ["pixel"]
+        "dependencies": ["indicator"]
     }
 }
 ```
 
-Note two things: the `on_red`, `on_green`, `on_blue` settings define the colour you will use later, and `"pixel"` has been added to `dependencies` so CLB initialises the pixel manager before your application.
+Note two things: the `on_red`, `on_green`, `on_blue` settings define the colour you will use later, and `"indicator"` has been added to `dependencies` so CLB initialises the indicator manager before your application.
 
 Now add `setup_services()` to your class — this goes after `setup()`:
 
 ```python
 def setup_services(self):
-    self.pixels = self.get_service_handle("pixel")
-    if self.pixels:
-        self.pixels.fill(0, 0, 0)
+    self.indicator = self.get_service_handle("indicator")
+    if self.indicator:
+        self.indicator.cmd_fill(0, 0, 0)
 ```
 
-And add `self.pixels = None` to `__init__`:
+And add `self.indicator = None` to `__init__`:
 
 ```python
 def __init__(self, clb):
     super().__init__(clb)
-    self.pixels = None
+    self.indicator = None
 ```
 
 Save the file. Now reload the application:
@@ -240,25 +236,25 @@ Save the file. Now reload the application:
 select-app Button Light
 ```
 
-**What you should see:** The device reboots. Now `status` shows both `pixel` and `App_button_light` in state `ok`. The pixel strip should initialise (it may flash briefly) and settle to off.
+**What you should see:** The device reboots. Now `status` shows both `indicator` and `App_button_light` in state `ok`. The pixel strip should initialise (it may flash briefly) and settle to off.
 
-Try calling the pixel service directly from the REPL:
+Try calling the indicator service directly from the REPL:
 
 ```
-pixel.fill 255 0 0
+indicator.fill 255 0 0
 ```
 
 The strip should turn red. Turn it off again:
 
 ```
-pixel.fill 0 0 0
+indicator.fill 0 0 0
 ```
 
 ### Think About It
 
-- You called `pixel.fill` from the REPL just like your code will call it. The REPL and your manager use the same service interface. Why is that consistent design useful?
-- What does `get_service_handle("pixel")` return if the pixel manager failed to initialise? Why does the `if self.pixels:` guard matter?
-- The pixel settings are inside your `app_default_settings`. Who owns those settings — your app or the pixel manager?
+- You called `indicator.fill` from the REPL just like your code will call it. The REPL and your manager use the same service interface. Why is that consistent design useful?
+- What does `get_service_handle("indicator")` return if the indicator manager failed to initialise? Why does the `if self.indicator:` guard matter?
+- The indicator settings are inside your `app_default_settings`. Who owns those settings — your app or the indicator manager?
 
 ---
 
@@ -298,7 +294,7 @@ Add the `gpio` section to `app_default_settings`:
 Add `"gpio"` to the dependencies list:
 
 ```python
-"dependencies": ["pixel", "gpio"]
+"dependencies": ["indicator", "gpio"]
 ```
 
 Read the colour settings in `setup()`, after the `STATE_OK` line:
@@ -325,12 +321,12 @@ Add the two handler methods to your class:
 
 ```python
 def on_button_pressed(self, event, data):
-    if self.pixels:
-        self.pixels.fill(self.on_red, self.on_green, self.on_blue)
+    if self.indicator:
+        self.indicator.cmd_fill(self.on_red, self.on_green, self.on_blue)
 
 def on_button_released(self, event, data):
-    if self.pixels:
-        self.pixels.fill(0, 0, 0)
+    if self.indicator:
+        self.indicator.cmd_fill(0, 0, 0)
 ```
 
 Save. Reload:
@@ -343,7 +339,7 @@ select-app Button Light
 
 ### Think About It
 
-- Your `on_button_pressed` handler calls `self.pixels.fill()`. The pixel manager has no idea a button exists anywhere on the device. The GPIO manager has no idea pixels exist. What makes this possible?
+- Your `on_button_pressed` handler calls `self.indicator.cmd_fill()`. The indicator manager has no idea a button exists anywhere on the device. The GPIO manager has no idea pixels exist. What makes this possible?
 - What would happen if you subscribed a second handler to `gpio.button_low` — for example, one that played a sound? Would you need to change anything in the GPIO manager?
 - The `update()` method in your application is empty. All the work happens in event handlers. Is this typical? What kind of work *would* belong in `update()`?
 
@@ -363,7 +359,7 @@ Press the button. The pixels are now blue. The new values are saved to `settings
 
 **Change the number of pixels:**
 ```
-set pixel.panel_width=4
+set indicator.count=4
 ```
 Reboot. Only four pixels light up.
 
@@ -392,7 +388,7 @@ ask it doesn't work
 
 **Useful:**
 ```
-ask the pixel manager shows STATE_OK in the status output but when I press
+ask the indicator manager shows STATE_OK in the status output but when I press
 the button nothing happens. There are no errors in the console. The gpio
 manager also shows STATE_OK.
 ```
@@ -404,7 +400,7 @@ If you are not sure what to observe, check:
 1. `status` — what state is each manager in?
 2. The console output since the last reboot — any errors?
 3. Whether the event is firing at all (add `print("button pressed")` to your handler temporarily)
-4. Whether the service call is reaching the pixel manager (try calling `pixel.fill 255 0 0` directly from the REPL)
+4. Whether the service call is reaching the indicator manager (try calling `indicator.fill 255 0 0` directly from the REPL)
 
 Forming a precise description of a broken system is itself an engineering skill. The discipline of separating *what I expected* from *what I observed* from *what I have already tried* is the same process used to write a useful bug report, ask a useful question on a forum, or brief a colleague on a problem.
 
@@ -417,31 +413,31 @@ Forming a precise description of a broken system is itself an engineering skill.
 │  App_button_light  (CLBAppManager)                  │
 │                                                     │
 │  app_default_settings defines:                      │
-│    pixel  ──► pixelpin, panel_width, ...            │
-│    gpio   ──► input_pins: [{name:"button", pin:14}] │
+│    indicator ──► pixelpin, count, ...               │
+│    gpio      ──► input_pins: [{name:"button",pin:14}│
 │    App_button_light ──► on_red, on_green, on_blue   │
 │                                                     │
 │  setup_services():                                  │
-│    get_service_handle("pixel") ──► self.pixels      │
+│    get_service_handle("indicator") ─► self.indicator│
 │    subscribe gpio.button_low  ──► on_button_pressed │
 │    subscribe gpio.button_high ──► on_button_released│
 │                                                     │
-│  on_button_pressed:  pixels.fill(r, g, b)           │
-│  on_button_released: pixels.fill(0, 0, 0)           │
+│  on_button_pressed:  indicator.cmd_fill(r, g, b)    │
+│  on_button_released: indicator.cmd_fill(0, 0, 0)    │
 └─────────────────────────────────────────────────────┘
          │ service call              │ event subscription
          ▼                          ▼
 ┌─────────────────┐      ┌──────────────────────┐
-│ pixel manager   │      │ gpio manager         │
-│ (CLBDeviceManager)     │ (CLBDeviceManager)   │
+│indicator manager│      │ gpio manager         │
+│(CLBDeviceManager)      │ (CLBDeviceManager)   │
 │                 │      │                      │
-│ fill(r,g,b)     │      │ publishes:           │
-│ set_rgb(x,y,...)│      │  gpio.button_low     │
-│ show()          │      │  gpio.button_high    │
+│ cmd_fill(r,g,b) │      │ publishes:           │
+│ cmd_set(i,r,g,b)│      │  gpio.button_low     │
+│ cmd_fade(i,...) │      │  gpio.button_high    │
 └─────────────────┘      └──────────────────────┘
 ```
 
-The pixel manager does not know the button exists.  
+The indicator manager does not know the button exists.  
 The GPIO manager does not know the pixels exist.  
 Your application connects them — and is the only place that knows about both.
 

@@ -126,11 +126,24 @@
 
     <div id="editor-pane">
       <div id="editor-tabs">
-        <!-- file tabs injected here when an exercise loads -->
-        <button class="editor-tab editor-tab-static" data-editor-tab="settings">settings.json</button>
+        <!-- exercise/device file tabs dynamically inserted before #editor-tabs-end -->
+        <div id="editor-tabs-end">
+          <button id="btn-browse-files" class="btn btn-tiny" disabled title="Browse device files">Files</button>
+          <button class="editor-tab editor-tab-static" data-editor-tab="settings">settings.json</button>
+        </div>
       </div>
 
-      <!-- file editor panes injected here when an exercise loads -->
+      <!-- file browser (shown in place of tab content when browsing) -->
+      <div id="file-browser">
+        <div id="file-browser-header">
+          <nav id="file-browser-breadcrumb"></nav>
+          <span id="file-browser-status"></span>
+          <button id="btn-file-browser-close" class="btn btn-tiny">✕</button>
+        </div>
+        <div id="file-browser-list"></div>
+      </div>
+
+      <!-- exercise/device file editor panes injected here -->
       <div id="editor-no-exercise" class="editor-tab-content active">
         <p class="placeholder" style="padding:16px;">Select an exercise to open the editor.</p>
       </div>

@@ -8,16 +8,12 @@ class Manager(CLBAppManager):
     desc = "Lights up pixels when a button is pressed, off when released"
 
     app_default_settings = {
-        "pixel": {
+        "indicator": {
             "enabled": True,
             "pixelpin": 18,
-            "panel_width": 8,
-            "panel_height": 1,
-            "x_panels": 1,
-            "y_panels": 1,
+            "count": 8,
             "pixeltype": "RGB",
-            "animation": "None",
-            "panel_type": "Multi-panels-x"
+            "brightness": 1.0
         },
         "gpio": {
             "enabled": True,
@@ -31,13 +27,13 @@ class Manager(CLBAppManager):
             "on_red": 255,
             "on_green": 100,
             "on_blue": 0,
-            "dependencies": ["pixel", "gpio"]
+            "dependencies": ["indicator", "gpio"]
         }
     }
 
     def __init__(self, clb):
         super().__init__(clb)
-        self.pixels = None
+        self.indicator = None
 
     def setup(self, settings):
         super().setup(settings)
@@ -51,9 +47,9 @@ class Manager(CLBAppManager):
         self.set_status(1001, "Button Light ready")
 
     def setup_services(self):
-        self.pixels = self.get_service_handle("pixel")
-        if self.pixels:
-            self.pixels.fill(0, 0, 0)
+        self.indicator = self.get_service_handle("indicator")
+        if self.indicator:
+            self.indicator.cmd_fill(0, 0, 0)
 
         button_pressed = self.clb.get_event("gpio.button_low")
         if button_pressed:
@@ -64,12 +60,12 @@ class Manager(CLBAppManager):
             button_released.subscribe(self.on_button_released)
 
     def on_button_pressed(self, event, data):
-        if self.pixels:
-            self.pixels.fill(self.on_red, self.on_green, self.on_blue)
+        if self.indicator:
+            self.indicator.cmd_fill(self.on_red, self.on_green, self.on_blue)
 
     def on_button_released(self, event, data):
-        if self.pixels:
-            self.pixels.fill(0, 0, 0)
+        if self.indicator:
+            self.indicator.cmd_fill(0, 0, 0)
 
     def update(self):
         if not self.enabled:

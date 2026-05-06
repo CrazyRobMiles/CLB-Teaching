@@ -11,7 +11,12 @@ export class App {
     this.repl = new MicroPythonREPL();
     this.firmware = new FirmwareInstaller(this.repl);
     this.exercises = new ExerciseLoader(this.repl);
-    this.fileEditors = [];   // [{ tabId, spec, startCode, solutionCode, editor, element }]
+    this.fileEditors = [];          // [{ tabId, spec, startCode, solutionCode, editor, element }]
+    this._deviceFileEditors = [];   // [{ tabId, path, editor, element, tabBtn, loadedContent }]
+    this._nextDeviceTabId = 0;
+    this._fileBrowserPath = '/';
+    this._fileBrowserOpen = false;
+    this._activeEditorTab = null;
     this.settingsEditor = null;
     this.currentExercise = null;
     this._fontSize = 13;
@@ -46,36 +51,64 @@ export class App {
     this.settingsEditor.setValue('// Connect a device to load settings.json');
   }
 
-  // ── File editor tabs (dynamic) ────────────────────────────────────
+  // ── File editor tabs (exercise) ───────────────────────────────────
 
   _loadExerciseEditors(exercise) {
     this._clearFileEditors();
 
-    const tabBar = document.getElementById('editor-tabs');
-    const staticTab = tabBar.querySelector('.editor-tab-static');
+    const tabBar      = document.getElementById('editor-tabs');
+    const insertRef   = document.getElementById('editor-tabs-end');
     const settingsPanel = document.getElementById('editor-tab-settings');
-    const noExercise = document.getElementById('editor-no-exercise');
+    const noExercise  = document.getElementById('editor-no-exercise');
 
     exercise.files.forEach(({ spec, startCode, solutionCode }, i) => {
-      const tabId = `file-${i}`;
+      const tabId   = `file-${i}`;
       const isFirst = i === 0;
 
-      // Tab button
+      // Tab button — same structure as device file tabs
       const tab = document.createElement('button');
-      tab.className = 'editor-tab' + (isFirst ? ' active' : '');
+      tab.className = 'editor-tab editor-tab-exercise' + (isFirst ? ' active' : '');
       tab.dataset.editorTab = tabId;
-      tab.textContent = spec.label;
       tab.addEventListener('click', () => this._switchEditorTab(tabId));
-      tabBar.insertBefore(tab, staticTab);
 
-      // Content pane
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'tab-name';
+      nameSpan.textContent = spec.label;
+      tab.appendChild(nameSpan);
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'tab-close-btn';
+      closeBtn.title = 'Close tab';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.addEventListener('click', e => { e.stopPropagation(); this._closeExerciseTab(tabId); });
+      tab.appendChild(closeBtn);
+
+      tabBar.insertBefore(tab, insertRef);
+
+      // Content pane — same structure as device file tabs
       const pane = document.createElement('div');
       pane.id = `editor-tab-${tabId}`;
       pane.className = 'editor-tab-content' + (isFirst ? ' active' : '');
 
       const toolbar = document.createElement('div');
       toolbar.className = 'editor-file-toolbar';
-      toolbar.innerHTML = `<span class="dim">${spec.device_path}</span>`;
+
+      const pathSpan = document.createElement('span');
+      pathSpan.className = 'dim';
+      pathSpan.textContent = spec.device_path;
+      toolbar.appendChild(pathSpan);
+
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'device-file-status';
+      toolbar.appendChild(statusSpan);
+
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn btn-tiny';
+      saveBtn.textContent = 'Save';
+      saveBtn.disabled = !this.repl.connected;
+      saveBtn.addEventListener('click', () => this._saveExerciseFile(tabId));
+      toolbar.appendChild(saveBtn);
+
       pane.appendChild(toolbar);
 
       const textarea = document.createElement('textarea');
@@ -96,14 +129,16 @@ export class App {
       editor.setSize('100%', '100%');
       editor.setValue(startCode);
 
-      this.fileEditors.push({ tabId, spec, startCode, solutionCode, editor, element: pane });
+      const entry = { tabId, spec, startCode, solutionCode, editor, element: pane, tabBtn: tab, loadedContent: startCode };
+      this.fileEditors.push(entry);
+      editor.on('change', () => this._updateExerciseTabLabel(entry));
     });
 
-    // Hide placeholder, deactivate settings tab
     noExercise.classList.remove('active');
-    staticTab.classList.remove('active');
+    document.querySelector('.editor-tab-static').classList.remove('active');
 
     if (this.fileEditors.length > 0) {
+      this._activeEditorTab = this.fileEditors[0].tabId;
       this.fileEditors[0].editor.refresh();
     }
   }
@@ -113,14 +148,14 @@ export class App {
       editor.toTextArea();
       element.remove();
     });
-    document.querySelectorAll('.editor-tab:not(.editor-tab-static)').forEach(t => t.remove());
+    document.querySelectorAll('.editor-tab-exercise').forEach(t => t.remove());
     this.fileEditors = [];
-
     document.getElementById('editor-no-exercise').classList.add('active');
   }
 
   _refreshAllEditors() {
     this.fileEditors.forEach(({ editor }) => editor.refresh());
+    this._deviceFileEditors.forEach(({ editor }) => editor.refresh());
     if (this.settingsEditor) this.settingsEditor.refresh();
   }
 
@@ -148,6 +183,9 @@ export class App {
     document.getElementById('btn-settings-save').addEventListener('click', () => this._saveSettings());
     document.getElementById('btn-settings-reload').addEventListener('click', () => this._loadSettings());
 
+    document.getElementById('btn-browse-files').addEventListener('click', () => this._toggleFileBrowser());
+    document.getElementById('btn-file-browser-close').addEventListener('click', () => this._closeFileBrowser());
+
     document.getElementById('btn-theme').addEventListener('click', () => {
       this._applyTheme(this._theme === 'dark' ? 'light' : 'dark');
     });
@@ -163,7 +201,6 @@ export class App {
     this._initPanelResize();
     this._initConsoleResize();
 
-    // Wire serial output to the console panel.
     this.repl.onData(text => this._consoleAppend(text));
   }
 
@@ -198,7 +235,6 @@ export class App {
       btn.textContent = 'Connecting…';
       await this.repl.connect();
       this._setConnected(true);
-      // If an exercise was already selected before connecting, configure the device now.
       if (this.currentExercise) {
         await this._pushExerciseToDevice(this.currentExercise);
       }
@@ -251,11 +287,12 @@ export class App {
     btn.disabled = true;
     btn.textContent = 'Saving…';
     try {
-      for (const { spec, editor } of this.fileEditors) {
-        await this.repl.writeFile(spec.device_path, editor.getValue());
+      for (const entry of this.fileEditors) {
+        await this.repl.writeFile(entry.spec.device_path, entry.editor.getValue());
+        entry.loadedContent = entry.editor.getValue();
+        this._updateExerciseTabLabel(entry);
       }
 
-      // Always keep app_manifest.py in sync so the device knows which app to run.
       const manifest = this.exercises._buildManifest(this.currentExercise.meta);
       await this.repl.writeFile('/app_manifest.py', manifest);
 
@@ -318,6 +355,13 @@ export class App {
   // ── Editor tab switching ──────────────────────────────────────────
 
   _switchEditorTab(name) {
+    // Close the file browser if it was open.
+    if (this._fileBrowserOpen) {
+      this._fileBrowserOpen = false;
+      document.getElementById('file-browser').classList.remove('active');
+    }
+    this._activeEditorTab = name;
+
     document.querySelectorAll('.editor-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.editorTab === name));
     document.querySelectorAll('.editor-tab-content').forEach(c =>
@@ -328,7 +372,9 @@ export class App {
       if (this.repl.connected && !this._settingsLoaded) this._loadSettings();
     } else {
       const fe = this.fileEditors.find(e => e.tabId === name);
-      if (fe) fe.editor.refresh();
+      if (fe) { fe.editor.refresh(); return; }
+      const dfe = this._deviceFileEditors.find(e => e.tabId === name);
+      if (dfe) dfe.editor.refresh();
     }
   }
 
@@ -369,6 +415,326 @@ export class App {
     }
   }
 
+  // ── File browser ──────────────────────────────────────────────────
+
+  _toggleFileBrowser() {
+    if (this._fileBrowserOpen) {
+      this._closeFileBrowser();
+    } else {
+      this._openFileBrowser();
+    }
+  }
+
+  async _openFileBrowser() {
+    if (!this.repl.connected) return;
+    this._fileBrowserOpen = true;
+    document.querySelectorAll('.editor-tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('file-browser').classList.add('active');
+    await this._browseTo(this._fileBrowserPath);
+  }
+
+  _closeFileBrowser() {
+    if (!this._fileBrowserOpen) return;
+    this._fileBrowserOpen = false;
+    document.getElementById('file-browser').classList.remove('active');
+    this._switchEditorTab(this._activeEditorTab ?? 'settings');
+  }
+
+  async _browseTo(path) {
+    this._fileBrowserPath = path;
+    const status = document.getElementById('file-browser-status');
+    const list   = document.getElementById('file-browser-list');
+
+    this._renderBreadcrumb(path);
+    status.textContent = 'Loading…';
+    list.innerHTML = '';
+
+    try {
+      const entries = await this.repl.listDirDetailed(path);
+      status.textContent = '';
+      this._renderFileBrowserList(entries, path);
+    } catch (e) {
+      status.textContent = `Error: ${e.message}`;
+    }
+  }
+
+  _renderBreadcrumb(path) {
+    const nav = document.getElementById('file-browser-breadcrumb');
+    nav.innerHTML = '';
+
+    const segments = path.split('/').filter(Boolean);
+
+    const rootEl = document.createElement(path === '/' ? 'span' : 'button');
+    rootEl.className = path === '/' ? 'breadcrumb-current' : 'breadcrumb-seg';
+    rootEl.textContent = '/';
+    if (path !== '/') rootEl.addEventListener('click', () => this._browseTo('/'));
+    nav.appendChild(rootEl);
+
+    segments.forEach((seg, i) => {
+      const sep = document.createElement('span');
+      sep.className = 'breadcrumb-sep';
+      sep.textContent = ' › ';
+      nav.appendChild(sep);
+
+      const segPath = '/' + segments.slice(0, i + 1).join('/');
+      const isLast  = i === segments.length - 1;
+      const el = document.createElement(isLast ? 'span' : 'button');
+      el.className = isLast ? 'breadcrumb-current' : 'breadcrumb-seg';
+      el.textContent = seg;
+      if (!isLast) el.addEventListener('click', () => this._browseTo(segPath));
+      nav.appendChild(el);
+    });
+  }
+
+  _renderFileBrowserList(entries, path) {
+    const list = document.getElementById('file-browser-list');
+
+    if (entries.length === 0) {
+      const msg = document.createElement('p');
+      msg.className = 'placeholder';
+      msg.style.padding = '16px';
+      msg.textContent = 'Empty directory';
+      list.appendChild(msg);
+      return;
+    }
+
+    entries.forEach(({ name, isDir }) => {
+      const btn = document.createElement('button');
+      btn.className = `file-entry ${isDir ? 'file-entry-dir' : 'file-entry-file'}`;
+
+      const icon = document.createElement('span');
+      icon.className = 'file-entry-icon';
+      icon.textContent = isDir ? '▸' : '·';
+      btn.appendChild(icon);
+
+      const label = document.createElement('span');
+      label.textContent = isDir ? name + '/' : name;
+      btn.appendChild(label);
+
+      const childPath = path === '/' ? `/${name}` : `${path}/${name}`;
+      if (isDir) {
+        btn.addEventListener('click', () => this._browseTo(childPath));
+      } else {
+        btn.addEventListener('click', () => this._openDeviceFile(childPath));
+      }
+
+      list.appendChild(btn);
+    });
+  }
+
+  // ── Device file tabs ──────────────────────────────────────────────
+
+  async _openDeviceFile(path) {
+    // If already open, just switch to it.
+    const existing = this._deviceFileEditors.find(e => e.path === path);
+    if (existing) {
+      this._closeFileBrowser();
+      this._switchEditorTab(existing.tabId);
+      return;
+    }
+
+    const status = document.getElementById('file-browser-status');
+    status.textContent = 'Opening…';
+    try {
+      const content = await this.repl.readFile(path);
+      this._createDeviceFileTab(path, content);
+    } catch (e) {
+      status.textContent = `Error: ${e.message}`;
+    }
+  }
+
+  _createDeviceFileTab(path, content) {
+    const tabId    = `device-${this._nextDeviceTabId++}`;
+    const filename = path.split('/').pop();
+    const tabBar   = document.getElementById('editor-tabs');
+    const insertRef = document.getElementById('editor-tabs-end');
+
+    // Tab button
+    const tab = document.createElement('button');
+    tab.className = 'editor-tab editor-tab-device';
+    tab.dataset.editorTab = tabId;
+    tab.addEventListener('click', () => this._switchEditorTab(tabId));
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'tab-name';
+    nameSpan.textContent = filename;
+    tab.appendChild(nameSpan);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'tab-close-btn';
+    closeBtn.title = 'Close tab';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', e => { e.stopPropagation(); this._closeDeviceTab(tabId); });
+    tab.appendChild(closeBtn);
+
+    tabBar.insertBefore(tab, insertRef);
+
+    // Content pane
+    const pane = document.createElement('div');
+    pane.id = `editor-tab-${tabId}`;
+    pane.className = 'editor-tab-content';
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'editor-file-toolbar';
+
+    const pathSpan = document.createElement('span');
+    pathSpan.className = 'dim';
+    pathSpan.textContent = path;
+    toolbar.appendChild(pathSpan);
+
+    const statusSpan = document.createElement('span');
+    statusSpan.className = 'device-file-status';
+    toolbar.appendChild(statusSpan);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-tiny';
+    saveBtn.textContent = 'Save';
+    saveBtn.addEventListener('click', () => this._saveDeviceFile(tabId));
+    toolbar.appendChild(saveBtn);
+
+    pane.appendChild(toolbar);
+
+    const textarea = document.createElement('textarea');
+    pane.appendChild(textarea);
+
+    document.getElementById('editor-tab-settings').parentNode
+      .insertBefore(pane, document.getElementById('editor-tab-settings'));
+
+    const editor = CodeMirror.fromTextArea(textarea, {
+      mode: this._modeForPath(path),
+      theme: this._theme === 'dark' ? 'material-darker' : 'default',
+      lineNumbers: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      lineWrapping: false,
+      autofocus: false,
+    });
+    editor.setSize('100%', '100%');
+    editor.setValue(content);
+
+    const entry = { tabId, path, editor, element: pane, tabBtn: tab, loadedContent: content };
+    this._deviceFileEditors.push(entry);
+    editor.on('change', () => this._updateDeviceTabLabel(entry));
+
+    this._closeFileBrowser();
+    this._switchEditorTab(tabId);
+  }
+
+  _closeDeviceTab(tabId) {
+    const idx = this._deviceFileEditors.findIndex(e => e.tabId === tabId);
+    if (idx === -1) return;
+    const { editor, element, tabBtn, path, loadedContent } = this._deviceFileEditors[idx];
+
+    if (editor.getValue() !== loadedContent) {
+      if (!confirm(`Close ${path.split('/').pop()}?\nUnsaved changes will be lost.`)) return;
+    }
+
+    editor.toTextArea();
+    element.remove();
+    tabBtn.remove();
+    this._deviceFileEditors.splice(idx, 1);
+
+    if (this._deviceFileEditors.length > 0) {
+      const next = this._deviceFileEditors[Math.min(idx, this._deviceFileEditors.length - 1)];
+      this._switchEditorTab(next.tabId);
+    } else if (this.fileEditors.length > 0) {
+      this._switchEditorTab(this.fileEditors[0].tabId);
+    } else {
+      this._switchEditorTab('settings');
+    }
+  }
+
+  async _saveDeviceFile(tabId) {
+    const entry = this._deviceFileEditors.find(e => e.tabId === tabId);
+    if (!entry) return;
+
+    const statusSpan = entry.element.querySelector('.device-file-status');
+    const saveBtn    = entry.element.querySelector('.btn');
+    saveBtn.disabled = true;
+    statusSpan.textContent = 'Saving…';
+
+    try {
+      await this.repl.writeFile(entry.path, entry.editor.getValue());
+      entry.loadedContent = entry.editor.getValue();
+      this._updateDeviceTabLabel(entry);
+      statusSpan.textContent = 'Saved';
+      setTimeout(() => { statusSpan.textContent = ''; }, 2000);
+    } catch (e) {
+      statusSpan.textContent = `Error: ${e.message}`;
+    } finally {
+      saveBtn.disabled = false;
+    }
+  }
+
+  _updateDeviceTabLabel(entry) {
+    const modified = entry.editor.getValue() !== entry.loadedContent;
+    const filename  = entry.path.split('/').pop();
+    entry.tabBtn.querySelector('.tab-name').textContent = modified ? `● ${filename}` : filename;
+  }
+
+  // ── Exercise file tabs ────────────────────────────────────────────
+
+  _closeExerciseTab(tabId) {
+    const idx = this.fileEditors.findIndex(e => e.tabId === tabId);
+    if (idx === -1) return;
+    const { editor, element, tabBtn, spec, loadedContent } = this.fileEditors[idx];
+
+    if (editor.getValue() !== loadedContent) {
+      if (!confirm(`Close ${spec.label}?\nUnsaved changes will be lost.`)) return;
+    }
+
+    editor.toTextArea();
+    element.remove();
+    tabBtn.remove();
+    this.fileEditors.splice(idx, 1);
+
+    if (this.fileEditors.length > 0) {
+      const next = this.fileEditors[Math.min(idx, this.fileEditors.length - 1)];
+      this._switchEditorTab(next.tabId);
+    } else if (this._deviceFileEditors.length > 0) {
+      this._switchEditorTab(this._deviceFileEditors[0].tabId);
+    } else {
+      this._switchEditorTab('settings');
+    }
+  }
+
+  async _saveExerciseFile(tabId) {
+    const entry = this.fileEditors.find(e => e.tabId === tabId);
+    if (!entry || !this.repl.connected) return;
+
+    const statusSpan = entry.element.querySelector('.device-file-status');
+    const saveBtn    = entry.element.querySelector('.btn');
+    saveBtn.disabled = true;
+    statusSpan.textContent = 'Saving…';
+
+    try {
+      await this.repl.writeFile(entry.spec.device_path, entry.editor.getValue());
+      entry.loadedContent = entry.editor.getValue();
+      this._updateExerciseTabLabel(entry);
+      statusSpan.textContent = 'Saved';
+      setTimeout(() => { statusSpan.textContent = ''; }, 2000);
+    } catch (e) {
+      statusSpan.textContent = `Error: ${e.message}`;
+    } finally {
+      saveBtn.disabled = false;
+    }
+  }
+
+  _updateExerciseTabLabel(entry) {
+    const modified = entry.editor.getValue() !== entry.loadedContent;
+    entry.tabBtn.querySelector('.tab-name').textContent =
+      modified ? `● ${entry.spec.label}` : entry.spec.label;
+  }
+
+  _modeForPath(path) {
+    const ext = path.split('.').pop().toLowerCase();
+    if (ext === 'py')   return 'python';
+    if (ext === 'json') return { name: 'javascript', json: true };
+    return null;
+  }
+
   // ── Theme ─────────────────────────────────────────────────────────
 
   _applyTheme(theme) {
@@ -379,6 +745,7 @@ export class App {
 
     const cmTheme = theme === 'dark' ? 'material-darker' : 'default';
     this.fileEditors.forEach(({ editor }) => editor.setOption('theme', cmTheme));
+    this._deviceFileEditors.forEach(({ editor }) => editor.setOption('theme', cmTheme));
     if (this.settingsEditor) this.settingsEditor.setOption('theme', cmTheme);
   }
 
@@ -482,9 +849,16 @@ export class App {
     firmware.disabled = !connected;
     exerciseSelect.disabled = false;
 
+    document.getElementById('btn-browse-files').disabled = !connected;
     document.getElementById('btn-settings-save').disabled = !connected;
     document.getElementById('btn-settings-reload').disabled = !connected;
+    this.fileEditors.forEach(entry => {
+      const saveBtn = entry.element?.querySelector('.btn');
+      if (saveBtn) saveBtn.disabled = !connected;
+    });
+
     if (!connected) {
+      this._closeFileBrowser();
       this._settingsLoaded = false;
       this.settingsEditor.setValue('// Connect a device to load settings.json');
       document.getElementById('settings-status').textContent = '';

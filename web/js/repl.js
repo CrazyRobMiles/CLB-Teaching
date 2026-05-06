@@ -119,7 +119,7 @@ export class MicroPythonREPL {
     const { stdout } = await this.execute(
       `_f=open('${escapedPath}','r')\nprint(_f.read())\n_f.close()`
     );
-    return stdout;
+    return stdout.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   }
 
   /**
@@ -141,6 +141,27 @@ export class MicroPythonREPL {
     try {
       // MicroPython prints a Python list literal — parse it safely.
       return JSON.parse(stdout.trim().replace(/'/g, '"'));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * List a directory with type info.
+   * Returns [{name, isDir}] sorted directories first, then files alphabetically.
+   */
+  async listDirDetailed(path = '/') {
+    const base = path.endsWith('/') ? path : path + '/';
+    const ep   = path.replace(/'/g, "\\'");
+    const eb   = base.replace(/'/g, "\\'");
+    const { stdout } = await this.execute(
+      `import os,json;print(json.dumps([[n,bool(os.stat('${eb}'+n)[0]&0x4000)]for n in sorted(os.listdir('${ep}'))]))`
+    );
+    try {
+      const raw   = JSON.parse(stdout.trim());
+      const dirs  = raw.filter(e => e[1]).map(e => ({ name: e[0], isDir: true  }));
+      const files = raw.filter(e => !e[1]).map(e => ({ name: e[0], isDir: false }));
+      return [...dirs, ...files];
     } catch {
       return [];
     }
