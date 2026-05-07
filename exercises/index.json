@@ -1,23 +1,58 @@
 [
   {
+    "chapter": 1,
+    "chapter_title": "Chapter 1: MicroPython Basics",
+    "id": "ch1_lab1_led_test",
+    "title": "Lab 1: LED Test",
+    "desc": "Build a simple LED circuit and prove the hardware works"
+  },
+  {
+    "chapter": 1,
+    "chapter_title": "Chapter 1: MicroPython Basics",
+    "id": "ch1_lab2_led_control",
+    "title": "Lab 2: LED Control",
+    "desc": "Control an LED from the MicroPython console using GPIO"
+  },
+  {
+    "chapter": 1,
+    "chapter_title": "Chapter 1: MicroPython Basics",
+    "id": "ch1_lab3_led_flash",
+    "title": "Lab 3: LED Flashing",
+    "desc": "Write a program that flashes an LED using while True and time.sleep"
+  },
+  {
+    "chapter": 1,
+    "chapter_title": "Chapter 1: MicroPython Basics",
+    "id": "ch1_lab4_switch_input",
+    "title": "Lab 4: Switch Input",
+    "desc": "Read a push button from the console and understand pull-up resistors"
+  },
+  {
+    "chapter": 1,
+    "chapter_title": "Chapter 1: MicroPython Basics",
+    "id": "ch1_lab5_switch_led",
+    "title": "Lab 5: Switch and LED",
+    "desc": "Write a program that lights an LED when a button is pressed"
+  },
+  {
+    "chapter": 2,
+    "chapter_title": "Chapter 2: Connected Little Boxes",
     "id": "00_getting_started",
     "title": "Getting Started",
-    "phase": 0,
-    "concept": "setup and deployment",
     "desc": "Install MicroPython and the CLB framework, then run a test program"
   },
   {
+    "chapter": 2,
+    "chapter_title": "Chapter 2: Connected Little Boxes",
     "id": "01_button_light",
     "title": "Button Light",
-    "phase": 1,
-    "concept": "services and events",
     "desc": "Light up a NeoPixel strip when a button is pressed"
   },
   {
+    "chapter": 2,
+    "chapter_title": "Chapter 2: Connected Little Boxes",
     "id": "02_encoder_brightness",
     "title": "Encoder Brightness",
-    "phase": 1,
-    "concept": "services and events",
     "desc": "Use a rotary encoder to control NeoPixel brightness"
   }
 ]

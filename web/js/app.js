@@ -134,12 +134,15 @@ export class App {
       editor.on('change', () => this._updateExerciseTabLabel(entry));
     });
 
-    noExercise.classList.remove('active');
-    document.querySelector('.editor-tab-static').classList.remove('active');
-
     if (this.fileEditors.length > 0) {
+      noExercise.classList.remove('active');
+      document.querySelector('.editor-tab-static').classList.remove('active');
       this._activeEditorTab = this.fileEditors[0].tabId;
       this.fileEditors[0].editor.refresh();
+    } else {
+      noExercise.classList.add('active');
+      noExercise.querySelector('p').textContent =
+        'This lab has no code to write — follow the instructions in the Exercise tab.';
     }
   }
 
@@ -210,11 +213,20 @@ export class App {
     try {
       const list = await this.exercises.listExercises();
       const sel = document.getElementById('exercise-select');
+      let currentChapter = null;
+      let group = null;
+
       list.forEach(ex => {
+        if (ex.chapter !== undefined && ex.chapter !== currentChapter) {
+          currentChapter = ex.chapter;
+          group = document.createElement('optgroup');
+          group.label = ex.chapter_title ?? `Chapter ${ex.chapter}`;
+          sel.appendChild(group);
+        }
         const opt = document.createElement('option');
         opt.value = ex.id;
-        opt.textContent = `${ex.id.split('_')[0]}. ${ex.title}`;
-        sel.appendChild(opt);
+        opt.textContent = ex.title;
+        (group ?? sel).appendChild(opt);
       });
     } catch (e) {
       console.error('Could not load exercise list:', e);
@@ -257,6 +269,8 @@ export class App {
       this._updateHintsReadyState();
       const hasSolution = exercise.files.some(f => f.solutionCode);
       document.getElementById('btn-show-solution').disabled = !hasSolution;
+      document.getElementById('btn-save-run').disabled =
+        !this.repl.connected || exercise.files.length === 0;
 
       if (this.repl.connected) {
         await this._pushExerciseToDevice(exercise);
@@ -293,8 +307,10 @@ export class App {
         this._updateExerciseTabLabel(entry);
       }
 
-      const manifest = this.exercises._buildManifest(this.currentExercise.meta);
-      await this.repl.writeFile('/app_manifest.py', manifest);
+      if (this.currentExercise.meta.clb !== false) {
+        const manifest = this.exercises._buildManifest(this.currentExercise.meta);
+        await this.repl.writeFile('/app_manifest.py', manifest);
+      }
 
       btn.textContent = 'Rebooting…';
       await this.repl.softReset();
@@ -865,7 +881,8 @@ export class App {
     }
 
     if (connected && this.currentExercise) {
-      document.getElementById('btn-save-run').disabled = false;
+      document.getElementById('btn-save-run').disabled =
+        this.currentExercise.files.length === 0;
     }
   }
 

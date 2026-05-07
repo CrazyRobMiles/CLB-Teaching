@@ -1,0 +1,14 @@
+{
+  "id": "ch1_lab3_led_flash",
+  "title": "Lab 3: LED Flashing",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": [
+    {
+      "label": "main.py",
+      "source": "start.py",
+      "solution": "solution.py",
+      "device_path": "/main.py"
+    }
+  ]
+}

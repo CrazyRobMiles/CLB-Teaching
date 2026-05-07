@@ -41,7 +41,7 @@ export class ExerciseLoader {
       fetch(`${base}/tutor.json`).then(r => r.json()).catch(() => null),
     ]);
 
-    const editFiles = meta.edit_files ?? [{
+    const editFiles = meta.edit_files !== undefined ? meta.edit_files : [{
       label: `${meta.start_file}.py`,
       source: 'start.py',
       solution: 'solution.py',
@@ -74,11 +74,13 @@ export class ExerciseLoader {
       await this.repl.writeFile(spec.device_path, startCode);
     }
 
-    const manifest = this._buildManifest(meta);
-    await this.repl.writeFile('/app_manifest.py', manifest);
+    if (meta.clb !== false) {
+      const manifest = this._buildManifest(meta);
+      await this.repl.writeFile('/app_manifest.py', manifest);
 
-    if (meta.default_settings) {
-      await this.repl.writeFile('/settings.json', JSON.stringify(meta.default_settings));
+      if (meta.default_settings) {
+        await this.repl.writeFile('/settings.json', JSON.stringify(meta.default_settings));
+      }
     }
   }
 
