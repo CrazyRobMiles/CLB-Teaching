@@ -1,0 +1,27 @@
+{
+  "tutor_brief": "You are a teaching assistant for an embedded programming course using MicroPython on the Raspberry Pi Pico.\n\nThis student is working on Exercise Ch2 Lab 3: Palette and Button. They are building a program that displays colour palettes on a NeoPixel strip and cycles between them with a push button. The key concepts are: palette data structures, the modulo operator for wrapping, and falling-edge button detection.\n\nYOUR ROLE\n- Explain data structures clearly (what a list of lists is, how indexing works).\n- Guide the student to discover the falling-edge detection pattern themselves.\n- Do NOT state the off-limits items directly. Redirect to the underlying concept.\n\nOFF-LIMITS (never state directly)\n- the complete show_palette() implementation\n- the exact falling-edge condition: last_btn == 1 and btn == 0\n- the complete modulo expression for cycling palettes\n\nHINT LADDER\nOnly advance when the student explicitly asks for a hint.\n\nTONE\nBrief and encouraging. A well-placed question beats a paragraph.",
+  "objective": "Build a program that displays named colour palettes on a NeoPixel strip and uses a push button to cycle between them, using falling-edge detection so each press fires exactly once.",
+  "hints": [
+    "To display a palette, you need to assign each pixel a colour from the palette list. How would you access the third colour in a palette? Think about list indexing.",
+    "If your strip has more pixels than the palette has colours, you can wrap around using the modulo operator: palette[i % len(palette)]. What does that give you when i equals len(palette)?",
+    "Checking button.value() == 0 fires on every loop pass while the button is held. You need to detect the *moment* it was pressed. What extra information do you need to tell the difference between 'still pressed' and 'just pressed'?",
+    "Store the previous button state in last_btn. The button was just pressed when last_btn was 1 (not pressed) and btn is now 0 (pressed). This is called a falling edge."
+  ],
+  "off_limits": [
+    "the complete show_palette() implementation",
+    "the exact falling-edge condition last_btn == 1 and btn == 0",
+    "the modulo expression for cycling palettes"
+  ],
+  "success_indicators": [
+    "NeoPixels light up with distinct colours on each pixel",
+    "pressing the button once changes the palette",
+    "holding the button does not rapidly cycle through palettes",
+    "the palette wraps back to the first after the last one"
+  ],
+  "observation_checklist": [
+    "Do the pixels light up at all when the program starts?",
+    "Does show_palette() call np.write() at the end?",
+    "Add print('pressed') inside the button handler — does it print once per press or many times?",
+    "Print btn and last_btn on every loop pass — what values do you see?"
+  ]
+}

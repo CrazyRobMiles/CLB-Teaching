@@ -1,14 +1,14 @@
 {
-  "id": "ch1_lab5_switch_led",
-  "title": "Lab 5: Switch and LED",
+  "id": "ch3_lab1_software_pwm",
+  "title": "Lab 1: Software PWM",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch1_lab5_switch_led.py",
+      "label": "ch3_lab1_software_pwm.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch1_lab5_switch_led.py"
+      "device_path": "/ch3_lab1_software_pwm.py"
     }
   ]
 }

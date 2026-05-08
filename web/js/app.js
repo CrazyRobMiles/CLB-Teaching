@@ -13,6 +13,7 @@ export class App {
     this.exercises = new ExerciseLoader(this.repl);
     this.fileEditors = [];          // [{ tabId, spec, startCode, solutionCode, editor, element }]
     this._deviceFileEditors = [];   // [{ tabId, path, editor, element, tabBtn, loadedContent }]
+    this._solutionTabs = [];        // [{ tabId, label, editor, element, tabBtn }]
     this._nextDeviceTabId = 0;
     this._fileBrowserPath = '/';
     this._fileBrowserOpen = false;
@@ -147,6 +148,13 @@ export class App {
   }
 
   _clearFileEditors() {
+    this._solutionTabs.forEach(({ editor, element, tabBtn }) => {
+      editor.toTextArea();
+      element.remove();
+      tabBtn.remove();
+    });
+    this._solutionTabs = [];
+
     this.fileEditors.forEach(({ editor, element }) => {
       editor.toTextArea();
       element.remove();
@@ -159,6 +167,7 @@ export class App {
   _refreshAllEditors() {
     this.fileEditors.forEach(({ editor }) => editor.refresh());
     this._deviceFileEditors.forEach(({ editor }) => editor.refresh());
+    this._solutionTabs.forEach(({ editor }) => editor.refresh());
     if (this.settingsEditor) this.settingsEditor.refresh();
   }
 
@@ -166,11 +175,12 @@ export class App {
 
   _bindUI() {
     document.getElementById('btn-connect').addEventListener('click', () => this._onConnect());
-    document.getElementById('btn-save-run').addEventListener('click', () => this._onSaveRun());
+    document.getElementById('btn-save').addEventListener('click', () => this._onSave());
+    document.getElementById('btn-run').addEventListener('click', () => this._onRun());
+    document.getElementById('btn-stop').addEventListener('click', () => this._onStop());
     document.getElementById('btn-show-solution').addEventListener('click', () => this._onShowSolution());
     document.getElementById('btn-install-firmware').addEventListener('click', () => this._onInstallFirmware());
     document.getElementById('btn-console-clear').addEventListener('click', () => this._consoleClear());
-    document.getElementById('btn-console-interrupt').addEventListener('click', () => this.repl.interrupt());
     document.getElementById('exercise-select').addEventListener('change', e => this._onExerciseSelected(e.target.value));
     document.getElementById('console-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') this._onConsoleInput();
@@ -269,8 +279,7 @@ export class App {
       this._updateHintsReadyState();
       const hasSolution = exercise.files.some(f => f.solutionCode);
       document.getElementById('btn-show-solution').disabled = !hasSolution;
-      document.getElementById('btn-save-run').disabled =
-        !this.repl.connected || exercise.files.length === 0;
+      this._updateRunControls();
 
       if (this.repl.connected) {
         await this._pushExerciseToDevice(exercise);
@@ -281,56 +290,87 @@ export class App {
   }
 
   async _pushExerciseToDevice(exercise) {
-    const btn = document.getElementById('btn-save-run');
-    btn.disabled = true;
-    btn.textContent = 'Setting up…';
+    const btnSave = document.getElementById('btn-save');
+    const btnRun = document.getElementById('btn-run');
+    btnSave.disabled = true;
+    btnRun.disabled = true;
+    btnRun.textContent = 'Setting up…';
     try {
       await this.exercises.setupExercise(exercise);
       await this.repl.softReset();
     } catch (e) {
       this._consoleAppend(`\nDevice setup failed: ${e.message}\n`);
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Save & Run';
+      btnRun.textContent = 'Run';
+      this._updateRunControls();
     }
   }
 
-  async _onSaveRun() {
-    if (!this.repl.connected || !this.currentExercise) return;
-    const btn = document.getElementById('btn-save-run');
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
-    try {
-      for (const entry of this.fileEditors) {
-        await this.repl.writeFile(entry.spec.device_path, entry.editor.getValue());
-        entry.loadedContent = entry.editor.getValue();
-        this._updateExerciseTabLabel(entry);
+  async _doSaveAll() {
+    for (const entry of this.fileEditors) {
+      await this.repl.writeFile(entry.spec.device_path, entry.editor.getValue());
+      entry.loadedContent = entry.editor.getValue();
+      this._updateExerciseTabLabel(entry);
+    }
+    for (const entry of this._deviceFileEditors) {
+      if (entry.editor.getValue() !== entry.loadedContent) {
+        await this._saveDeviceFile(entry.tabId);
       }
-
+    }
+    if (this.currentExercise) {
       if (this.currentExercise.meta.clb !== false) {
         const manifest = this.exercises._buildManifest(this.currentExercise.meta);
         await this.repl.writeFile('/app_manifest.py', manifest);
+      } else if (this.fileEditors.length > 0) {
+        const path = this.fileEditors[0].spec.device_path;
+        await this.repl.writeFile('/main.py', `exec(open('${path}').read())\n`);
       }
+    }
+  }
 
-      btn.textContent = 'Rebooting…';
-      await this.repl.softReset();
+  async _onSave() {
+    if (!this.repl.connected) return;
+    const btn = document.getElementById('btn-save');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      await this._doSaveAll();
     } catch (e) {
       this._consoleAppend(`\nSave failed: ${e.message}\n`);
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Save & Run';
+      btn.textContent = 'Save';
     }
+  }
+
+  async _onRun() {
+    if (!this.repl.connected) return;
+    const btnSave = document.getElementById('btn-save');
+    const btnRun = document.getElementById('btn-run');
+    btnSave.disabled = true;
+    btnRun.disabled = true;
+    btnRun.textContent = 'Saving…';
+    try {
+      await this._doSaveAll();
+      btnRun.textContent = 'Rebooting…';
+      await this.repl.softReset();
+    } catch (e) {
+      this._consoleAppend(`\nRun failed: ${e.message}\n`);
+    } finally {
+      btnSave.disabled = false;
+      btnRun.textContent = 'Run';
+      this._updateRunControls();
+    }
+  }
+
+  _onStop() {
+    this.repl.interrupt();
   }
 
   _onShowSolution() {
     if (!this.currentExercise) return;
-    const confirmed = confirm(
-      'Replace the editor with the complete solution?\n' +
-      'Your current code will be lost unless you copy it first.'
-    );
-    if (!confirmed) return;
-    this.fileEditors.forEach(({ solutionCode, editor }) => {
-      if (solutionCode) editor.setValue(solutionCode);
+    this.fileEditors.forEach(entry => {
+      if (entry.solutionCode) this._openSolutionTab(entry);
     });
   }
 
@@ -390,7 +430,9 @@ export class App {
       const fe = this.fileEditors.find(e => e.tabId === name);
       if (fe) { fe.editor.refresh(); return; }
       const dfe = this._deviceFileEditors.find(e => e.tabId === name);
-      if (dfe) dfe.editor.refresh();
+      if (dfe) { dfe.editor.refresh(); return; }
+      const st = this._solutionTabs.find(e => e.tabId === name);
+      if (st) st.editor.refresh();
     }
   }
 
@@ -716,6 +758,106 @@ export class App {
     }
   }
 
+  // ── Solution tabs ─────────────────────────────────────────────────
+
+  _openSolutionTab(entry) {
+    const label = this.fileEditors.length > 1
+      ? entry.spec.label.replace(/\.py$/, '') + '_solution.py'
+      : 'solution.py';
+
+    // If already open, just switch to it.
+    const existing = this._solutionTabs.find(t => t.label === label);
+    if (existing) {
+      this._switchEditorTab(existing.tabId);
+      return;
+    }
+
+    const tabId    = `solution-${this._nextDeviceTabId++}`;
+    const tabBar   = document.getElementById('editor-tabs');
+    const insertRef = document.getElementById('editor-tabs-end');
+
+    const tab = document.createElement('button');
+    tab.className = 'editor-tab editor-tab-solution';
+    tab.dataset.editorTab = tabId;
+    tab.addEventListener('click', () => this._switchEditorTab(tabId));
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'tab-name';
+    nameSpan.textContent = label;
+    tab.appendChild(nameSpan);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'tab-close-btn';
+    closeBtn.title = 'Close tab';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', e => { e.stopPropagation(); this._closeSolutionTab(tabId); });
+    tab.appendChild(closeBtn);
+
+    tabBar.insertBefore(tab, insertRef);
+
+    const pane = document.createElement('div');
+    pane.id = `editor-tab-${tabId}`;
+    pane.className = 'editor-tab-content';
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'editor-file-toolbar';
+
+    const pathSpan = document.createElement('span');
+    pathSpan.className = 'dim';
+    pathSpan.textContent = label;
+    toolbar.appendChild(pathSpan);
+
+    const roSpan = document.createElement('span');
+    roSpan.className = 'device-file-status';
+    roSpan.textContent = 'read-only';
+    toolbar.appendChild(roSpan);
+
+    pane.appendChild(toolbar);
+
+    const textarea = document.createElement('textarea');
+    pane.appendChild(textarea);
+
+    document.getElementById('editor-tab-settings').parentNode
+      .insertBefore(pane, document.getElementById('editor-tab-settings'));
+
+    const editor = CodeMirror.fromTextArea(textarea, {
+      mode: 'python',
+      theme: this._theme === 'dark' ? 'material-darker' : 'default',
+      lineNumbers: true,
+      indentUnit: 4,
+      tabSize: 4,
+      readOnly: true,
+      lineWrapping: false,
+      autofocus: false,
+    });
+    editor.setSize('100%', '100%');
+    editor.setValue(entry.solutionCode);
+
+    const solutionEntry = { tabId, label, editor, element: pane, tabBtn: tab };
+    this._solutionTabs.push(solutionEntry);
+
+    this._switchEditorTab(tabId);
+  }
+
+  _closeSolutionTab(tabId) {
+    const idx = this._solutionTabs.findIndex(t => t.tabId === tabId);
+    if (idx === -1) return;
+    const { editor, element, tabBtn } = this._solutionTabs[idx];
+
+    editor.toTextArea();
+    element.remove();
+    tabBtn.remove();
+    this._solutionTabs.splice(idx, 1);
+
+    if (this.fileEditors.length > 0) {
+      this._switchEditorTab(this.fileEditors[0].tabId);
+    } else if (this._deviceFileEditors.length > 0) {
+      this._switchEditorTab(this._deviceFileEditors[0].tabId);
+    } else {
+      this._switchEditorTab('settings');
+    }
+  }
+
   async _saveExerciseFile(tabId) {
     const entry = this.fileEditors.find(e => e.tabId === tabId);
     if (!entry || !this.repl.connected) return;
@@ -762,6 +904,7 @@ export class App {
     const cmTheme = theme === 'dark' ? 'material-darker' : 'default';
     this.fileEditors.forEach(({ editor }) => editor.setOption('theme', cmTheme));
     this._deviceFileEditors.forEach(({ editor }) => editor.setOption('theme', cmTheme));
+    this._solutionTabs.forEach(({ editor }) => editor.setOption('theme', cmTheme));
     if (this.settingsEditor) this.settingsEditor.setOption('theme', cmTheme);
   }
 
@@ -852,7 +995,6 @@ export class App {
     const badge = document.getElementById('device-status');
     const btn = document.getElementById('btn-connect');
     const input = document.getElementById('console-input');
-    const interrupt = document.getElementById('btn-console-interrupt');
     const firmware = document.getElementById('btn-install-firmware');
     const exerciseSelect = document.getElementById('exercise-select');
 
@@ -861,7 +1003,6 @@ export class App {
     btn.textContent = connected ? 'Disconnect' : 'Connect Device';
     btn.disabled = false;
     input.disabled = !connected;
-    interrupt.disabled = !connected;
     firmware.disabled = !connected;
     exerciseSelect.disabled = false;
 
@@ -880,10 +1021,15 @@ export class App {
       document.getElementById('settings-status').textContent = '';
     }
 
-    if (connected && this.currentExercise) {
-      document.getElementById('btn-save-run').disabled =
-        this.currentExercise.files.length === 0;
-    }
+    this._updateRunControls();
+  }
+
+  _updateRunControls() {
+    const connected = this.repl.connected;
+    const hasFiles = this.currentExercise && this.currentExercise.files.length > 0;
+    document.getElementById('btn-save').disabled = !connected;
+    document.getElementById('btn-run').disabled = !connected || !hasFiles;
+    document.getElementById('btn-stop').disabled = !connected;
   }
 
   // ── Console ───────────────────────────────────────────────────────

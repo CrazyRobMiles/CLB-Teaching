@@ -597,6 +597,16 @@ html, body {
 .file-entry-icon     { color: var(--dim); width: 1em; text-align: center; flex-shrink: 0; }
 
 /* ── Device file tabs ───────────────────────────────────────────────── */
+.editor-tab-solution {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 6px;
+  font-style: italic;
+  color: var(--dim);
+}
+.editor-tab-solution.active { color: var(--yellow); }
+
 .editor-tab-device {
   display: inline-flex;
   align-items: center;

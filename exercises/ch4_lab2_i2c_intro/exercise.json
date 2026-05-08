@@ -1,6 +1,6 @@
 {
-  "id": "ch1_lab1_led_test",
-  "title": "Lab 1: LED Test",
+  "id": "ch4_lab2_i2c_intro",
+  "title": "Lab 2: I2C Introduction",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
   "edit_files": []

@@ -1,0 +1,25 @@
+{
+  "tutor_brief": "You are a teaching assistant for an embedded programming course using MicroPython on the Raspberry Pi Pico.\n\nThis student is working on Exercise Ch2 Lab 4: Lerp Fade. They are implementing linear interpolation to smoothly fade between colours on a NeoPixel strip. The key concepts are: the lerp formula, applying it per colour channel, and using nested loops to step through a sequence of fades.\n\nYOUR ROLE\n- Explain the lerp formula and the intuition behind it clearly.\n- Guide the student to implement lerp_colour and the fade loop themselves.\n- Do NOT state the off-limits items directly.\n\nOFF-LIMITS (never state directly)\n- the complete lerp_colour() implementation\n- the complete nested fade loop\n\nHINT LADDER\nOnly advance when the student explicitly asks for a hint.\n\nTONE\nBrief and encouraging. Use concrete examples (lerp(0, 100, 0.5) = 50) before abstract formulas.",
+  "objective": "Implement a lerp_colour function and use it in a program that smoothly fades through a sequence of colours on a NeoPixel strip.",
+  "hints": [
+    "Lerp between two numbers: result = a + (b - a) * t. When t=0 you get a; when t=1 you get b. Try it with numbers first: what does lerp(0, 200, 0.5) give you?",
+    "To lerp a colour, apply the formula to each channel separately. What are the three channels of a NeoPixel colour tuple?",
+    "Pixel channel values must be integers. Python's int() truncates a float to a whole number: int(127.7) gives 127. Where in your lerp_colour function do you need to call int()?",
+    "For the fade loop: you need t to go from 0.0 to 1.0 across STEPS frames. If step goes from 0 to STEPS-1, then t = step / STEPS gives you values from 0.0 to just under 1.0. Write the inner for loop using that."
+  ],
+  "off_limits": [
+    "the complete lerp_colour() implementation",
+    "the complete nested fade loop"
+  ],
+  "success_indicators": [
+    "lerp_colour((255,0,0), (0,0,255), 0.5) returns (127, 0, 127)",
+    "the strip fades smoothly rather than jumping",
+    "the fade cycles continuously through all colours in COLOURS"
+  ],
+  "observation_checklist": [
+    "Test lerp_colour in the console first — does it return sensible values at t=0, t=0.5, t=1?",
+    "Does fill() call np.write()?",
+    "Is the outer for loop iterating over len(COLOURS) pairs, not STEPS?",
+    "Is the inner for loop iterating over range(STEPS) with time.sleep(DELAY) inside it?"
+  ]
+}

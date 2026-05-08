@@ -1,6 +1,6 @@
 {
-  "id": "ch1_lab1_led_test",
-  "title": "Lab 1: LED Test",
+  "id": "ch4_lab3_pca9685",
+  "title": "Lab 3: The PCA9685",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
   "edit_files": []

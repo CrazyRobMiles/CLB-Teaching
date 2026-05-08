@@ -1,14 +1,14 @@
 {
-  "id": "ch1_lab5_switch_led",
-  "title": "Lab 5: Switch and LED",
+  "id": "ch2_lab4_lerp_fade",
+  "title": "Lab 4: Lerp Fade",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch1_lab5_switch_led.py",
+      "label": "ch2_lab4_lerp_fade.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch1_lab5_switch_led.py"
+      "device_path": "/ch2_lab4_lerp_fade.py"
     }
   ]
 }

@@ -5,10 +5,10 @@
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "main.py",
+      "label": "ch1_lab3_led_flash.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/main.py"
+      "device_path": "/ch1_lab3_led_flash.py"
     }
   ]
 }
