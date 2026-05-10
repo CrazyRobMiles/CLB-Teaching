@@ -1,54 +1,42 @@
-# Step 2 — Install the CLB Framework
+# Step 2 — Run Your First Program
 
-With MicroPython running on the Pico, the next step is to install the CLB framework files. This page does it for you automatically over the USB connection.
-
----
-
-## 1. Connect the device
-
-If you are not already connected, click **Connect Device** in the top bar. Your browser will show a list of available serial ports — select the one corresponding to your Pico (it is usually labelled **USB Serial Device** or similar).
-
-Once connected, the status badge in the top bar changes to **Connected** and the console panel shows the MicroPython `>>>` prompt.
+With MicroPython installed, let's confirm everything is working by running a simple test program.
 
 ---
 
-## 2. Install the firmware
+## What the program does
 
-Click **Install Firmware** in the top bar.
+The editor on this page has already loaded `main.py` — a one-line Python program:
 
-You will be asked to confirm. Click OK.
-
-A progress bar appears while the installer:
-
-1. Fetches the pinned CLB release from GitHub
-2. Writes each framework file to the device over the serial connection
-3. Writes `settings.json` and `app_manifest.py`
-4. Reboots the device
-
-This takes around 30–60 seconds depending on your connection speed. Do not unplug the device while the progress bar is running.
-
----
-
-## 3. Wait for the reboot
-
-When installation finishes the device reboots automatically. The console panel will show boot output from the CLB framework — something like:
-
-```
-CLB v1.x.x booting...
-Loading managers...
-All managers ready.
+```python
+print("Hello World")
 ```
 
-The exact output depends on the CLB version. As long as you see boot messages and no `Traceback` errors, the installation was successful.
+No external hardware is required.
 
 ---
 
-## If something goes wrong
+## Run it
 
-| Symptom | Likely cause | Fix |
-|---------|-------------|-----|
-| Progress bar stalls for more than 2 minutes | Serial connection dropped | Disconnect, reconnect, try again |
-| `Traceback` in console after reboot | Partial install | Run Install Firmware again |
-| Device does not appear in port list | Driver issue | Try a different USB port or cable |
+1. Make sure you are still connected (the status badge should show **Connected**)
+2. Click **Run** in the top bar
 
-Once the device has booted cleanly, move on to the next page to run your first program.
+The page writes `main.py` to the Pico and triggers a soft reboot. Watch the console panel.
+
+---
+
+## What to look for
+
+Within a second or two you should see:
+
+```
+Hello World
+```
+
+followed by a `>>>` prompt. That is MicroPython telling you it has finished running `main.py` and is ready for more input.
+
+---
+
+## You are ready
+
+MicroPython is installed, your USB connection works, and you can write programs and run them from this page. Move on to the chapter labs to start building circuits and writing real programs.

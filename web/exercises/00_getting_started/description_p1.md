@@ -5,18 +5,9 @@
 This exercise gets your device ready to run CLB programs. By the end you will have:
 
 - MicroPython installed on your Raspberry Pi Pico
-- The CLB framework installed on the device
-- A simple test program running and printing output to the console
+- Used the terminal to talk to Python on the Pico
 
 There is no circuit to build and no code to write. This is purely setup.
-
----
-
-## What is the Connected Little Box Framework?
-
-The CLB is a MicroPython framework for building small connected devices. Every capability of the device — WiFi, sensors, displays, application logic — is implemented as a self-contained **manager** class. Managers are loaded at boot, configured from a JSON settings file, and updated in a cooperative loop.
-
-You will learn how all of this works in the exercises that follow. For now, the goal is simply to get the framework running.
 
 ---
 
@@ -40,8 +31,7 @@ You will learn how all of this works in the exercises that follow. For now, the 
 | Step | What you will do |
 |------|-----------------|
 | 1 | Install MicroPython on the Pico |
-| 2 | Install the CLB framework via this page |
-| 3 | Run the test program and confirm everything works |
+| 2 | Run the test program and confirm everything works |
 
 If your Pico already has MicroPython installed, skip ahead to **Step 2** on the next page.
 

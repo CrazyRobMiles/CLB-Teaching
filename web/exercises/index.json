@@ -1,5 +1,12 @@
 [
   {
+    "chapter": 0,
+    "chapter_title": "Getting Started",
+    "id": "00_getting_started",
+    "title": "Getting Started",
+    "desc": "Install MicroPython on the Pico and run a Hello World program"
+  },
+  {
     "chapter": 1,
     "chapter_title": "Chapter 1: MicroPython Basics",
     "id": "ch1_lab1_led_test",
@@ -142,9 +149,9 @@
   {
     "chapter": 5,
     "chapter_title": "Chapter 5: Connected Little Boxes",
-    "id": "00_getting_started",
-    "title": "Getting Started",
-    "desc": "Install MicroPython and the CLB framework, then run a test program"
+    "id": "00_clb_setup",
+    "title": "CLB Setup",
+    "desc": "Install the CLB framework and run the Hello CLB test program"
   },
   {
     "chapter": 5,

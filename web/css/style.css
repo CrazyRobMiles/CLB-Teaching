@@ -286,6 +286,13 @@ html, body {
 
 .placeholder { color: var(--dim); font-style: italic; }
 
+.hints-intro { padding: 16px; color: var(--fg); }
+.hints-intro h3 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
+.hints-intro h4 { margin: 14px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+.hints-intro p { margin: 0 0 8px; font-size: 12px; line-height: 1.6; }
+.hints-intro ul { margin: 0 0 8px; padding-left: 18px; font-size: 12px; line-height: 1.8; }
+.hints-intro-action { margin-top: 14px !important; padding: 10px 12px; background: var(--surface2); border-radius: 6px; font-style: italic; }
+
 /* ── Landing page ───────────────────────────────────────────────────── */
 .landing-hero { margin-bottom: 20px; }
 .landing-hero p { color: var(--text); line-height: 1.5; margin-top: 6px; font-size: 0.95em; }

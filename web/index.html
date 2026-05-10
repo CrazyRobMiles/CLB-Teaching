@@ -35,6 +35,7 @@
     <button id="btn-save" class="btn btn-primary" disabled>Save</button>
     <button id="btn-run" class="btn btn-success" disabled>Run</button>
     <button id="btn-stop" class="btn btn-danger" disabled>Stop</button>
+    <button id="btn-restart" class="btn btn-danger" disabled>Restart</button>
     <button id="btn-show-solution" class="btn btn-ghost" disabled>Show Solution</button>
     <button id="btn-install-firmware" class="btn btn-ghost" disabled>Install Firmware</button>
   </div>
@@ -82,12 +83,24 @@
           <span class="landing-ui-desc">Connect your Raspberry Pi Pico over USB — requires Chrome or Edge (Web Serial API)</span>
         </div>
         <div class="landing-ui-item">
-          <span class="landing-ui-label">Save · Run · Stop</span>
-          <span class="landing-ui-desc">Save writes your code to the Pico without rebooting; Run saves then reboots; Stop interrupts a running program</span>
+          <span class="landing-ui-label">Save · Run · Stop · Restart</span>
+          <span class="landing-ui-desc">Save writes your code to the Pico without rebooting; Run saves then reboots; Stop interrupts a running program; Restart soft-resets the device</span>
         </div>
         <div class="landing-ui-item">
           <span class="landing-ui-label">↓ Notes PDF</span>
           <span class="landing-ui-desc">Download a printable PDF of the current lab's description pages</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Resize panes</span>
+          <span class="landing-ui-desc">Drag the divider between the Tutor and Console panes to change how much space each gets</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">A− · A+</span>
+          <span class="landing-ui-desc">Use the A− · A+ buttons in the top right to make the text on the page smaller or larger</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">☀ · ☾ theme</span>
+          <span class="landing-ui-desc">Toggle between light and dark themes using the theme button in the top right</span>
         </div>
 
       </div>
@@ -142,7 +155,7 @@
       </div>
 
       <div id="hints-messages">
-        <p id="hints-placeholder" class="placeholder">Configure an AI provider (⚙) to ask for hints.</p>
+        <div id="hints-placeholder" class="hints-placeholder"></div>
       </div>
 
       <div id="hints-input-row">
@@ -285,14 +298,13 @@
   import { App } from './js/app.js';
 
   window.addEventListener('load', () => {
-    if (!('serial' in navigator)) {
-      document.getElementById('btn-connect').textContent = 'Web Serial not supported';
-      document.getElementById('btn-connect').disabled = true;
-      document.getElementById('device-status').textContent = 'Use Chrome or Edge';
-      return;
-    }
     const app = new App({ MicroPythonREPL, FirmwareInstaller, ExerciseLoader });
     app.init();
+    if (!('serial' in navigator)) {
+      document.getElementById('btn-connect').textContent = 'Serial not supported';
+      document.getElementById('btn-connect').disabled = true;
+      document.getElementById('device-status').textContent = 'Use Chrome or Edge';
+    }
   });
 </script>
 

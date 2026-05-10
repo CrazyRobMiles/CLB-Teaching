@@ -2,28 +2,20 @@
   "id": "00_getting_started",
   "title": "Getting Started",
   "phase": 0,
-  "concept": "setup and deployment",
-  "clb_min_version": "1.0.0",
+  "concept": "setup and testing",
   "hardware": [],
   "pages": [
     "description_p1.md",
     "description_p2.md",
-    "description_p3.md",
-    "description_p4.md"
+    "description_p3.md"
   ],
   "edit_files": [
     {
-      "label": "App_hello_clb.py",
+      "label": "main.py",
       "source": "start.py",
-      "device_path": "/managers/App_hello_clb_manager.py"
+      "device_path": "/main.py"
     }
   ],
-  "start_file": "App_hello_clb",
-  "circuit_description": "No external circuit required",
-  "default_settings": {
-    "App_hello_clb": {
-      "enabled": true,
-      "dependencies": []
-    }
-  }
+  "start_file": "main",
+  "circuit_description": "No external circuit required"
 }

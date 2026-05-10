@@ -1,0 +1,27 @@
+{
+  "id": "00_clb_setup",
+  "title": "CLB Setup",
+  "phase": 0,
+  "concept": "CLB framework installation",
+  "clb_min_version": "1.0.0",
+  "hardware": [],
+  "pages": [
+    "description_p1.md",
+    "description_p2.md"
+  ],
+  "edit_files": [
+    {
+      "label": "App_hello_clb.py",
+      "source": "start.py",
+      "device_path": "/managers/App_hello_clb_manager.py"
+    }
+  ],
+  "start_file": "App_hello_clb",
+  "circuit_description": "No external circuit required",
+  "default_settings": {
+    "App_hello_clb": {
+      "enabled": true,
+      "dependencies": []
+    }
+  }
+}

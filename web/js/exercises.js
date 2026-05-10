@@ -38,7 +38,9 @@ export class ExerciseLoader {
     const pageFiles = meta.pages ?? ['description.md'];
     const [pages, tutor] = await Promise.all([
       Promise.all(pageFiles.map(f => fetch(`${base}/${f}`).then(r => r.text()))),
-      fetch(`${base}/tutor.json`).then(r => r.json()).catch(() => null),
+      fetch(`${base}/tutor.py`).then(r => r.text()).catch(() =>
+        fetch(`${base}/tutor.json`).then(r => r.json()).then(j => j.tutor_brief).catch(() => null)
+      ),
     ]);
 
     const editFiles = meta.edit_files !== undefined ? meta.edit_files : [{

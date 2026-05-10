@@ -178,6 +178,7 @@ export class App {
     document.getElementById('btn-save').addEventListener('click', () => this._onSave());
     document.getElementById('btn-run').addEventListener('click', () => this._onRun());
     document.getElementById('btn-stop').addEventListener('click', () => this._onStop());
+    document.getElementById('btn-restart').addEventListener('click', () => this._onRestart());
     document.getElementById('btn-show-solution').addEventListener('click', () => this._onShowSolution());
     document.getElementById('btn-install-firmware').addEventListener('click', () => this._onInstallFirmware());
     document.getElementById('btn-console-clear').addEventListener('click', () => this._consoleClear());
@@ -367,6 +368,10 @@ export class App {
 
   _onStop() {
     this.repl.interrupt();
+  }
+
+  async _onRestart() {
+    await this.repl.softReset();
   }
 
   _onShowSolution() {
@@ -999,10 +1004,11 @@ export class App {
     const input = document.getElementById('console-input');
     const firmware = document.getElementById('btn-install-firmware');
 
-    badge.textContent = connected ? 'Connected' : 'Disconnected';
+    const hasSerial = 'serial' in navigator;
+    badge.textContent = connected ? 'Connected' : hasSerial ? 'Disconnected' : 'Use Chrome or Edge';
     badge.className = `status-badge ${connected ? 'status-connected' : 'status-disconnected'}`;
-    btn.textContent = connected ? 'Disconnect' : 'Connect Device';
-    btn.disabled = false;
+    btn.textContent = connected ? 'Disconnect' : hasSerial ? 'Connect Device' : 'Serial not supported';
+    btn.disabled = !hasSerial && !connected;
     input.disabled = !connected;
     firmware.disabled = !connected;
 
@@ -1030,6 +1036,7 @@ export class App {
     document.getElementById('btn-save').disabled = !connected;
     document.getElementById('btn-run').disabled = !connected || !hasFiles;
     document.getElementById('btn-stop').disabled = !connected;
+    document.getElementById('btn-restart').disabled = !connected;
   }
 
   // ── Console ───────────────────────────────────────────────────────
@@ -1174,9 +1181,34 @@ export class App {
     const ph = document.getElementById('hints-placeholder');
     if (ph) {
       if (!this._llmProvider) {
-        ph.textContent = 'Configure an AI provider (⚙) to ask for hints.';
+        ph.innerHTML = `
+          <div class="hints-intro">
+            <h3>AI Tutor</h3>
+            <p>Each exercise has a built-in AI tutor that can answer questions and give
+            hints as you work through it. The tutor won't give you the answer directly —
+            it uses a Socratic approach, asking questions and nudging you toward the
+            solution so that you do the thinking.</p>
+            <h4>How to use it</h4>
+            <ul>
+              <li>Ask what a concept means or how something works</li>
+              <li>Describe what you tried and what happened — the more specific, the better</li>
+              <li>Ask for a hint when you're stuck</li>
+            </ul>
+            <h4>How hints work</h4>
+            <p>Each exercise has an ordered hint ladder from vague to specific. The tutor
+            gives one level at a time — ask again to go deeper. The final hints point
+            directly at the answer, so try to get there with fewer hints.</p>
+            <p class="hints-intro-action">To get started, click <strong>⚙</strong> above
+            and configure an AI provider (Google Gemini, Groq, or a local Ollama server).</p>
+          </div>`;
       } else if (!this.currentExercise?.tutor) {
-        ph.textContent = 'Select an exercise to use the AI tutor.';
+        ph.innerHTML = `
+          <div class="hints-intro">
+            <h3>AI Tutor ready</h3>
+            <p>Select an exercise from the dropdown above and the tutor will load its
+            knowledge of that exercise — the learning objective, what you need to discover
+            yourself, and the hint ladder for when you're stuck.</p>
+          </div>`;
       } else {
         ph.style.display = 'none';
         return;
@@ -1205,7 +1237,7 @@ export class App {
 
     let response = '';
     try {
-      const system = this.currentExercise.tutor.tutor_brief;
+      const system = this.currentExercise.tutor;
       for await (const chunk of this._llmProvider.chat(this._hintMessages, system)) {
         if (!response) {
           textEl.classList.remove('hint-msg-thinking');
