@@ -9,7 +9,7 @@
  * git subtree or copy on release bump) to avoid the limit.
  */
 
-const FIRMWARE_CONFIG_URL = '../firmware.json';
+const FIRMWARE_CONFIG_URL = 'firmware.json';
 
 export class FirmwareInstaller {
   constructor(repl) {

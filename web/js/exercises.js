@@ -5,7 +5,7 @@
  * pushing the starting code to the device.
  */
 
-const EXERCISES_BASE = '../exercises';
+const EXERCISES_BASE = 'exercises';
 
 export class ExerciseLoader {
   constructor(repl) {
