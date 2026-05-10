@@ -10,7 +10,7 @@ GPIO stands for **General Purpose Input/Output**. These are pins that your progr
 
 > **Important:** When you use `machine.Pin(15, ...)`, the number 15 refers to **GP15** — the GPIO number — not the physical pin number on the board. GP15 happens to be physical pin 20.
 
-![Pico pinout diagram](images/pico_pinout.jpg)
+![Pico pinout diagram](images/pico_pinout.png)
 
 *Diagram: The Raspberry Pi Pico pinout. GPIO numbers (GP0, GP1 … GP28) label each signal pin; physical pin numbers run 1–40 around the outside. GP15 is on the left edge, physical pin 20.*
 

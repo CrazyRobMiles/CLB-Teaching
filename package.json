@@ -1,0 +1,12 @@
+{
+  "name": "clb-teaching-tools",
+  "version": "1.0.0",
+  "description": "Build tools for CLB Teaching",
+  "scripts": {
+    "generate-pdfs": "node scripts/generate_pdfs.js"
+  },
+  "dependencies": {
+    "marked": "^13.0.0",
+    "puppeteer": "^22.0.0"
+  }
+}

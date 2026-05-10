@@ -238,6 +238,7 @@ export class App {
         opt.textContent = ex.title;
         (group ?? sel).appendChild(opt);
       });
+      sel.disabled = false;
     } catch (e) {
       console.error('Could not load exercise list:', e);
     }
@@ -279,6 +280,7 @@ export class App {
       this._updateHintsReadyState();
       const hasSolution = exercise.files.some(f => f.solutionCode);
       document.getElementById('btn-show-solution').disabled = !hasSolution;
+      document.getElementById('btn-download-notes').href = `pdfs/${exercise.meta.id}.pdf`;
       this._updateRunControls();
 
       if (this.repl.connected) {
@@ -996,7 +998,6 @@ export class App {
     const btn = document.getElementById('btn-connect');
     const input = document.getElementById('console-input');
     const firmware = document.getElementById('btn-install-firmware');
-    const exerciseSelect = document.getElementById('exercise-select');
 
     badge.textContent = connected ? 'Connected' : 'Disconnected';
     badge.className = `status-badge ${connected ? 'status-connected' : 'status-disconnected'}`;
@@ -1004,7 +1005,6 @@ export class App {
     btn.disabled = false;
     input.disabled = !connected;
     firmware.disabled = !connected;
-    exerciseSelect.disabled = false;
 
     document.getElementById('btn-browse-files').disabled = !connected;
     document.getElementById('btn-settings-save').disabled = !connected;
@@ -1059,12 +1059,23 @@ export class App {
 
     const nav   = document.getElementById('description-nav');
     const total = this._pages.length;
-    if (total <= 1) { nav.classList.add('hidden'); return; }
+    const prev  = document.getElementById('btn-page-prev');
+    const next  = document.getElementById('btn-page-next');
+    const indicator = document.getElementById('page-indicator');
 
     nav.classList.remove('hidden');
-    document.getElementById('page-indicator').textContent = `${index + 1} / ${total}`;
-    document.getElementById('btn-page-prev').disabled = index === 0;
-    document.getElementById('btn-page-next').disabled = index === total - 1;
+
+    const multiPage = total > 1;
+    prev.classList.toggle('hidden', !multiPage);
+    next.classList.toggle('hidden', !multiPage);
+    indicator.classList.toggle('hidden', !multiPage);
+
+    if (multiPage) {
+      indicator.textContent = `${index + 1} / ${total}`;
+      prev.disabled = index === 0;
+      next.disabled = index === total - 1;
+    }
+
     document.getElementById('description-content').scrollTop = 0;
   }
 
