@@ -141,9 +141,7 @@ export class App {
       this._activeEditorTab = this.fileEditors[0].tabId;
       this.fileEditors[0].editor.refresh();
     } else {
-      noExercise.classList.add('active');
-      noExercise.querySelector('p').textContent =
-        'This lab has no code to write — follow the instructions in the Exercise tab.';
+      noExercise.classList.add('active', 'console-mode');
     }
   }
 
@@ -161,7 +159,9 @@ export class App {
     });
     document.querySelectorAll('.editor-tab-exercise').forEach(t => t.remove());
     this.fileEditors = [];
-    document.getElementById('editor-no-exercise').classList.add('active');
+    const noEx = document.getElementById('editor-no-exercise');
+    noEx.classList.add('active');
+    noEx.classList.remove('console-mode');
   }
 
   _refreshAllEditors() {

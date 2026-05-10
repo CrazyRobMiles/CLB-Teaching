@@ -58,7 +58,38 @@
 
     <div id="tab-description" class="tab-content active">
       <div id="description-content">
-        <p class="placeholder">Select an exercise to begin.</p>
+
+        <h2>Using this page</h2>
+
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Exercise list</span>
+          <span class="landing-ui-desc">Select a lab from the dropdown at the top to load its instructions and starter code</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Exercise tab</span>
+          <span class="landing-ui-desc">Step-by-step instructions for the current lab; use ← Prev and Next → to move between pages</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Editor</span>
+          <span class="landing-ui-desc">Write and edit your MicroPython code here; the tab shows a ● when you have unsaved changes</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Console</span>
+          <span class="landing-ui-desc">See output from the Pico and send commands; the input box at the bottom sends a line of Python</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Connect Device</span>
+          <span class="landing-ui-desc">Connect your Raspberry Pi Pico over USB — requires Chrome or Edge (Web Serial API)</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">Save · Run · Stop</span>
+          <span class="landing-ui-desc">Save writes your code to the Pico without rebooting; Run saves then reboots; Stop interrupts a running program</span>
+        </div>
+        <div class="landing-ui-item">
+          <span class="landing-ui-label">↓ Notes PDF</span>
+          <span class="landing-ui-desc">Download a printable PDF of the current lab's description pages</span>
+        </div>
+
       </div>
       <div id="description-nav" class="hidden">
         <button id="btn-page-prev" class="btn btn-tiny">← Prev</button>
@@ -148,7 +179,54 @@
 
       <!-- exercise/device file editor panes injected here -->
       <div id="editor-no-exercise" class="editor-tab-content active">
-        <p class="placeholder" style="padding:16px;">Select an exercise to open the editor.</p>
+        <div class="landing-overview">
+          <div class="landing-hero">
+            <h1>Connected Little Box — Teaching</h1>
+            <p>Introduce you to programming Python on the Raspberry Pi Pico using MicroPython, then use those skills to control a Connected Little Box — a small device that can move servos, drive motors, and respond to the world around it.</p>
+          </div>
+
+          <h2>Course overview</h2>
+
+          <div class="landing-card">
+            <span class="landing-card-num">1</span>
+            <div class="landing-card-body">
+              <strong>Getting Started with MicroPython</strong>
+              <p>Install firmware, write your first program, and learn the basics of Python on the Pico</p>
+            </div>
+          </div>
+          <div class="landing-card">
+            <span class="landing-card-num">2</span>
+            <div class="landing-card-body">
+              <strong>Colour &amp; Light</strong>
+              <p>Drive NeoPixel LEDs, mix RGB colours, and create animations</p>
+            </div>
+          </div>
+          <div class="landing-card">
+            <span class="landing-card-num">3</span>
+            <div class="landing-card-body">
+              <strong>DC Motors</strong>
+              <p>Control motor speed and direction with PWM and an H-bridge driver</p>
+            </div>
+          </div>
+          <div class="landing-card">
+            <span class="landing-card-num">4</span>
+            <div class="landing-card-body">
+              <strong>Servo Motors</strong>
+              <p>Position servos precisely using I²C and the PCA9685 PWM controller</p>
+            </div>
+          </div>
+          <div class="landing-card">
+            <span class="landing-card-num">5</span>
+            <div class="landing-card-body">
+              <strong>Connected Little Box</strong>
+              <p>Bring it all together — program the full CLB to respond to sensors and commands</p>
+            </div>
+          </div>
+
+          <p class="landing-start">Select an exercise from the dropdown above to get started →</p>
+        </div>
+
+        <p class="landing-console-msg placeholder">This lab has no code to write — follow the instructions in the Exercise tab.</p>
       </div>
 
       <div id="editor-tab-settings" class="editor-tab-content">
