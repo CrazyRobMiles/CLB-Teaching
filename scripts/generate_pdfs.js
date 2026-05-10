@@ -5,8 +5,8 @@ const { marked }  = require('marked');
 const fs   = require('fs');
 const path = require('path');
 
-const EXERCISES_JSON = path.join(__dirname, '..', 'exercises', 'index.json');
-const EXERCISES_DIR  = path.join(__dirname, '..', 'exercises');
+const EXERCISES_JSON = path.join(__dirname, '..', 'web', 'exercises', 'index.json');
+const EXERCISES_DIR  = path.join(__dirname, '..', 'web', 'exercises');
 const OUTPUT_DIR     = path.join(__dirname, '..', 'web', 'pdfs');
 
 // ── Embedded CSS ─────────────────────────────────────────────────────────────

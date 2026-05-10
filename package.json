@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Build tools for CLB Teaching",
   "scripts": {
-    "generate-pdfs": "node scripts/generate_pdfs.js",
-    "dev": "cp -r exercises web/exercises && cp firmware.json web/firmware.json && echo \"Ready — open web/ in Live Server\""
+    "generate-pdfs": "node scripts/generate_pdfs.js"
   },
   "dependencies": {
     "marked": "^13.0.0",

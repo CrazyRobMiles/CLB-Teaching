@@ -15,11 +15,11 @@ This repository and the CLB platform repository are intentionally separate.
 | **Contains** | Device managers, base framework, hardware drivers | Web app, exercises, circuit diagrams, AI tutor definitions |
 | **Knows about** | Its own managers and settings system | CLB version number; exercise file format; REPL protocol |
 | **Does not know** | That a teaching layer exists | CLB internals |
-| **Versioned by** | GitHub releases / tags | `firmware.json` pins a CLB release |
+| **Versioned by** | GitHub releases / tags | `web/firmware.json` pins a CLB release |
 
-**The contract:** CLB publishes versioned releases containing the firmware files. This repo pins one release in `firmware.json`. The web app fetches that release and pushes it to the student's device. Beyond version number and file paths, neither project knows about the other.
+**The contract:** CLB publishes versioned releases containing the firmware files. This repo pins one release in `web/firmware.json`. The web app fetches that release and pushes it to the student's device. Beyond version number and file paths, neither project knows about the other.
 
-When CLB releases a new version, update `firmware.json` and verify the exercises still work. No CLB changes are needed.
+When CLB releases a new version, update `web/firmware.json` and verify the exercises still work. No CLB changes are needed.
 
 ---
 
@@ -28,10 +28,10 @@ When CLB releases a new version, update `firmware.json` and verify the exercises
 ```
 CLB-Teaching/
 │
-├── firmware.json              ← pins the CLB release to install
-│
-├── exercises/
-│   ├── index.json             ← ordered list of all exercises
+├── web/
+│   ├── firmware.json          ← pins the CLB release to install
+│   ├── exercises/
+│   │   ├── index.json         ← ordered list of all exercises
 │   ├── 00_getting_started/
 │   │   ├── exercise.json
 │   │   ├── description_p1.md  ← multi-page descriptions
@@ -113,7 +113,7 @@ File writes are chunked at 256 bytes to avoid exhausting MicroPython's RAM. Cont
 
 ## Exercise Package Format
 
-Each exercise is a folder under `exercises/` containing these files:
+Each exercise is a folder under `web/exercises/` containing these files:
 
 ### `exercise.json`
 
@@ -167,14 +167,14 @@ An exercise with a single editable file needs only `start.py` and `solution.py`.
 
 Exercise definition for the AI assistant. Contains: objective, off-limits items (never revealed directly), ordered hint ladder, observation checklist, and a `tutor_brief` string injected verbatim into the LLM system prompt.
 
-See `exercises/01_button_light/tutor.py` for the reference format.
+See `web/exercises/01_button_light/tutor.py` for the reference format.
 
 ---
 
 ## Adding a New Exercise
 
-1. Create `exercises/NN_name/` following the format above
-2. Add an entry to `exercises/index.json`
+1. Create `web/exercises/NN_name/` following the format above
+2. Add an entry to `web/exercises/index.json`
 3. Write description content — either a single `description.md` or multiple pages listed under `pages` in `exercise.json`
 4. Verify `start.py` loads cleanly and the device reaches `STATE_OK`
 5. Verify `solution.py` (if present) produces the correct behaviour
@@ -217,7 +217,7 @@ No existing files need to change. `tracking.js` is purely additive — imported 
 
 ## CLB Version Management
 
-`firmware.json` specifies which CLB release to fetch:
+`web/firmware.json` specifies which CLB release to fetch:
 
 ```json
 {
