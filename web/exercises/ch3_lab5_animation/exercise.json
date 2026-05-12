@@ -1,14 +1,14 @@
-{
-  "id": "ch2_lab5_animation",
+﻿{
+  "id": "ch3_lab5_animation",
   "title": "Lab 5: Non-Blocking Animation",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
   "edit_files": [
     {
-      "label": "ch2_lab5_animation.py",
+      "label": "ch3_lab5_animation.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch2_lab5_animation.py"
+      "device_path": "/ch3_lab5_animation.py"
     }
   ]
 }

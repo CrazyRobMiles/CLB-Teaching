@@ -1,12 +1,12 @@
-# Exercise ch4_lab3_pca9685: The PCA9685
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch4_lab3_pca9685: The PCA9685
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # Console-only lab. The student uses ustruct.pack to write multi-byte transactions
 # more cleanly, drives multiple channels, and consolidates understanding of the
 # chip's register map before building the ServoDriver class in Lab 4.
 
 EXERCISE = {
-    "id": "ch4_lab3_pca9685",
+    "id": "ch5_lab3_pca9685",
     "phase": 4,
     "title": "Lab 3: The PCA9685",
     "concept": "intelligent peripherals, register maps, and multi-byte I2C transactions",
@@ -30,17 +30,17 @@ EXERCISE = {
     "hints": [
         # Hint 1
         "You already know how to move channel 0 to a specific angle. Now think about "
-        "channel 1 — what is the starting register address for its four ON/OFF bytes? "
+        "channel 1 â€” what is the starting register address for its four ON/OFF bytes? "
         "Look at the register table in the description: each channel occupies 4 registers, "
         "and channel 0 starts at 0x06.",
 
         # Hint 2
-        "The register base for channel N is: 0x06 + N * 4. Channel 0 → 0x06, "
-        "channel 1 → 0x0A, channel 2 → 0x0E. Now write calls to move three servos "
+        "The register base for channel N is: 0x06 + N * 4. Channel 0 â†’ 0x06, "
+        "channel 1 â†’ 0x0A, channel 2 â†’ 0x0E. Now write calls to move three servos "
         "to different angles in a single script.",
 
         # Hint 3
-        "Building the 4-byte payload by hand — bytes([0, 0, off_low, off_high]) — "
+        "Building the 4-byte payload by hand â€” bytes([0, 0, off_low, off_high]) â€” "
         "works but requires manual byte splitting. ustruct.pack('<HH', 0, off_count) "
         "does the same thing more safely. '<HH' means: little-endian, two unsigned "
         "16-bit integers. Try it and verify the bytes match your manual approach.",
@@ -67,17 +67,17 @@ EXERCISE = {
         "Are you computing the channel register as 0x06 + channel * 4? Verify for channel 1: should be 0x0A.",
         "Does ustruct.pack('<HH', 0, 307) produce b'\\x00\\x00\\x33\\x01'? Check with print().",
         "If a servo on channel 1+ doesn't move, verify it is plugged into the correct PCA9685 output connector.",
-        "If all servos stop when you run new code, the chip has been re-initialised — check whether set_freq was called again (triggering the sleep/wake cycle).",
+        "If all servos stop when you run new code, the chip has been re-initialised â€” check whether set_freq was called again (triggering the sleep/wake cycle).",
     ],
 
-    # Verbatim tutor brief — injected directly into the LLM system prompt.
+    # Verbatim tutor brief â€” injected directly into the LLM system prompt.
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using MicroPython
 on a Raspberry Pi Pico.
 
 This student is working on Chapter 4, Lab 3: The PCA9685. This is a console
 exploration exercise that builds directly on Lab 2. The student now has the
-chip initialised and can move a servo — this lab deepens their understanding
+chip initialised and can move a servo â€” this lab deepens their understanding
 of the register map, introduces ustruct.pack for cleaner byte construction,
 and drives multiple channels independently.
 
@@ -96,7 +96,7 @@ YOUR ROLE
   student to the answer.
 
 WHEN A STUDENT SAYS "IT DOESN'T WORK"
-Check initialisation first — every session needs the wake/prescale/restart
+Check initialisation first â€” every session needs the wake/prescale/restart
 sequence. Then check the channel register calculation. Then check wiring
 (servo plugged into the right header). Walk through the observation checklist.
 
@@ -107,7 +107,7 @@ Do not volunteer the next hint unprompted.
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
 When the student writes a working set_servo helper, note explicitly that
-they have just written the core of a hardware driver — the next step (Lab 4)
+they have just written the core of a hardware driver â€” the next step (Lab 4)
 is only a matter of organising that code into a class.
 
 WHAT TO CELEBRATE
@@ -115,6 +115,6 @@ When the student moves three independent servos with three one-line calls:
 point out that all three commands travel over just two wires and complete in
 microseconds, and that the chip will now hold all three positions indefinitely
 without another I2C transaction. This is the power of dedicated hardware
-peripheral — it scales to 16 channels with no additional CPU cost.
+peripheral â€” it scales to 16 channels with no additional CPU cost.
 """,
 }

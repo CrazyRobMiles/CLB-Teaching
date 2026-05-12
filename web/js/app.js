@@ -32,10 +32,34 @@ export class App {
 
   async init() {
     this._applyTheme(this._theme);
+    this._initMarked();
     this._initSettingsEditor();
     this._initHints();
     this._bindUI();
     await this._populateExerciseList();
+  }
+
+  _initMarked() {
+    marked.use({
+      renderer: {
+        code(text, lang) {
+          const tags = lang ? lang.split(/\s+/) : [];
+          const wantsCopy = tags.includes('copy');
+          const langName = tags[0] && tags[0] !== 'copy' ? tags[0] : '';
+          const html = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+          const codeTag = langName
+            ? `<code class="language-${langName}">${html}</code>`
+            : `<code>${html}</code>`;
+          const copyBtn = wantsCopy
+            ? '<button class="copy-code-btn">Copy</button>'
+            : '';
+          return `<pre>${codeTag}${copyBtn}</pre>\n`;
+        }
+      }
+    });
   }
 
   // ── Settings editor ───────────────────────────────────────────────
@@ -210,6 +234,17 @@ export class App {
       if (e.ctrlKey && (e.key === '=' || e.key === '+')) { e.preventDefault(); this._adjustFontSize(1); }
       if (e.ctrlKey && e.key === '-')  { e.preventDefault(); this._adjustFontSize(-1); }
       if (e.ctrlKey && e.key === '0')  { e.preventDefault(); this._setFontSize(13); }
+    });
+
+    document.getElementById('description-content').addEventListener('click', e => {
+      const btn = e.target.closest('.copy-code-btn');
+      if (!btn) return;
+      const code = btn.closest('pre')?.querySelector('code');
+      const text = (code ?? btn.closest('pre'))?.textContent ?? '';
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      });
     });
 
     this._initPanelResize();

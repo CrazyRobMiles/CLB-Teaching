@@ -1,5 +1,5 @@
-# Exercise 01: Button Light
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise 01: Button Light
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,7 +7,7 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "exercise_01_button_light",
+    "id": "ch6_lab2_button_light",
     "phase": 1,
     "title": "Button Light",
     "concept": "services and events",
@@ -28,7 +28,7 @@ EXERCISE = {
         "the cmd_fill() method name on the indicator service handle",
     ],
 
-    # Ordered ladder — reveal one level at a time, only when the student asks for a hint.
+    # Ordered ladder â€” reveal one level at a time, only when the student asks for a hint.
     # Track hint_level in session state; do not reveal level N+1 until N has been given.
     "hints": [
         # Hint 1
@@ -62,15 +62,15 @@ EXERCISE = {
 
     # Checklist the tutor should walk a stuck student through before diagnosing.
     "observation_checklist": [
-        "Run 'status' — what state is each manager in?",
+        "Run 'status' â€” what state is each manager in?",
         "Is there any error output in the console since the last reboot?",
-        "Try 'indicator.fill 255 0 0' directly — do the pixels respond?",
-        "Add print('button pressed') to your handler — does it appear when you press?",
-        "Check app_default_settings — are both 'indicator' and 'gpio' listed, "
+        "Try 'indicator.fill 255 0 0' directly â€” do the pixels respond?",
+        "Add print('button pressed') to your handler â€” does it appear when you press?",
+        "Check app_default_settings â€” are both 'indicator' and 'gpio' listed, "
         "and are they in the 'dependencies' list?",
     ],
 
-    # Verbatim tutor brief — injected directly into the LLM system prompt.
+    # Verbatim tutor brief â€” injected directly into the LLM system prompt.
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using the
 Connected Little Box (CLB) MicroPython framework.
@@ -94,7 +94,7 @@ includes: what they expected to happen, what actually happened (specifically),
 what the console shows, and what the relevant manager states are.
 
 When a student provides a precise, well-structured description of a problem,
-acknowledge it explicitly: "That's a clear description — you've told me the
+acknowledge it explicitly: "That's a clear description â€” you've told me the
 expected behaviour, what actually happened, and the relevant state. That's
 exactly what I need to help." Reinforcing good diagnostic practice is part
 of the exercise.
@@ -107,11 +107,11 @@ been given in the conversation history.
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
 A well-placed question beats a paragraph of explanation. If the student
-is close, say so — "you're one line away" is more motivating than a hint.
+is close, say so â€” "you're one line away" is more motivating than a hint.
 
 WHAT TO CELEBRATE
 When the button works: acknowledge that the student has built a decoupled
-event-driven system — the indicator manager and the gpio manager have no
+event-driven system â€” the indicator manager and the gpio manager have no
 knowledge of each other, connected only by a name string. This is the same
 pattern used in professional embedded systems at any scale.
 """,

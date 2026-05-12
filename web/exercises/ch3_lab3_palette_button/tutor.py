@@ -1,5 +1,5 @@
-# Exercise ch2_lab3_palette_button: Palette and Button
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch2_lab3_palette_button: Palette and Button
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,7 +7,7 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "ch2_lab3_palette_button",
+    "id": "ch3_lab3_palette_button",
     "phase": 2,
     "title": "Lab 3: Palette and Button",
     "concept": "lists of lists, modulo wrapping, and falling-edge detection",
@@ -27,7 +27,7 @@ EXERCISE = {
         "the modulo expression for cycling palettes: (current_palette + 1) % len(PALETTES)",
     ],
 
-    # Ordered ladder — reveal one level at a time, only when the student asks for a hint.
+    # Ordered ladder â€” reveal one level at a time, only when the student asks for a hint.
     "hints": [
         # Hint 1
         "To display a palette, you need to assign each pixel a colour from that palette's "
@@ -40,7 +40,7 @@ EXERCISE = {
         "give you when i equals len(palette) exactly?",
 
         # Hint 3
-        "Checking button.value() == 0 fires every loop pass while the button is held — "
+        "Checking button.value() == 0 fires every loop pass while the button is held â€” "
         "that could be 50 times a second. You only want it to fire once, at the moment "
         "the button is first pressed. What extra piece of information do you need to "
         "tell the difference between 'button still held' and 'button just pressed'?",
@@ -48,7 +48,7 @@ EXERCISE = {
         # Hint 4
         "Store the previous button state in last_btn before the loop, and update it at "
         "the bottom of each loop pass. The button was just pressed when last_btn was 1 "
-        "(not pressed) and btn is now 0 (pressed). This is called a falling edge — "
+        "(not pressed) and btn is now 0 (pressed). This is called a falling edge â€” "
         "the signal fell from high to low. What is the Python condition that expresses that?",
     ],
 
@@ -64,12 +64,12 @@ EXERCISE = {
     "observation_checklist": [
         "Do the pixels light up at all when the program starts? (show_palette is called before the loop)",
         "Does show_palette() call np.write() at the end?",
-        "Add print('pressed') inside the button handler — does it print once per press or many times?",
-        "Print btn and last_btn on every loop pass — what values do you see when you press and hold?",
+        "Add print('pressed') inside the button handler â€” does it print once per press or many times?",
+        "Print btn and last_btn on every loop pass â€” what values do you see when you press and hold?",
         "Is last_btn updated at the bottom of the loop, not inside the if block?",
     ],
 
-    # Verbatim tutor brief — injected directly into the LLM system prompt.
+    # Verbatim tutor brief â€” injected directly into the LLM system prompt.
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using MicroPython
 on the Raspberry Pi Pico.
@@ -86,12 +86,12 @@ structure. The student must fill in the PALETTES list with at least two palettes
 implement show_palette, and add the falling-edge detection logic.
 
 YOUR ROLE
-- Explain data structures clearly: a list of lists is a table — PALETTES[1][3]
+- Explain data structures clearly: a list of lists is a table â€” PALETTES[1][3]
   gives the 4th colour in the 2nd palette. Make sure the student understands
   how indexing works before they try to write the loop.
 - Explain why falling-edge detection is needed: without it, one press fires
   continuously while the button is held, which feels wrong.
-- Guide the student to discover the implementation details themselves — especially
+- Guide the student to discover the implementation details themselves â€” especially
   the falling-edge condition and the modulo cycling.
 - Do NOT state the off-limits items directly even when asked. Redirect to the
   underlying concept and ask a guiding question.
@@ -111,14 +111,14 @@ been given in the conversation history.
 TONE
 Brief and encouraging. A well-placed question beats a paragraph of explanation.
 If the student's button fires on every loop pass instead of once, say "you're
-detecting the level, not the edge — what's different about the first pass
+detecting the level, not the edge â€” what's different about the first pass
 compared to the ones that follow?" rather than explaining edge detection in full.
 
 WHAT TO CELEBRATE
 When the button cycles palettes exactly once per press: acknowledge that the
-student has solved a real embedded systems problem — debounced, edge-triggered
+student has solved a real embedded systems problem â€” debounced, edge-triggered
 input. This exact pattern appears in every professional embedded codebase.
-When the palette wraps back to the first: point out the elegance of modulo —
+When the palette wraps back to the first: point out the elegance of modulo â€”
 a single expression handles both advance and wrap simultaneously.
 """,
 }

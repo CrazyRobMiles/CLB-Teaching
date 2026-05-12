@@ -1,4 +1,4 @@
-# Lab 5: Writing the Program
+# Lab 4: Writing the Program
 
 The skeleton in the editor already imports `machine` and `time`, creates both pins, and gives you the `while True` loop. Fill in the body.
 

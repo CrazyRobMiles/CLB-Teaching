@@ -1,4 +1,4 @@
-# Lab 4: Switch Input
+# Lab 3: Switch Input
 
 So far we've only produced outputs. Now we'll add an **input**: a push button whose state the Pico can read.
 

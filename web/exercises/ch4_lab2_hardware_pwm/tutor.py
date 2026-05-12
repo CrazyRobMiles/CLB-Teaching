@@ -1,5 +1,5 @@
-# Exercise ch3_lab2_hardware_pwm: Hardware PWM
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch3_lab2_hardware_pwm: Hardware PWM
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,7 +7,7 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "ch3_lab2_hardware_pwm",
+    "id": "ch4_lab2_hardware_pwm",
     "phase": 3,
     "title": "Lab 2: Hardware PWM",
     "concept": "hardware peripherals, PWM slices, duty_u16",
@@ -15,7 +15,7 @@ EXERCISE = {
     "objective": (
         "Configure a hardware PWM object on GP15 to run at 1000 Hz with a 50% duty cycle, "
         "using the machine.PWM class, and observe how the hardware sustains the waveform "
-        "with no CPU involvement — enabling a smooth fade loop that would be impossible "
+        "with no CPU involvement â€” enabling a smooth fade loop that would be impossible "
         "with software PWM."
     ),
 
@@ -33,7 +33,7 @@ EXERCISE = {
         "The machine.PWM object has two things you need to set after creating it: "
         "the frequency (how many cycles per second) and the duty cycle (what fraction "
         "of each cycle is HIGH). Both are set by calling methods on the object. "
-        "Look at the example in description_p1.md — what are those two method names?",
+        "Look at the example in description_p1.md â€” what are those two method names?",
 
         # Hint 2
         "The frequency method is .freq() and takes an integer Hz value. "
@@ -42,7 +42,7 @@ EXERCISE = {
 
         # Hint 3
         "The duty cycle method is .duty_u16(). The 'u16' means it takes a 16-bit "
-        "unsigned integer — a value from 0 (always off) to 65535 (always on). "
+        "unsigned integer â€” a value from 0 (always off) to 65535 (always on). "
         "If 65535 is 100% and 0 is 0%, what value gives you 50%?",
 
         # Hint 4
@@ -54,12 +54,12 @@ EXERCISE = {
         "For the fade loop in the solution: range(0, 65536, 512) steps the duty "
         "from 0 to 65535 in 128 steps. With 8 ms between steps that is about "
         "1 second to fade fully up. The key insight is that .duty_u16() just writes "
-        "a register — the hardware does all the switching, so the CPU is free.",
+        "a register â€” the hardware does all the switching, so the CPU is free.",
     ],
 
     "success_indicators": [
         "LED glows at steady half brightness after Save & Run",
-        "no CPU-hogging loop required — LED stays on while console is responsive",
+        "no CPU-hogging loop required â€” LED stays on while console is responsive",
         "changing the duty_u16 value changes brightness instantly",
         "fade loop (from solution) produces a smooth, flicker-free ramp",
         "console remains responsive while the fade loop runs",
@@ -69,21 +69,21 @@ EXERCISE = {
         "Is the LED completely off? Check that led.duty_u16() was called, not just led.freq().",
         "Is there an AttributeError? Make sure you imported PWM from machine.",
         "Is the LED at full brightness instead of half? The duty_u16 value may be 65535 not 32768.",
-        "Print led.freq() and led.duty_u16() — MicroPython returns the current values.",
-        "Try led.duty_u16(0) in the console — does the LED go off? That confirms the object works.",
+        "Print led.freq() and led.duty_u16() â€” MicroPython returns the current values.",
+        "Try led.duty_u16(0) in the console â€” does the LED go off? That confirms the object works.",
     ],
 
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using MicroPython
 on a Raspberry Pi Pico.
 
-This student is working on Chapter 3, Lab 2: Hardware PWM. The task is minimal —
-two method calls after creating a PWM object — but the concept behind it is
+This student is working on Chapter 3, Lab 2: Hardware PWM. The task is minimal â€”
+two method calls after creating a PWM object â€” but the concept behind it is
 significant: the Pico contains dedicated PWM hardware (eight slices, sixteen
 channels) that generates waveforms entirely independently of the CPU.
 
 The exercise teaches: how the Pico PWM hardware works (counter, compare, wrap),
-what duty_u16 means (16-bit scale, 0–65535), why hardware PWM has no jitter,
+what duty_u16 means (16-bit scale, 0â€“65535), why hardware PWM has no jitter,
 and how freeing the CPU from timing work enables things like smooth fades.
 
 YOUR ROLE
@@ -101,7 +101,7 @@ are: forgetting to call duty_u16() at all (LED stays off), passing the wrong val
 the LED is currently doing.
 
 When a student provides a precise, well-structured problem description,
-acknowledge it: "That's a clear description — expected behaviour, actual
+acknowledge it: "That's a clear description â€” expected behaviour, actual
 behaviour, and the error. That's exactly what I need." Reinforcing good diagnostic
 practice is part of the exercise.
 
@@ -112,7 +112,7 @@ been given in the conversation history.
 
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
-Two lines of working hardware PWM code is a real achievement — the student has
+Two lines of working hardware PWM code is a real achievement â€” the student has
 just configured a dedicated peripheral, not written a software loop.
 
 WHAT TO CELEBRATE

@@ -1,14 +1,14 @@
-{
-  "id": "ch2_lab4_lerp_fade",
+﻿{
+  "id": "ch3_lab4_lerp_fade",
   "title": "Lab 4: Lerp Fade",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch2_lab4_lerp_fade.py",
+      "label": "ch3_lab4_lerp_fade.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch2_lab4_lerp_fade.py"
+      "device_path": "/ch3_lab4_lerp_fade.py"
     }
   ]
 }

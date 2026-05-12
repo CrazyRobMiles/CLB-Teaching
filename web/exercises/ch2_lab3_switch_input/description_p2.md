@@ -1,4 +1,4 @@
-# Lab 4: Reading the Switch
+# Lab 3: Reading the Switch
 
 Type these commands in the **Console** panel.
 

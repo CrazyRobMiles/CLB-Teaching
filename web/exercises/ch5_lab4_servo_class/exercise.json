@@ -1,14 +1,14 @@
-{
-  "id": "ch4_lab4_servo_class",
+﻿{
+  "id": "ch5_lab4_servo_class",
   "title": "Lab 4: Servo Driver Class",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch4_lab4_servo_class.py",
+      "label": "ch5_lab4_servo_class.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch4_lab4_servo_class.py"
+      "device_path": "/ch5_lab4_servo_class.py"
     }
   ]
 }

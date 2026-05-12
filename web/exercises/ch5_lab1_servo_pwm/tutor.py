@@ -1,11 +1,11 @@
-# Exercise ch4_lab1_servo_pwm: Servo Motors — PWM Basics
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch4_lab1_servo_pwm: Servo Motors â€” PWM Basics
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # This is a console-only exploration lab (no saved file). The student types
 # commands directly into the MicroPython REPL to drive a servo via machine.PWM.
 
 EXERCISE = {
-    "id": "ch4_lab1_servo_pwm",
+    "id": "ch5_lab1_servo_pwm",
     "phase": 4,
     "title": "Lab 1: Servo Motors",
     "concept": "PWM pulse width and servo control",
@@ -13,7 +13,7 @@ EXERCISE = {
     "objective": (
         "Discover how a standard hobby servo is controlled by PWM pulse width: "
         "set up a 50 Hz signal on GP15 using machine.PWM, then move the servo "
-        "to 0°, 90°, and 180° by writing the correct duty_u16 values, and "
+        "to 0Â°, 90Â°, and 180Â° by writing the correct duty_u16 values, and "
         "understand why absolute pulse time (not duty cycle percentage) is what matters."
     ),
 
@@ -27,7 +27,7 @@ EXERCISE = {
     # Ordered hint ladder.
     "hints": [
         # Hint 1
-        "Servos don't care about duty cycle percentage — they respond to the absolute "
+        "Servos don't care about duty cycle percentage â€” they respond to the absolute "
         "width of the high pulse in milliseconds. What frequency gives you a 20 ms period, "
         "and why does that matter for a servo?",
 
@@ -42,7 +42,7 @@ EXERCISE = {
 
         # Hint 4
         "For 1.0 ms: (1.0/20) * 65535 = 3277. For 1.5 ms: 4915. For 2.0 ms: 6554. "
-        "Try each — does the servo reach both physical end-stops cleanly? "
+        "Try each â€” does the servo reach both physical end-stops cleanly? "
         "If it grinds at one end, the servo's actual range may be slightly different "
         "from the spec. That is normal.",
     ],
@@ -59,20 +59,20 @@ EXERCISE = {
 
     # Diagnostic checklist.
     "observation_checklist": [
-        "Is the servo wired correctly — brown/black to GND, red to 5V (VBUS pin 40), signal to GP15?",
+        "Is the servo wired correctly â€” brown/black to GND, red to 5V (VBUS pin 40), signal to GP15?",
         "Did you call servo.freq(50) before setting duty? Order matters.",
         "Is there a twitching or buzzing sound? That usually means the pulse width is out of range for this servo.",
-        "Try servo.duty_u16(0) — does the servo go limp? That confirms PWM is reaching the signal wire.",
-        "If the servo doesn't move at all, try a different GPIO pin — confirm Pin(15) refers to GP15 on your board.",
+        "Try servo.duty_u16(0) â€” does the servo go limp? That confirms PWM is reaching the signal wire.",
+        "If the servo doesn't move at all, try a different GPIO pin â€” confirm Pin(15) refers to GP15 on your board.",
     ],
 
-    # Verbatim tutor brief — injected directly into the LLM system prompt.
+    # Verbatim tutor brief â€” injected directly into the LLM system prompt.
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using MicroPython
 on a Raspberry Pi Pico.
 
 This student is working on Chapter 4, Lab 1: Servo Motors. This is a console
-exploration exercise — there is no file to edit. The student types commands
+exploration exercise â€” there is no file to edit. The student types commands
 directly into the MicroPython REPL on the Pico to control a servo motor via
 the machine.PWM class.
 
@@ -103,13 +103,13 @@ Do not volunteer the next hint unprompted.
 
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
-Praise the student when they correctly derive a formula — that skill
+Praise the student when they correctly derive a formula â€” that skill
 transfers to every other PWM-controlled device they will ever use.
 
 WHAT TO CELEBRATE
-When the servo sweeps 0° → 90° → 180° on command: note that the student
+When the servo sweeps 0Â° â†’ 90Â° â†’ 180Â° on command: note that the student
 has just used the same technique that RC cars, robotic arms, and camera
-gimbals use — a precise pulse width interpreted by a closed-loop controller.
+gimbals use â€” a precise pulse width interpreted by a closed-loop controller.
 They have also discovered why raw duty_u16 values are awkward to work with,
 which motivates the ServoDriver class they will build in Lab 4.
 """,

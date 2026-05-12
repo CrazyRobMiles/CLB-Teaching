@@ -6,7 +6,7 @@ With the device connected, type these commands one at a time in the **Console** 
 
 ## Import the machine module
 
-```python
+```python copy
 import machine
 ```
 
@@ -16,21 +16,21 @@ import machine
 
 ## Create an output pin
 
-```python
-led = machine.Pin(15, machine.Pin.OUT)
+```python copy
+led = machine.Pin(28, machine.Pin.OUT)
 ```
 
-This creates a Pin object for GP15 and configures it as an **output**. The result is stored in the variable `led`.
+This creates a **Pin** object for GP28 and configures it as an **output**. The result is stored in the variable `led`.
 
 ---
 
 ## Turn the LED on and off
 
-```python
+```python copy
 led.on()
 ```
 
-```python
+```python copy
 led.off()
 ```
 
@@ -47,7 +47,7 @@ Try switching the LED on and off a few times to confirm it responds instantly.
 
 ## Read the current state
 
-```python
+```python copy
 led.value()
 ```
 

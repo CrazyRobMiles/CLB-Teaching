@@ -1,5 +1,5 @@
-# Exercise ch2_lab2_colour_range: Colour Range
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch2_lab2_colour_range: Colour Range
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,14 +7,14 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "ch2_lab2_colour_range",
+    "id": "ch3_lab2_colour_range",
     "phase": 2,
     "title": "Lab 2: Colour Range",
     "concept": "lists, loops, and the colour spectrum",
 
     "objective": (
-        "Write a MicroPython program that defines a list of eight RGB colour tuples — "
-        "one per pixel — spread across the visible spectrum, then assigns each colour "
+        "Write a MicroPython program that defines a list of eight RGB colour tuples â€” "
+        "one per pixel â€” spread across the visible spectrum, then assigns each colour "
         "to its pixel using a loop and calls np.write() to display them all at once."
     ),
 
@@ -27,12 +27,12 @@ EXERCISE = {
         "the gradient calculation using int(255 * i / (NUM_PIXELS - 1))",
     ],
 
-    # Ordered ladder — reveal one level at a time, only when the student asks for a hint.
+    # Ordered ladder â€” reveal one level at a time, only when the student asks for a hint.
     "hints": [
         # Hint 1
         "A Python list holds multiple values in order. You already know each colour "
         "is a tuple like (255, 0, 0). How do you think you'd write a list that "
-        "contains two colours — red and green — separated by a comma?",
+        "contains two colours â€” red and green â€” separated by a comma?",
 
         # Hint 2
         "To access the third item in a list called colours, you write colours[2] "
@@ -47,7 +47,7 @@ EXERCISE = {
         # Hint 4
         "Python's enumerate() gives you both the index and the value together: "
         "for i, colour in enumerate(colours): is equivalent to your range loop "
-        "but reads more clearly. Try rewriting your loop using enumerate — "
+        "but reads more clearly. Try rewriting your loop using enumerate â€” "
         "what does np[i] = colour look like inside that loop?",
     ],
 
@@ -64,12 +64,12 @@ EXERCISE = {
         "Does the colours list have exactly 8 entries? (len(colours) in the console will tell you)",
         "Is the for loop inside the program, not in the console?",
         "Did you call np.write() after the loop, not inside it?",
-        "Does each entry in colours look like (r, g, b) with three numbers 0–255?",
-        "Try printing colours[0] in the console — is it a tuple or something else?",
-        "Save & Run — does any output appear in the console? Any error messages?",
+        "Does each entry in colours look like (r, g, b) with three numbers 0â€“255?",
+        "Try printing colours[0] in the console â€” is it a tuple or something else?",
+        "Save & Run â€” does any output appear in the console? Any error messages?",
     ],
 
-    # Verbatim tutor brief — injected directly into the LLM system prompt.
+    # Verbatim tutor brief â€” injected directly into the LLM system prompt.
     "tutor_brief": """
 You are a teaching assistant for an embedded programming course using MicroPython
 on the Raspberry Pi Pico.
@@ -86,9 +86,9 @@ The student's job is to fill the colours list with 8 tuples and write the loop.
 YOUR ROLE
 - Explain lists and indexing clearly: a list is an ordered collection, indexed
   from 0; colours[i] gives the i-th colour; np[i] = colours[i] maps directly.
-- Explain why NUM_PIXELS is defined as a constant — one place to change if the
+- Explain why NUM_PIXELS is defined as a constant â€” one place to change if the
   strip length changes.
-- Be generous with colour theory — if the student asks why (255, 127, 0) is
+- Be generous with colour theory â€” if the student asks why (255, 127, 0) is
   orange, explain additive mixing.
 - Do NOT state the off-limits items directly even when asked. Redirect to the
   concept and ask a guiding question.
@@ -97,7 +97,7 @@ WHEN A STUDENT SAYS "IT DOESN'T WORK"
 Ask them to work through the observation checklist. The most common issues are:
 the colours list has fewer than 8 entries (index out of range error), np.write()
 is missing or inside the loop instead of after it, or the file was not saved
-before running. Ask them what the console shows — an error message is a specific
+before running. Ask them what the console shows â€” an error message is a specific
 clue, silence means the code ran without effect.
 
 HINT LADDER
@@ -108,14 +108,14 @@ been given in the conversation history.
 TONE
 Encouraging. This is the first real program in the chapter. Keep it achievable.
 When the student gets 8 pixels lighting up with different colours, that is a
-genuine milestone — acknowledge it.
+genuine milestone â€” acknowledge it.
 
 WHAT TO CELEBRATE
 When all 8 pixels light up with different colours: the student has written a
 complete program that stores structured data (a list of tuples) and processes
-it with a loop — that is real programming, not just console commands.
+it with a loop â€” that is real programming, not just console commands.
 When the student tries a gradient calculation: connect it to the idea that
-colour can be computed, not just hand-picked — that's the foundation of
+colour can be computed, not just hand-picked â€” that's the foundation of
 procedural colour, which they will use in Lab 4.
 """,
 }

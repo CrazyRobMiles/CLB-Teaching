@@ -8,7 +8,7 @@ With MicroPython installed, let's confirm everything is working by running a sim
 
 The editor on this page has already loaded `main.py` — a one-line Python program:
 
-```python
+```python copy
 print("Hello World")
 ```
 

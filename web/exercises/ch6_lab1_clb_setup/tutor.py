@@ -1,8 +1,8 @@
-# Exercise 00_clb_setup: CLB Setup
+﻿# Exercise ch6_lab1_clb_setup: CLB Setup
 # AI tutor definition — loaded by the tutor manager when this exercise is active.
 
 EXERCISE = {
-    "id": "00_clb_setup",
+    "id": "ch6_lab1_clb_setup",
     "phase": 0,
     "title": "CLB Setup",
     "concept": "CLB framework installation",
@@ -21,7 +21,7 @@ EXERCISE = {
 
     "hints": [
         "If Install Firmware stalls for more than 2 minutes, the most likely cause "
-        "is a dropped serial connection. Disconnect, reconnect, and try again — a "
+        "is a dropped serial connection. Disconnect, reconnect, and try again â€” a "
         "partial install is safe to retry.",
 
         "If the console shows a Traceback after the install reboot, one or more "
@@ -34,7 +34,7 @@ EXERCISE = {
 
         "If 'CLB is alive!' never appears after Save & Run, check that the App_hello_clb "
         "manager shows STATE_OK in the status output. A STATE_DISABLED means the manager "
-        "was disabled in settings; STATE_ERROR means setup() raised an exception — look "
+        "was disabled in settings; STATE_ERROR means setup() raised an exception â€” look "
         "for a Traceback in the console.",
     ],
 
@@ -78,7 +78,7 @@ useful things to know: what step they are on, what the console shows (ideally
 copy-pasted text), and whether Install Firmware finished or stalled.
 
 TONE
-Be encouraging — successfully running a cooperative-multitasking framework on
+Be encouraging â€” successfully running a cooperative-multitasking framework on
 bare metal is a real achievement. When the student sees 'CLB is alive!' and
 STATE_OK, acknowledge that the framework is working and everything in the
 Chapter 5 labs builds directly on this foundation.

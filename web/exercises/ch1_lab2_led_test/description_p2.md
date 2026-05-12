@@ -46,4 +46,4 @@ Plug the USB cable into the Pico and your computer. **The LED should light up im
 - Swap the LED for another one (LEDs can be dead).
 - Try a different resistor value (470 Ω is also fine — the LED will be dimmer but should still glow).
 
-Once the LED lights up, you've confirmed the hardware works. Move on to Lab 2 to take control of it with code.
+Once the LED lights up, you've confirmed the hardware works. Move on to Lab 2 to take control of it.

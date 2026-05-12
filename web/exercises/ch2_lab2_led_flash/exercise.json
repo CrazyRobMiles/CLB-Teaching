@@ -1,14 +1,14 @@
-{
-  "id": "ch1_lab3_led_flash",
-  "title": "Lab 3: LED Flashing",
+﻿{
+  "id": "ch2_lab2_led_flash",
+  "title": "Lab 2: LED Flashing",
   "clb": false,
-  "pages": ["description_p1.md", "description_p2.md"],
+  "pages": ["description_p1.md", "description_p2.md","description_p3.md"],
   "edit_files": [
     {
-      "label": "ch1_lab3_led_flash.py",
+      "label": "ch2_lab2_led_flash.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch1_lab3_led_flash.py"
+      "device_path": "/ch2_lab2_led_flash.py"
     }
   ]
 }

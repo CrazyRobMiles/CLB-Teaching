@@ -1,14 +1,14 @@
-{
-  "id": "ch2_lab2_colour_range",
+﻿{
+  "id": "ch3_lab2_colour_range",
   "title": "Lab 2: Colour Range",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch2_lab2_colour_range.py",
+      "label": "ch3_lab2_colour_range.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch2_lab2_colour_range.py"
+      "device_path": "/ch3_lab2_colour_range.py"
     }
   ]
 }

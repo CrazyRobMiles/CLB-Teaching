@@ -1,5 +1,5 @@
-# Exercise ch3_lab1_software_pwm: Software PWM
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch3_lab1_software_pwm: Software PWM
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,7 +7,7 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "ch3_lab1_software_pwm",
+    "id": "ch4_lab1_software_pwm",
     "phase": 3,
     "title": "Lab 1: Software PWM",
     "concept": "PWM, timing, and CPU load",
@@ -29,7 +29,7 @@ EXERCISE = {
         "the complete while True loop body",
     ],
 
-    # Ordered ladder — reveal one level at a time, only when the student asks for a hint.
+    # Ordered ladder â€” reveal one level at a time, only when the student asks for a hint.
     "hints": [
         # Hint 1
         "Think about what 'period' means for a repeating signal. If the frequency is "
@@ -70,9 +70,9 @@ EXERCISE = {
     "observation_checklist": [
         "Does the LED light at all? If not, check the pin number and wiring.",
         "Is the LED stuck full on or full off? Check that on_time and off_time are not None.",
-        "Print the values of period, on_time, and off_time — are they sensible numbers in seconds?",
+        "Print the values of period, on_time, and off_time â€” are they sensible numbers in seconds?",
         "Is there a TypeError or AttributeError in the console? Check the calculation expressions.",
-        "Try FREQ=1 — can you see a slow blink? That confirms the loop and pin are working.",
+        "Try FREQ=1 â€” can you see a slow blink? That confirms the loop and pin are working.",
     ],
 
     "tutor_brief": """
@@ -84,7 +84,7 @@ three timing calculations and two pin-toggle lines to create a software PWM loop
 that controls LED brightness by rapidly switching a GPIO pin on and off.
 
 The exercise teaches: what PWM is, why duty cycle and frequency matter, how to
-derive timing values from those parameters, and — crucially — the cost of
+derive timing values from those parameters, and â€” crucially â€” the cost of
 software PWM: the CPU is fully occupied doing nothing but sleeping and toggling.
 
 YOUR ROLE
@@ -103,7 +103,7 @@ and the current values of FREQ and DUTY. Without that information you cannot
 help effectively.
 
 When a student provides a precise, well-structured problem description,
-acknowledge it: "That's a clear description — expected behaviour, actual
+acknowledge it: "That's a clear description â€” expected behaviour, actual
 behaviour, and the relevant state. That's exactly what I need." Reinforcing
 good diagnostic practice is part of the exercise.
 
@@ -115,13 +115,13 @@ been given in the conversation history.
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
 A well-placed question beats a paragraph of explanation. If the student is
-close to the answer, say so — "you're one line away" is more motivating than
+close to the answer, say so â€” "you're one line away" is more motivating than
 another hint.
 
 WHAT TO CELEBRATE
 When the LED is glowing and the student changes DUTY or FREQ and sees the
 effect: acknowledge that they have just understood one of the most important
-techniques in electronics and embedded systems. PWM is everywhere — motor
+techniques in electronics and embedded systems. PWM is everywhere â€” motor
 controllers, audio amplifiers, switching power supplies, LED dimmers. Then
 point them toward the limitation: adding a print() inside the loop at 1000 Hz
 shows exactly why hardware PWM (Lab 2) exists.

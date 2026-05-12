@@ -1,14 +1,14 @@
-{
-  "id": "ch3_lab5_motor_buttons",
+﻿{
+  "id": "ch4_lab5_motor_buttons",
   "title": "Lab 5: Button-Controlled Motor",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch3_lab5_motor_buttons.py",
+      "label": "ch4_lab5_motor_buttons.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch3_lab5_motor_buttons.py"
+      "device_path": "/ch4_lab5_motor_buttons.py"
     }
   ]
 }

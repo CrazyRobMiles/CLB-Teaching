@@ -1,7 +1,0 @@
-{
-  "id": "ch1_lab1_led_test",
-  "title": "Lab 1: LED Test",
-  "clb": false,
-  "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
-  "edit_files": []
-}

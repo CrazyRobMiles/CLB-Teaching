@@ -1,14 +1,14 @@
-{
-  "id": "ch3_lab4_motor_class",
+﻿{
+  "id": "ch4_lab4_motor_class",
   "title": "Lab 4: Motor Driver Class",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch3_lab4_motor_class.py",
+      "label": "ch4_lab4_motor_class.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch3_lab4_motor_class.py"
+      "device_path": "/ch4_lab4_motor_class.py"
     }
   ]
 }

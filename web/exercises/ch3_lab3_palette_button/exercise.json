@@ -1,14 +1,14 @@
-{
-  "id": "ch2_lab3_palette_button",
+﻿{
+  "id": "ch3_lab3_palette_button",
   "title": "Lab 3: Palette and Button",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": [
     {
-      "label": "ch2_lab3_palette_button.py",
+      "label": "ch3_lab3_palette_button.py",
       "source": "start.py",
       "solution": "solution.py",
-      "device_path": "/ch2_lab3_palette_button.py"
+      "device_path": "/ch3_lab3_palette_button.py"
     }
   ]
 }

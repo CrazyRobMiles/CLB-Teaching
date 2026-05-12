@@ -1,4 +1,4 @@
-# Lab 5: Switch and LED
+# Lab 4: Switch and LED
 
 You know how to control an LED and how to read a switch. Now combine them: the LED should light up while the button is pressed and go off when it's released.
 

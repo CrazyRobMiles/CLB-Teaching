@@ -180,6 +180,26 @@ html, body {
   padding: 10px 12px;
   overflow-x: auto;
   margin-bottom: 10px;
+  position: relative;
+}
+.copy-code-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  border-radius: 3px;
+  font-size: 0.8em;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, color 0.15s;
+}
+.copy-code-btn:hover {
+  opacity: 1;
+  color: var(--text);
 }
 #description-content pre code {
   background: none;

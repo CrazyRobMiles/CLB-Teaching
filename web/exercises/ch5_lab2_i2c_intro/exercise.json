@@ -1,5 +1,5 @@
-{
-  "id": "ch4_lab2_i2c_intro",
+﻿{
+  "id": "ch5_lab2_i2c_intro",
   "title": "Lab 2: I2C Introduction",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],

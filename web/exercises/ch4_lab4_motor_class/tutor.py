@@ -1,5 +1,5 @@
-# Exercise ch3_lab4_motor_class: Motor Driver Class
-# AI tutor definition — loaded by the tutor manager when this exercise is active.
+﻿# Exercise ch3_lab4_motor_class: Motor Driver Class
+# AI tutor definition â€” loaded by the tutor manager when this exercise is active.
 #
 # The tutor receives this as part of its system prompt. It shapes how the LLM
 # responds to student questions: generous with concepts, Socratic about the
@@ -7,14 +7,14 @@
 # until the student has worked through the hint ladder.
 
 EXERCISE = {
-    "id": "ch3_lab4_motor_class",
+    "id": "ch4_lab4_motor_class",
     "phase": 3,
     "title": "Lab 4: Motor Driver Class",
     "concept": "abstraction, class design, encapsulation",
 
     "objective": (
-        "Implement the five method bodies of the MotorDriver class — forward(), backward(), "
-        "stop(), brake(), and _set_speed() — so that it correctly controls an L298N "
+        "Implement the five method bodies of the MotorDriver class â€” forward(), backward(), "
+        "stop(), brake(), and _set_speed() â€” so that it correctly controls an L298N "
         "H-bridge channel, accepting speed as a percentage and hiding all pin-level "
         "detail from the caller."
     ),
@@ -38,7 +38,7 @@ EXERCISE = {
 
         # Hint 2
         "self._in1.value(1) sets IN1 high. self._in2.value(0) sets IN2 low. "
-        "Then you need to call _set_speed() with the speed argument — not duty_u16() directly, "
+        "Then you need to call _set_speed() with the speed argument â€” not duty_u16() directly, "
         "because _set_speed() does the unit conversion for you.",
 
         # Hint 3
@@ -53,8 +53,8 @@ EXERCISE = {
 
         # Hint 5
         "The formula is: int(percent * 65535 // 100). "
-        "Use // (integer division) rather than / (floating point) — at 100% this gives "
-        "exactly 65535, whereas floating point might give 65534.999… and truncate wrong. "
+        "Use // (integer division) rather than / (floating point) â€” at 100% this gives "
+        "exactly 65535, whereas floating point might give 65534.999â€¦ and truncate wrong. "
         "So the line is: self._pwm.duty_u16(int(percent * 65535 // 100)).",
     ],
 
@@ -69,11 +69,11 @@ EXERCISE = {
 
     "observation_checklist": [
         "Is there a TypeError or AttributeError after Save & Run? Check that all methods return normally (remove any stray 'pass' left in).",
-        "Does the motor do nothing at all? Check that self.stop() in __init__ now works — it calls _set_speed(0), which calls duty_u16.",
+        "Does the motor do nothing at all? Check that self.stop() in __init__ now works â€” it calls _set_speed(0), which calls duty_u16.",
         "Is the motor going backward when you call forward()? IN1 and IN2 may be swapped.",
-        "Is speed always 0 or always 65535? Check the _set_speed formula — is percent being used, or a constant?",
-        "Try motor_a.forward(100) in the console — does it work? If so, the class works; check the test lines at the bottom of the file.",
-        "Print self._pwm.duty_u16() after calling forward(50) — it should return approximately 32767.",
+        "Is speed always 0 or always 65535? Check the _set_speed formula â€” is percent being used, or a constant?",
+        "Try motor_a.forward(100) in the console â€” does it work? If so, the class works; check the test lines at the bottom of the file.",
+        "Print self._pwm.duty_u16() after calling forward(50) â€” it should return approximately 32767.",
     ],
 
     "tutor_brief": """
@@ -120,13 +120,13 @@ been given in the conversation history.
 
 TONE
 Be encouraging without being sycophantic. Brief is better than verbose.
-Five method bodies may feel like a lot, but each is two or three lines —
+Five method bodies may feel like a lot, but each is two or three lines â€”
 reassure the student that they already know all the content from Lab 3.
 
 WHAT TO CELEBRATE
 When both test motors run correctly at Save & Run time: acknowledge that the
 student has just written their first hardware driver. MotorDriver is exactly
-the kind of abstraction that real embedded firmware is built from — clean,
+the kind of abstraction that real embedded firmware is built from â€” clean,
 testable, reusable. They can now instantiate four of them for a robot chassis
 without ever thinking about IN1/IN2 again. Point them to Lab 5 where the class
 gets combined with button input to build an interactive controller.

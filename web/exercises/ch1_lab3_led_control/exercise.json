@@ -1,6 +1,6 @@
 ﻿{
-  "id": "ch5_lab1_servo_pwm",
-  "title": "Lab 1: Servo Motors",
+  "id": "ch1_lab3_led_control",
+  "title": "Lab 3: LED Control",
   "clb": false,
   "pages": ["description_p1.md", "description_p2.md"],
   "edit_files": []
