@@ -10,7 +10,7 @@ The Raspberry Pi Pico stores files in its on-board flash memory. You can create,
 
 From the MicroPython console you can see what is on the device:
 
-```python
+```python copy
 import os
 os.listdir('/')
 ```

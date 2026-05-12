@@ -10,7 +10,7 @@ We're not going to write the program in this exercise though, we are going to ty
 
 GPIO stands for **General Purpose Input/Output**. These are pins that a program can control: set them HIGH (3.3 V) to switch something on, or LOW (0 V) to switch it off. The Pico has 26 usable GPIO pins, labelled GP0 to GP28 on the board.
 
-> **Important:** When you use `machine.Pin(28, ...)`, the number 15 refers to **GP28** — the GPIO number — not the physical pin number on the board. GP28 happens to be physical pin 34. We are using it because it is easy to move the LED from the 3.3V supply to this pin. We could use any of the GPIO pins for this.
+> **Important:** When you use `machine.Pin(28, ...)`, the number 28 refers to **GP28** — the GPIO number — not the physical pin number on the board. GP28 happens to be physical pin 34. We are using it because it is easy to move the LED from the 3.3V supply to this pin. We could use any of the GPIO pins for this.
 
 ![Pico pinout diagram](images/pico_pinout.png)
 

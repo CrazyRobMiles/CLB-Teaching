@@ -1,61 +1,47 @@
-# How This Course Works
+# Lab 2: LED Flashing
 
-Before you write any code, it helps to understand how programs are stored and run on the Pico.
+Typing commands one at a time works for testing, but it's not practical for anything that needs to happen repeatedly or at speed. In this lab you'll write your first MicroPython program — a loop that flashes the LED automatically.
 
 ---
 
-## The Pico has a filesystem
+## Programs vs the console
 
-The Raspberry Pi Pico stores files in its on-board flash memory. You can create, read, and delete files just like on a computer — they survive when the power is removed.
+When you type in the console, MicroPython runs each line immediately and then waits. A **program** is a file of code that runs from top to bottom on its own. On the Pico, a file called `main.py` runs automatically every time the board starts up.
 
-From the MicroPython console you can see what is on the device:
+The editor above the console already has a `main.py` skeleton open. You'll fill in the missing lines.
+
+---
+
+## `while True`
 
 ```python
-import os
-os.listdir('/')
+while True:
+    do_something()
 ```
 
-This lists all files in the root directory. On a freshly flashed device you will typically see only `['main.py']`, or an empty list.
+`while True` creates an **infinite loop** — the body repeats forever (or until you interrupt it with Ctrl+C). This is the standard pattern for embedded programs that should run continuously.
 
 ---
 
-## `main.py` is special
-
-When MicroPython starts up — whether from power-on or a soft reset — it looks for a file called `main.py` in the root directory and runs it automatically. No other filename gets this treatment.
-
-This means:
-
-- A file called `blink.py` does **nothing** on its own at power-on
-- A file called `main.py` runs **every time** the device boots
-
----
-
-## How exercises are stored
-
-Each exercise in this course saves its program file with a unique name that matches the exercise — for example, `ch1_lab3_led_flash.py`. This has two benefits:
-
-1. **Your work is preserved.** Each exercise file stays on the device as you progress. You can always go back and run an earlier exercise.
-2. **Exercises don't interfere.** If every exercise wrote to `main.py`, each one would overwrite the previous one.
-
-When you press **Save & Run**, the course tool does two things:
-
-1. Writes your program to the exercise file (e.g., `/ch1_lab3_led_flash.py`)
-2. Writes a one-line `main.py` that runs that file:
+## `time.sleep`
 
 ```python
-exec(open('/ch1_lab3_led_flash.py').read())
+import time
+time.sleep(0.5)
 ```
 
-This means your program also runs at the next power-on — the Pico boots, `main.py` runs, and `main.py` immediately hands control to your exercise file.
+`time.sleep(seconds)` pauses execution for the given number of seconds. You can use decimal values: `0.5` is half a second, `0.1` is a tenth of a second.
 
 ---
 
-## Running an earlier exercise
+## The flashing pattern
 
-If you want to run an exercise file that isn't the current one, type this in the console (replacing the filename as needed):
-
-```python
-exec(open('/ch1_lab3_led_flash.py').read())
+```
+turn LED on
+wait 0.5 s
+turn LED off
+wait 0.5 s
+(repeat forever)
 ```
 
-Or select that exercise in the exercise list and press **Save & Run** again.
+Each pass through the loop takes 1 second, so the LED flashes once per second.
