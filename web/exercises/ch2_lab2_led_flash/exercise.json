@@ -2,7 +2,7 @@
   "id": "ch2_lab2_led_flash",
   "title": "Lab 2: LED Flashing",
   "clb": false,
-  "pages": ["description_p1.md", "description_p2.md"],
+  "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
   "edit_files": [
     {
       "label": "ch2_lab2_led_flash.py",

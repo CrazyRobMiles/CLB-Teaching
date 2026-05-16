@@ -18,6 +18,7 @@ html, html[data-theme="dark"] {
   --red:     #f38ba8;
   --blue:    #89b4fa;
   --yellow:  #f9e2af;
+  --ws-dot:  rgba(108, 112, 134, 0.55);
 }
 
 /* ── Light theme ────────────────────────────────────────────────────── */
@@ -32,6 +33,7 @@ html[data-theme="light"] {
   --red:     #d20f39;
   --blue:    #1e66f5;
   --yellow:  #df8e1d;
+  --ws-dot:  rgba(156, 160, 176, 0.6);
 }
 
 html, body {
@@ -60,7 +62,14 @@ html, body {
   color: var(--blue);
   white-space: nowrap;
   margin-right: 8px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  cursor: pointer;
 }
+#brand:hover { text-decoration: underline; }
 
 #device-controls, #exercise-controls, #run-controls {
   display: flex;
@@ -317,27 +326,48 @@ html, body {
 .landing-hero { margin-bottom: 20px; }
 .landing-hero p { color: var(--text); line-height: 1.5; margin-top: 6px; font-size: 0.95em; }
 
-.landing-card {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  padding: 10px 12px;
+.landing-chapter-heading {
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--yellow);
+  margin: 18px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.landing-chapter-heading:first-child { margin-top: 0; }
+
+.landing-exercise-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-left: 3px solid var(--blue);
   border-radius: 4px;
-  margin-bottom: 8px;
-  background: var(--surface);
+  padding: 7px 12px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  transition: border-left-color 0.12s, background 0.12s;
 }
-.landing-card-num {
-  font-size: 1.3em;
-  font-weight: 700;
-  color: var(--blue);
-  min-width: 1.4em;
-  line-height: 1.2;
-  flex-shrink: 0;
+.landing-exercise-item:hover {
+  border-left-color: var(--green);
+  background: var(--surface2);
 }
-.landing-card-body strong { color: var(--text); }
-.landing-card-body p { margin: 3px 0 0; color: var(--dim); font-size: 0.88em; }
+.landing-exercise-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.9em;
+}
+.landing-exercise-item p {
+  margin: 2px 0 0;
+  color: var(--dim);
+  font-size: 0.82em;
+  line-height: 1.4;
+}
 
 .landing-ui-item {
   display: flex;
@@ -730,4 +760,62 @@ html, body {
   flex: 1;
   color: var(--dim);
   font-size: 11px;
+}
+
+/* ── Whitespace indicators in editor ───────────────────────────────── */
+.cm-ws-space {
+  background-image: radial-gradient(circle, var(--ws-dot) 1.5px, transparent 1.5px);
+  background-repeat: no-repeat;
+  background-position: 50% 55%;
+  background-size: 3px 3px;
+}
+.cm-ws-tab {
+  background-image: linear-gradient(90deg, var(--ws-dot), var(--ws-dot));
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  background-size: calc(100% - 4px) 1px;
+}
+
+/* ── Image viewer (in-panel) ────────────────────────────────────────── */
+#image-viewer {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+#image-viewer.active { display: flex; }
+
+#image-viewer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+#image-viewer-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#image-viewer-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 16px;
+  cursor: zoom-out;
+}
+#image-viewer-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
 }

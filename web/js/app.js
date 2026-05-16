@@ -17,6 +17,7 @@ export class App {
     this._nextDeviceTabId = 0;
     this._fileBrowserPath = '/';
     this._fileBrowserOpen = false;
+    this._imageViewerOpen = false;
     this._activeEditorTab = null;
     this.settingsEditor = null;
     this.currentExercise = null;
@@ -31,6 +32,7 @@ export class App {
   }
 
   async init() {
+    this._homeDescriptionHTML = document.getElementById('description-content').innerHTML;
     this._applyTheme(this._theme);
     this._initMarked();
     this._initSettingsEditor();
@@ -153,6 +155,7 @@ export class App {
       });
       editor.setSize('100%', '100%');
       editor.setValue(startCode);
+      this._addWhitespaceOverlay(editor);
 
       const entry = { tabId, spec, startCode, solutionCode, editor, element: pane, tabBtn: tab, loadedContent: startCode };
       this.fileEditors.push(entry);
@@ -214,7 +217,14 @@ export class App {
       tab.addEventListener('click', () => this._switchTab(tab.dataset.tab));
     });
     document.getElementById('btn-page-prev').addEventListener('click', () => this._renderPage(this._pageIndex - 1));
-    document.getElementById('btn-page-next').addEventListener('click', () => this._renderPage(this._pageIndex + 1));
+    document.getElementById('btn-page-next').addEventListener('click', () => {
+      const btn = document.getElementById('btn-page-next');
+      if (btn.dataset.nextExercise) {
+        this._navigateToExercise(btn.dataset.nextExercise);
+      } else {
+        this._renderPage(this._pageIndex + 1);
+      }
+    });
 
     document.querySelector('.editor-tab-static').addEventListener('click', () =>
       this._switchEditorTab('settings'));
@@ -247,6 +257,10 @@ export class App {
       });
     });
 
+    document.getElementById('brand').addEventListener('click', () => this._goHome());
+    document.getElementById('btn-image-viewer-close').addEventListener('click', () => this._closeImageViewer());
+    document.getElementById('image-viewer-body').addEventListener('click', () => this._closeImageViewer());
+
     this._initPanelResize();
     this._initConsoleResize();
 
@@ -275,9 +289,42 @@ export class App {
         (group ?? sel).appendChild(opt);
       });
       sel.disabled = false;
+      this._populateLandingPage(list);
     } catch (e) {
       console.error('Could not load exercise list:', e);
     }
+  }
+
+  _populateLandingPage(list) {
+    const container = document.getElementById('landing-exercise-list');
+    if (!container) return;
+    let currentChapter = null;
+
+    list.forEach(ex => {
+      if (ex.chapter !== undefined && ex.chapter !== currentChapter) {
+        currentChapter = ex.chapter;
+        const h = document.createElement('h3');
+        h.className = 'landing-chapter-heading';
+        h.textContent = ex.chapter_title ?? `Chapter ${ex.chapter}`;
+        container.appendChild(h);
+      }
+
+      const btn = document.createElement('button');
+      btn.className = 'landing-exercise-item';
+      btn.addEventListener('click', () => this._navigateToExercise(ex.id));
+
+      const title = document.createElement('strong');
+      title.textContent = ex.title;
+      btn.appendChild(title);
+
+      if (ex.desc) {
+        const desc = document.createElement('p');
+        desc.textContent = ex.desc;
+        btn.appendChild(desc);
+      }
+
+      container.appendChild(btn);
+    });
   }
 
   // ── Event handlers ────────────────────────────────────────────────
@@ -453,10 +500,14 @@ export class App {
   // ── Editor tab switching ──────────────────────────────────────────
 
   _switchEditorTab(name) {
-    // Close the file browser if it was open.
     if (this._fileBrowserOpen) {
       this._fileBrowserOpen = false;
       document.getElementById('file-browser').classList.remove('active');
+    }
+    if (this._imageViewerOpen) {
+      this._imageViewerOpen = false;
+      document.getElementById('image-viewer').classList.remove('active');
+      document.getElementById('image-viewer-img').src = '';
     }
     this._activeEditorTab = name;
 
@@ -713,6 +764,7 @@ export class App {
     });
     editor.setSize('100%', '100%');
     editor.setValue(content);
+    if (this._modeForPath(path) === 'python') this._addWhitespaceOverlay(editor);
 
     const entry = { tabId, path, editor, element: pane, tabBtn: tab, loadedContent: content };
     this._deviceFileEditors.push(entry);
@@ -874,6 +926,7 @@ export class App {
     });
     editor.setSize('100%', '100%');
     editor.setValue(entry.solutionCode);
+    this._addWhitespaceOverlay(editor);
 
     const solutionEntry = { tabId, label, editor, element: pane, tabBtn: tab };
     this._solutionTabs.push(solutionEntry);
@@ -1107,15 +1160,28 @@ export class App {
 
     nav.classList.remove('hidden');
 
-    const multiPage = total > 1;
+    const multiPage  = total > 1;
+    const isLastPage = index === total - 1;
+    const nextExId   = this._getNextExerciseId();
+
     prev.classList.toggle('hidden', !multiPage);
-    next.classList.toggle('hidden', !multiPage);
     indicator.classList.toggle('hidden', !multiPage);
 
     if (multiPage) {
       indicator.textContent = `${index + 1} / ${total}`;
       prev.disabled = index === 0;
-      next.disabled = index === total - 1;
+    }
+
+    if (isLastPage && nextExId) {
+      next.classList.remove('hidden');
+      next.disabled = false;
+      next.textContent = 'Next Exercise →';
+      next.dataset.nextExercise = nextExId;
+    } else {
+      next.classList.toggle('hidden', !multiPage);
+      next.textContent = 'Next →';
+      next.disabled = isLastPage;
+      delete next.dataset.nextExercise;
     }
 
     document.getElementById('description-content').scrollTop = 0;
@@ -1134,7 +1200,39 @@ export class App {
         img.style.height = 'auto';
       });
     }
-    document.getElementById('description-content').innerHTML = scratch.innerHTML;
+    const content = document.getElementById('description-content');
+    content.innerHTML = scratch.innerHTML;
+    content.querySelectorAll('img').forEach(img => {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => this._showImageViewer(img.src));
+    });
+  }
+
+  _showImageViewer(src) {
+    if (this._fileBrowserOpen) {
+      this._fileBrowserOpen = false;
+      document.getElementById('file-browser').classList.remove('active');
+    }
+    this._imageViewerOpen = true;
+    const filename = src.split('/').pop().split('?')[0];
+    document.getElementById('image-viewer-title').textContent = filename;
+    document.getElementById('image-viewer-img').src = src;
+    document.getElementById('image-viewer-img').alt = filename;
+    document.querySelectorAll('.editor-tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('image-viewer').classList.add('active');
+  }
+
+  _closeImageViewer() {
+    if (!this._imageViewerOpen) return;
+    this._imageViewerOpen = false;
+    document.getElementById('image-viewer').classList.remove('active');
+    document.getElementById('image-viewer-img').src = '';
+    if (this._activeEditorTab) {
+      this._switchEditorTab(this._activeEditorTab);
+    } else {
+      document.getElementById('editor-no-exercise').classList.add('active');
+    }
   }
 
   // ── Hints / AI tutor ─────────────────────────────────────────────
@@ -1319,5 +1417,57 @@ export class App {
       t.classList.toggle('active', t.dataset.tab === name));
     document.querySelectorAll('.tab-content').forEach(c =>
       c.classList.toggle('active', c.id === `tab-${name}`));
+  }
+
+  // ── Home navigation ───────────────────────────────────────────────
+
+  _goHome() {
+    document.getElementById('exercise-select').value = '';
+    this.currentExercise = null;
+    this._pages = [];
+    this._pageIndex = 0;
+
+    document.getElementById('description-content').innerHTML = this._homeDescriptionHTML;
+    document.getElementById('description-nav').classList.add('hidden');
+
+    this._clearFileEditors();
+    document.querySelectorAll('.editor-tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('editor-no-exercise').classList.add('active');
+
+    this._hintMessages = [];
+    document.getElementById('hints-messages').innerHTML = '';
+    this._updateHintsReadyState();
+    document.getElementById('btn-show-solution').disabled = true;
+    this._updateRunControls();
+  }
+
+  // ── Exercise navigation ───────────────────────────────────────────
+
+  _getNextExerciseId() {
+    if (!this.currentExercise) return null;
+    const sel = document.getElementById('exercise-select');
+    const options = [...sel.options].filter(o => o.value);
+    const idx = options.findIndex(o => o.value === this.currentExercise.meta.id);
+    return idx >= 0 && idx < options.length - 1 ? options[idx + 1].value : null;
+  }
+
+  async _navigateToExercise(id) {
+    document.getElementById('exercise-select').value = id;
+    await this._onExerciseSelected(id);
+  }
+
+  // ── Whitespace overlay ────────────────────────────────────────────
+
+  _addWhitespaceOverlay(editor) {
+    editor.addOverlay({
+      token(stream) {
+        const ch = stream.peek();
+        if (ch === ' ')  { stream.next(); return 'ws-space'; }
+        if (ch === '\t') { stream.next(); return 'ws-tab'; }
+        while (stream.next() != null && stream.peek() !== ' ' && stream.peek() !== '\t') {}
+        return null;
+      }
+    });
   }
 }

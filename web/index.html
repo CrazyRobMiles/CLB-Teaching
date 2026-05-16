@@ -18,7 +18,7 @@
 
 <!-- ── TOP BAR ─────────────────────────────────────────────────────── -->
 <header id="topbar">
-  <div id="brand">Connected Little Box</div>
+  <button id="brand">Connected Little Box</button>
 
   <div id="device-controls">
     <button id="btn-connect" class="btn btn-primary">Connect Device</button>
@@ -190,6 +190,17 @@
         <div id="file-browser-list"></div>
       </div>
 
+      <!-- image viewer (shown in place of tab content when viewing an image) -->
+      <div id="image-viewer">
+        <div id="image-viewer-header">
+          <span id="image-viewer-title" class="dim"></span>
+          <button id="btn-image-viewer-close" class="btn btn-tiny">✕</button>
+        </div>
+        <div id="image-viewer-body">
+          <img id="image-viewer-img" src="" alt="">
+        </div>
+      </div>
+
       <!-- exercise/device file editor panes injected here -->
       <div id="editor-no-exercise" class="editor-tab-content active">
         <div class="landing-overview">
@@ -199,44 +210,9 @@
           </div>
 
           <h2>Course overview</h2>
+          <div id="landing-exercise-list"></div>
 
-          <div class="landing-card">
-            <span class="landing-card-num">1</span>
-            <div class="landing-card-body">
-              <strong>Getting Started with MicroPython</strong>
-              <p>Install firmware, write your first program, and learn the basics of Python on the Pico</p>
-            </div>
-          </div>
-          <div class="landing-card">
-            <span class="landing-card-num">2</span>
-            <div class="landing-card-body">
-              <strong>Colour &amp; Light</strong>
-              <p>Drive NeoPixel LEDs, mix RGB colours, and create animations</p>
-            </div>
-          </div>
-          <div class="landing-card">
-            <span class="landing-card-num">3</span>
-            <div class="landing-card-body">
-              <strong>DC Motors</strong>
-              <p>Control motor speed and direction with PWM and an H-bridge driver</p>
-            </div>
-          </div>
-          <div class="landing-card">
-            <span class="landing-card-num">4</span>
-            <div class="landing-card-body">
-              <strong>Servo Motors</strong>
-              <p>Position servos precisely using I²C and the PCA9685 PWM controller</p>
-            </div>
-          </div>
-          <div class="landing-card">
-            <span class="landing-card-num">5</span>
-            <div class="landing-card-body">
-              <strong>Connected Little Box</strong>
-              <p>Bring it all together — program the full CLB to respond to sensors and commands</p>
-            </div>
-          </div>
-
-          <p class="landing-start">Select an exercise from the dropdown above to get started →</p>
+          <p class="landing-start">Click any lab above or use the dropdown to get started →</p>
         </div>
 
         <p class="landing-console-msg placeholder">This lab has no code to write — follow the instructions in the Exercise tab.</p>
