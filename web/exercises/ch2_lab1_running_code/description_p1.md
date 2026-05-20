@@ -42,7 +42,7 @@ When you press **Save & Run**, the course tool does two things:
 1. Writes your program to the exercise file (e.g., `/ch1_lab3_led_flash.py`)
 2. Writes a one-line `main.py` that runs that file:
 
-```python
+```python copy
 exec(open('/ch1_lab3_led_flash.py').read())
 ```
 
@@ -54,7 +54,7 @@ This means your program also runs at the next power-on — the Pico boots, `main
 
 If you want to run an exercise file that isn't the current one, type this in the console (replacing the filename as needed):
 
-```python
+```python copy
 exec(open('/ch1_lab3_led_flash.py').read())
 ```
 

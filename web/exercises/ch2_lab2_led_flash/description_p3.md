@@ -8,7 +8,7 @@ Python uses indentation — the spaces at the start of each line — to define w
 
 Look at the loop you just wrote:
 
-```python
+```python copy
 while True:
     led.on()
     time.sleep(0.5)

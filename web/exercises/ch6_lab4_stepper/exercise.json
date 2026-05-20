@@ -1,0 +1,24 @@
+{
+  "id": "ch6_lab4_stepper",
+  "title": "Stepper Motors",
+  "clb_min_version": "1.0.0",
+  "hardware": ["28byj48_stepper", "uln2003"],
+  "pages": [
+    "description_p1.md",
+    "description_p2.md",
+    "description_p3.md",
+    "description_p4.md"
+  ],
+  "edit_files": [],
+  "circuit_description": "Two 28BYJ-48 steppers on ULN2003 driver boards. Left motor: GPIO 12–15. Right motor: GPIO 8–11. Motor VCC from VBUS (5 V).",
+  "default_settings": {
+    "stepper": {
+      "enabled": true,
+      "wheel_spacing_mm": 110,
+      "motors": [
+        {"pins": [15, 14, 13, 12], "wheel_diameter_mm": 69},
+        {"pins": [8, 9, 10, 11], "wheel_diameter_mm": 69}
+      ]
+    }
+  }
+}

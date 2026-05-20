@@ -35,6 +35,6 @@ Add a push button to your breadboard:
 
 The LED from the previous labs can stay connected.
 
-![Switch circuit](images/lab4_circuit.jpg)
+![Switch circuit](images/lab3_circuit.jpg)
 
 *Photo: The breadboard from Lab 2 with a push button added. One leg of the button connects to GP14 (physical pin 19); the other connects to GND.*

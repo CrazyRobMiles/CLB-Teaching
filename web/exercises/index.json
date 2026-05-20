@@ -173,5 +173,19 @@
     "id": "ch6_lab3_encoder_brightness",
     "title": "Lab 3: Encoder Brightness",
     "desc": "Use a rotary encoder to control NeoPixel brightness"
+  },
+  {
+    "chapter": 6,
+    "chapter_title": "Chapter 6: Connected Little Boxes",
+    "id": "ch6_lab4_stepper",
+    "title": "Lab 4: Stepper Motors",
+    "desc": "Wire 28BYJ-48 steppers via ULN2003 boards and drive a two-wheel robot using the CLB stepper manager"
+  },
+  {
+    "chapter": 6,
+    "chapter_title": "Chapter 6: Connected Little Boxes",
+    "id": "ch6_lab5_hcsr04",
+    "title": "Lab 5: Distance Sensor",
+    "desc": "Wire an HC-SR04 ultrasonic sensor and use the CLB hcsr04 manager to take distance readings and publish proximity events"
   }
 ]

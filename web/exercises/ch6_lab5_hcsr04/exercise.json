@@ -1,0 +1,23 @@
+{
+  "id": "ch6_lab5_hcsr04",
+  "title": "Distance Sensor",
+  "clb_min_version": "1.0.0",
+  "hardware": ["hcsr04"],
+  "pages": [
+    "description_p1.md",
+    "description_p2.md",
+    "description_p3.md",
+    "description_p4.md"
+  ],
+  "edit_files": [],
+  "circuit_description": "HC-SR04 ultrasonic sensor. TRIG on GPIO 5 (direct). ECHO on GPIO 18 via voltage divider: 1 kΩ from ECHO to GPIO, 2 kΩ from GPIO to GND.",
+  "default_settings": {
+    "hcsr04": {
+      "enabled": true,
+      "trigger_pin": 5,
+      "echo_pin": 18,
+      "interval_ms": 500,
+      "threshold_mm": 300
+    }
+  }
+}
