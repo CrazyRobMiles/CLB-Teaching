@@ -52,18 +52,23 @@ export class FirmwareInstaller {
     onProgress(0, 'Fetching file list…');
     const files = await this.fetchFileList();
 
+    // Download all files from GitHub in parallel while device setup runs.
+    onProgress(5, 'Downloading firmware files…');
+    const fetched = await Promise.all(
+      files.map(async ({ devicePath, rawUrl }) => {
+        const res = await fetch(rawUrl);
+        if (!res.ok) throw new Error(`Failed to fetch ${rawUrl}: ${res.status}`);
+        return { devicePath, content: await res.text() };
+      })
+    );
+
     // Ensure required directories exist on the device.
     await this._ensureDirs(files.map(f => f.devicePath));
 
-    for (let i = 0; i < files.length; i++) {
-      const { devicePath, rawUrl } = files[i];
-      const pct = Math.round((i / files.length) * 100);
+    for (let i = 0; i < fetched.length; i++) {
+      const { devicePath, content } = fetched[i];
+      const pct = Math.round(10 + (i / fetched.length) * 88);
       onProgress(pct, `Writing ${devicePath}`);
-
-      const res = await fetch(rawUrl);
-      if (!res.ok) throw new Error(`Failed to fetch ${rawUrl}: ${res.status}`);
-      const content = await res.text();
-
       await this.repl.writeFile(devicePath, content);
     }
 

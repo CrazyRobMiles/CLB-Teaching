@@ -3,7 +3,6 @@
   "version": "main",
   "firmware_path": "firmware",
   "exclude": [
-    "settings.json",
-    "app_manifest.py"
+    "settings.json"
   ]
 }

@@ -50,7 +50,7 @@ export class MicroPythonREPL {
 
   async disconnect() {
     this._reading = false;
-    try { this.reader?.cancel(); } catch (_) {}
+    try { await this.reader?.cancel(); } catch (_) {}  // must await — releases readable lock
     try { this.writer?.releaseLock(); } catch (_) {}
     try { await this.port?.close(); } catch (_) {}
     this.port = this.reader = this.writer = null;
@@ -107,22 +107,17 @@ export class MicroPythonREPL {
   }
 
   /**
-   * Write content to a file on the device, chunked to avoid RAM pressure.
-   * Uses open('w') for the first chunk, open('a') for subsequent ones.
+   * Write content to a file on the device in a single raw-REPL round trip.
+   * All chunks are sent as one Python script so we only pay the enter/exit
+   * raw overhead once per file instead of once per 256-byte chunk.
    */
   async writeFile(path, content) {
     const chunks = this._chunk(content, CHUNK_SIZE);
     const escapedPath = path.replace(/'/g, "\\'");
-
-    // First chunk: create / overwrite.
-    const first = this._pyStr(chunks[0] ?? '');
-    await this.execute(`_f=open('${escapedPath}','w')\n_f.write(${first})\n_f.close()`);
-
-    // Remaining chunks: append.
-    for (let i = 1; i < chunks.length; i++) {
-      const chunk = this._pyStr(chunks[i]);
-      await this.execute(`_f=open('${escapedPath}','a')\n_f.write(${chunk})\n_f.close()`);
-    }
+    const lines = [`_f=open('${escapedPath}','w')`];
+    for (const chunk of chunks) lines.push(`_f.write(${this._pyStr(chunk)})`);
+    lines.push(`_f.close()`);
+    await this.execute(lines.join('\n'));
   }
 
   /**
