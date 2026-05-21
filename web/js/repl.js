@@ -198,7 +198,7 @@ export class MicroPythonREPL {
   async _readRawResult() {
     // Raw REPL response format after Ctrl-D execution:
     //   "OK" + stdout + \x04 + stderr + \x04
-    await this._waitFor('OK', 2000);
+    await this._waitFor('OK', EXEC_TIMEOUT);
     this._rxBuf = this._rxBuf.slice(this._rxBuf.indexOf('OK') + 2);
 
     const stdout = await this._readUntil(CTRL_D, EXEC_TIMEOUT);
