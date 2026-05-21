@@ -85,6 +85,19 @@ html, body {
   gap: 4px;
 }
 
+#topbar .btn {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+  padding: 5px 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+#topbar .btn:hover:not(:disabled) { opacity: 0.85; color: #fff; border-color: var(--blue); }
+#topbar #btn-feedback { background: var(--red); border-color: var(--red); text-decoration: none; }
+#topbar #btn-feedback:hover { opacity: 0.85; border-color: var(--red); }
+
 #exercise-select {
   background: var(--surface2);
   color: var(--text);
@@ -406,9 +419,6 @@ html, body {
 #editor-no-exercise h1 { font-size: 1.25em; font-weight: 700; color: var(--blue); margin: 0 0 8px; }
 #editor-no-exercise h2 { font-size: 1em; font-weight: 600; color: var(--yellow); margin: 20px 0 10px; }
 
-.landing-console-msg { display: none; }
-#editor-no-exercise.console-mode .landing-overview { display: none; }
-#editor-no-exercise.console-mode .landing-console-msg { display: block; }
 
 /* ── Right panel ────────────────────────────────────────────────────── */
 #panel-right {

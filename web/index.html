@@ -18,28 +18,32 @@
 
 <!-- ── TOP BAR ─────────────────────────────────────────────────────── -->
 <header id="topbar">
-  <button id="brand">Connected Little Box</button>
+  <button id="brand" title="Go to the home page">Connected Little Box</button>
 
   <div id="device-controls">
-    <button id="btn-connect" class="btn btn-primary">Connect Device</button>
+    <button id="btn-connect" class="btn btn-primary" title="Connect to a Raspberry Pi Pico over USB (requires Chrome or Edge)">Connect Device</button>
     <span id="device-status" class="status-badge status-disconnected">Disconnected</span>
   </div>
 
   <div id="exercise-controls">
-    <select id="exercise-select" disabled>
+    <select id="exercise-select" disabled title="Choose an exercise to load its instructions and starter code">
       <option value="">— select an exercise —</option>
     </select>
   </div>
 
   <div id="run-controls">
-    <button id="btn-save" class="btn btn-primary" disabled>Save</button>
-    <button id="btn-run" class="btn btn-success" disabled>Run</button>
-    <button id="btn-stop" class="btn btn-danger" disabled>Stop</button>
-    <button id="btn-restart" class="btn btn-danger" disabled>Restart</button>
-    <button id="btn-start-clb" class="btn btn-primary" disabled>Start Connected Little Box</button>
-    <button id="btn-show-solution" class="btn btn-ghost" disabled>Show Solution</button>
-    <button id="btn-install-firmware" class="btn btn-ghost" disabled>Install Connected Little Boxes</button>
+    <button id="btn-save" class="btn btn-primary" disabled title="Save all open files to the device without restarting">Save</button>
+    <button id="btn-run" class="btn btn-success" disabled title="Save all open files then run the current program">Run</button>
+    <button id="btn-stop" class="btn btn-danger" disabled title="Interrupt the currently running program">Stop</button>
+    <button id="btn-restart" class="btn btn-danger" disabled title="Soft-reset the device, re-running boot.py and main.py">Restart</button>
+    <button id="btn-start-clb" class="btn btn-primary" disabled title="Run the Connected Little Box main program (clb.py)">Start Connected Little Box</button>
+    <button id="btn-show-solution" class="btn btn-ghost" disabled title="Show the model solution for the current exercise">Show Solution</button>
+    <button id="btn-install-firmware" class="btn btn-ghost" disabled title="Install the Connected Little Box firmware onto the device">Install Connected Little Boxes</button>
+    <button id="btn-browse-files" class="btn btn-ghost" disabled title="Browse the device filesystem and open a file for editing">Open Device File</button>
+    <button id="btn-new-file" class="btn btn-ghost" disabled title="Create a new empty file on the device and open it for editing">New Device File</button>
   </div>
+
+  <a id="btn-feedback" href="https://github.com/CrazyRobMiles/CLB-Teaching/issues" target="_blank" rel="noopener" class="btn" title="Report a problem or suggest an improvement on GitHub">Feedback</a>
 
   <div id="font-controls">
     <button id="btn-font-decrease" class="btn btn-tiny" title="Decrease font size (Ctrl+-)">A−</button>
@@ -176,8 +180,6 @@
       <div id="editor-tabs">
         <!-- exercise/device file tabs dynamically inserted before #editor-tabs-end -->
         <div id="editor-tabs-end">
-          <button id="btn-browse-files" class="btn btn-tiny" disabled title="Browse device files">Files</button>
-          <button id="btn-new-file" class="btn btn-tiny" disabled title="Create new file on device">New</button>
           <button class="editor-tab editor-tab-static hidden" data-editor-tab="settings">settings.json</button>
         </div>
       </div>
@@ -217,7 +219,6 @@
           <p class="landing-start">Click any lab above or use the dropdown to get started →</p>
         </div>
 
-        <p class="landing-console-msg placeholder">This lab has no code to write — follow the instructions in the Exercise tab.</p>
       </div>
 
       <div id="editor-tab-settings" class="editor-tab-content">

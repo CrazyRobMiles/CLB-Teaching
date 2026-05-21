@@ -117,27 +117,6 @@ export class App {
       pane.id = `editor-tab-${tabId}`;
       pane.className = 'editor-tab-content' + (isFirst ? ' active' : '');
 
-      const toolbar = document.createElement('div');
-      toolbar.className = 'editor-file-toolbar';
-
-      const pathSpan = document.createElement('span');
-      pathSpan.className = 'dim';
-      pathSpan.textContent = spec.device_path;
-      toolbar.appendChild(pathSpan);
-
-      const statusSpan = document.createElement('span');
-      statusSpan.className = 'device-file-status';
-      toolbar.appendChild(statusSpan);
-
-      const saveBtn = document.createElement('button');
-      saveBtn.className = 'btn btn-tiny';
-      saveBtn.textContent = 'Save';
-      saveBtn.disabled = !this.repl.connected;
-      saveBtn.addEventListener('click', () => this._saveExerciseFile(tabId));
-      toolbar.appendChild(saveBtn);
-
-      pane.appendChild(toolbar);
-
       const textarea = document.createElement('textarea');
       pane.appendChild(textarea);
 
@@ -167,8 +146,14 @@ export class App {
       document.querySelector('.editor-tab-static').classList.remove('active');
       this._activeEditorTab = this.fileEditors[0].tabId;
       this.fileEditors[0].editor.refresh();
-    } else {
-      noExercise.classList.add('active', 'console-mode');
+    } else if (this._deviceFileEditors.length > 0) {
+      noExercise.classList.remove('active');
+      const current = this._deviceFileEditors.find(e => e.tabId === this._activeEditorTab);
+      if (current) {
+        current.editor.refresh();
+      } else {
+        this._switchEditorTab(this._deviceFileEditors[0].tabId);
+      }
     }
   }
 
@@ -448,14 +433,16 @@ export class App {
     try {
       await this._doSaveAll();
       let path = null;
-      if (this.fileEditors.length > 0) {
-        const activeEx = this.fileEditors.find(e => e.tabId === this._activeEditorTab)
-                      ?? this.fileEditors[0];
+      const activeEx  = this.fileEditors.find(e => e.tabId === this._activeEditorTab);
+      const activeDev = this._deviceFileEditors.find(e => e.tabId === this._activeEditorTab);
+      if (activeEx) {
         path = activeEx.spec.device_path;
-      } else {
-        const active = this._deviceFileEditors.find(e => e.tabId === this._activeEditorTab)
-                    ?? this._deviceFileEditors[0];
-        if (active) path = active.path;
+      } else if (activeDev) {
+        path = activeDev.path;
+      } else if (this.fileEditors.length > 0) {
+        path = this.fileEditors[0].spec.device_path;
+      } else if (this._deviceFileEditors.length > 0) {
+        path = this._deviceFileEditors[0].path;
       }
       if (path) {
         await this.repl.interrupt();
@@ -766,32 +753,6 @@ export class App {
     pane.id = `editor-tab-${tabId}`;
     pane.className = 'editor-tab-content';
 
-    const toolbar = document.createElement('div');
-    toolbar.className = 'editor-file-toolbar';
-
-    const pathSpan = document.createElement('span');
-    pathSpan.className = 'dim';
-    pathSpan.textContent = path;
-    toolbar.appendChild(pathSpan);
-
-    const statusSpan = document.createElement('span');
-    statusSpan.className = 'device-file-status';
-    toolbar.appendChild(statusSpan);
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'btn btn-tiny';
-    saveBtn.textContent = 'Save';
-    saveBtn.addEventListener('click', () => this._saveDeviceFile(tabId));
-    toolbar.appendChild(saveBtn);
-
-    const saveAsBtn = document.createElement('button');
-    saveAsBtn.className = 'btn btn-tiny';
-    saveAsBtn.textContent = 'Save As';
-    saveAsBtn.addEventListener('click', () => this._saveDeviceFileAs(tabId));
-    toolbar.appendChild(saveAsBtn);
-
-    pane.appendChild(toolbar);
-
     const textarea = document.createElement('textarea');
     pane.appendChild(textarea);
 
@@ -818,6 +779,7 @@ export class App {
 
     this._closeFileBrowser();
     this._switchEditorTab(tabId);
+    this._updateRunControls();
   }
 
   _closeDeviceTab(tabId) {
@@ -848,21 +810,13 @@ export class App {
     const entry = this._deviceFileEditors.find(e => e.tabId === tabId);
     if (!entry) return;
 
-    const statusSpan = entry.element.querySelector('.device-file-status');
-    const saveBtn    = entry.element.querySelector('.btn');
-    saveBtn.disabled = true;
-    statusSpan.textContent = 'Saving…';
-
     try {
       await this.repl.writeFile(entry.path, entry.editor.getValue());
       entry.loadedContent = entry.editor.getValue();
       this._updateDeviceTabLabel(entry);
-      statusSpan.textContent = 'Saved';
-      setTimeout(() => { statusSpan.textContent = ''; }, 2000);
     } catch (e) {
-      statusSpan.textContent = `Error: ${e.message}`;
-    } finally {
-      saveBtn.disabled = false;
+      this._consoleAppend(`\nSave failed (${entry.path}): ${e.message}\n`);
+      throw e;
     }
   }
 
@@ -966,21 +920,6 @@ export class App {
     pane.id = `editor-tab-${tabId}`;
     pane.className = 'editor-tab-content';
 
-    const toolbar = document.createElement('div');
-    toolbar.className = 'editor-file-toolbar';
-
-    const pathSpan = document.createElement('span');
-    pathSpan.className = 'dim';
-    pathSpan.textContent = label;
-    toolbar.appendChild(pathSpan);
-
-    const roSpan = document.createElement('span');
-    roSpan.className = 'device-file-status';
-    roSpan.textContent = 'read-only';
-    toolbar.appendChild(roSpan);
-
-    pane.appendChild(toolbar);
-
     const textarea = document.createElement('textarea');
     pane.appendChild(textarea);
 
@@ -1029,22 +968,13 @@ export class App {
   async _saveExerciseFile(tabId) {
     const entry = this.fileEditors.find(e => e.tabId === tabId);
     if (!entry || !this.repl.connected) return;
-
-    const statusSpan = entry.element.querySelector('.device-file-status');
-    const saveBtn    = entry.element.querySelector('.btn');
-    saveBtn.disabled = true;
-    statusSpan.textContent = 'Saving…';
-
     try {
       await this.repl.writeFile(entry.spec.device_path, entry.editor.getValue());
       entry.loadedContent = entry.editor.getValue();
       this._updateExerciseTabLabel(entry);
-      statusSpan.textContent = 'Saved';
-      setTimeout(() => { statusSpan.textContent = ''; }, 2000);
     } catch (e) {
-      statusSpan.textContent = `Error: ${e.message}`;
-    } finally {
-      saveBtn.disabled = false;
+      this._consoleAppend(`\nSave failed (${entry.spec.device_path}): ${e.message}\n`);
+      throw e;
     }
   }
 
@@ -1176,10 +1106,6 @@ export class App {
     document.getElementById('btn-browse-files').disabled = !connected;
     document.getElementById('btn-new-file').disabled = !connected;
     document.getElementById('btn-start-clb').disabled = !connected;
-    this.fileEditors.forEach(entry => {
-      const saveBtn = entry.element?.querySelector('.btn');
-      if (saveBtn) saveBtn.disabled = !connected;
-    });
 
     if (!connected) {
       this._closeFileBrowser();

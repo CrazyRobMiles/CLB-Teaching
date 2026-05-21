@@ -107,17 +107,29 @@ export class MicroPythonREPL {
   }
 
   /**
-   * Write content to a file on the device in a single raw-REPL round trip.
-   * All chunks are sent as one Python script so we only pay the enter/exit
-   * raw overhead once per file instead of once per 256-byte chunk.
+   * Write content to a file on the device.
+   * Enters raw REPL once, keeps the file handle open across all chunk writes,
+   * then exits — so we pay the enter/exit overhead once per file and each
+   * individual send stays small (no large script compilation on the device).
    */
   async writeFile(path, content) {
     const chunks = this._chunk(content, CHUNK_SIZE);
     const escapedPath = path.replace(/'/g, "\\'");
-    const lines = [`_f=open('${escapedPath}','w')`];
-    for (const chunk of chunks) lines.push(`_f.write(${this._pyStr(chunk)})`);
-    lines.push(`_f.close()`);
-    await this.execute(lines.join('\n'));
+    await this._enterRaw();
+    try {
+      await this._execRaw(`_f=open('${escapedPath}','w')`);
+      for (const chunk of chunks) await this._execRaw(`_f.write(${this._pyStr(chunk)})`);
+      await this._execRaw(`_f.close()`);
+    } finally {
+      await this._exitRaw();
+    }
+  }
+
+  // Execute one statement in an already-open raw REPL session.
+  async _execRaw(code) {
+    await this._sendRaw(code + CTRL_D);
+    const { stderr } = await this._readRawResult();
+    if (stderr) throw new Error(stderr.trim());
   }
 
   /**
@@ -250,6 +262,7 @@ export class MicroPythonREPL {
   async _waitFor(pattern, timeout) {
     const deadline = Date.now() + timeout;
     while (!this._rxBuf.includes(pattern)) {
+      if (!this.port) throw new Error('Disconnected');
       if (Date.now() > deadline) throw new Error(`Timeout waiting for: ${JSON.stringify(pattern)}`);
       await this._sleep(20);
     }
@@ -264,6 +277,7 @@ export class MicroPythonREPL {
         this._rxBuf = this._rxBuf.slice(idx + terminator.length);
         return result;
       }
+      if (!this.port) throw new Error('Disconnected');
       if (Date.now() > deadline) throw new Error(`Timeout waiting for terminator`);
       await this._sleep(20);
     }
@@ -272,6 +286,7 @@ export class MicroPythonREPL {
   // ── Low-level send ────────────────────────────────────────────────
 
   async _sendRaw(text) {
+    if (!this.writer) return;
     const encoded = new TextEncoder().encode(text);
     await this.writer.write(encoded);
   }
