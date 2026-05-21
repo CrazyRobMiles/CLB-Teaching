@@ -6,7 +6,7 @@ The skeleton has `lerp_colour`, `fill`, the ANIMATIONS registry, and the main lo
 
 ## fade_loop
 
-```python
+```python copy
 def fade_loop(colours, steps=60):
     n = len(colours)
     pair = 0
@@ -25,7 +25,7 @@ The `pair` and `step` variables track where in the fade sequence we are. `step` 
 
 ## solid_pulse
 
-```python
+```python copy
 def solid_pulse(colour, steps=30):
     step = 0
     direction = 1

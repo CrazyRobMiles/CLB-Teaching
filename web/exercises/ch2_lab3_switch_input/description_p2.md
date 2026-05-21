@@ -6,7 +6,7 @@ Type these commands in the **Console** panel.
 
 ## Create an input pin with pull-up
 
-```python
+```python copy
 import machine
 switch = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP)
 ```
@@ -20,7 +20,7 @@ Three arguments:
 
 ## Read the value
 
-```python
+```python copy
 switch.value()
 ```
 
@@ -36,7 +36,7 @@ Try it: call `switch.value()` and press the button while calling it again.
 
 To see the value update continuously, run this in the console:
 
-```python
+```python copy
 import time
 while True:
     print(switch.value())

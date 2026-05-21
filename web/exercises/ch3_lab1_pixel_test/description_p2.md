@@ -6,7 +6,7 @@ MicroPython includes a `neopixel` module built in — no installation needed. Ty
 
 ## Set up the strip
 
-```python
+```python copy
 import machine
 import neopixel
 
@@ -22,7 +22,7 @@ np = neopixel.NeoPixel(pin, 8)
 
 Pixels are addressed from `0` (nearest to the Pico) to `n-1`. Assign a colour as an `(r, g, b)` tuple:
 
-```python
+```python copy
 np[0] = (255, 0, 0)    # first pixel: red
 np[1] = (0, 255, 0)    # second pixel: green
 np[2] = (0, 0, 255)    # third pixel: blue
@@ -34,7 +34,7 @@ np[2] = (0, 0, 255)    # third pixel: blue
 
 ## Send the colours to the hardware
 
-```python
+```python copy
 np.write()
 ```
 
@@ -46,7 +46,7 @@ np.write()
 
 To set every pixel to the same colour, loop over all indices:
 
-```python
+```python copy
 for i in range(len(np)):
     np[i] = (255, 100, 0)    # amber
 np.write()
@@ -58,7 +58,7 @@ np.write()
 
 ## Turn everything off
 
-```python
+```python copy
 for i in range(len(np)):
     np[i] = (0, 0, 0)
 np.write()

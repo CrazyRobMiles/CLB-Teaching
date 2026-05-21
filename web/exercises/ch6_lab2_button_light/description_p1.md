@@ -83,7 +83,7 @@ Managers declare their own default settings as a class attribute. When CLB loads
 
 You can change a setting live from the REPL without editing any file:
 
-```
+```copy
 set indicator.count=16
 ```
 

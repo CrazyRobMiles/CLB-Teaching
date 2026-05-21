@@ -6,7 +6,7 @@ Type these commands in the **Console** to bring up the PCA9685 step by step.
 
 ## Set up I2C and wake the chip
 
-```python
+```python copy
 from machine import I2C, Pin
 
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
@@ -22,7 +22,7 @@ i2c.writeto_mem(0x40, 0x00, bytes([0x20]))
 
 ## Set the PWM frequency to 50 Hz
 
-```python
+```python copy
 prescale = round(25_000_000 / (4096 * 50)) - 1   # = 121
 
 i2c.writeto_mem(0x40, 0x00, bytes([0x10]))         # sleep mode (required to change prescale)
@@ -34,7 +34,7 @@ i2c.writeto_mem(0x40, 0x00, bytes([0x20]))         # wake up
 
 ## Move a servo on channel 0
 
-```python
+```python copy
 import ustruct
 
 def set_servo(channel, off_count):
@@ -52,7 +52,7 @@ set_servo(0, 410)   # 180°
 
 ## Move multiple servos
 
-```python
+```python copy
 set_servo(0, 307)   # servo 0 → 90°
 set_servo(1, 205)   # servo 1 → 0°
 set_servo(2, 410)   # servo 2 → 180°

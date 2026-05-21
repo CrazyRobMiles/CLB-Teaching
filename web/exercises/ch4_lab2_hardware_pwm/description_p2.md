@@ -30,7 +30,7 @@ For motor speed control you will typically use:
 
 A helper function makes this cleaner:
 
-```python
+```python copy
 def set_speed(pwm, percent):
     pwm.duty_u16(int(percent * 65535 // 100))
 ```

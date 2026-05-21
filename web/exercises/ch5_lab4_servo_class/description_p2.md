@@ -14,7 +14,7 @@ The values 150 and 600 are starting points. Real servos vary:
 
 Because `MIN_PULSE` and `MAX_PULSE` are class attributes, you can override them per instance:
 
-```python
+```python copy
 servo0 = ServoDriver(pca, 0)
 servo0.MIN_PULSE = 130    # this servo needs a narrower minimum
 ```
@@ -23,7 +23,7 @@ servo0.MIN_PULSE = 130    # this servo needs a narrower minimum
 
 ## Testing multiple servos
 
-```python
+```python copy
 servo0 = ServoDriver(pca, 0)
 servo1 = ServoDriver(pca, 1)
 
@@ -38,7 +38,7 @@ Both commands complete in microseconds — the PCA9685 holds both positions simu
 ## Experiment
 
 **Slow sweep:**
-```python
+```python copy
 import time
 for deg in range(0, 181, 5):
     servo0.angle(deg)
@@ -46,7 +46,7 @@ for deg in range(0, 181, 5):
 ```
 
 **Oscillate two servos in opposite phases:**
-```python
+```python copy
 for deg in range(0, 181, 2):
     servo0.angle(deg)
     servo1.angle(180 - deg)

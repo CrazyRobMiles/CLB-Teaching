@@ -6,7 +6,7 @@ With the PCA9685 wired up (SDA→GP0, SCL→GP1, VCC→3V3, GND→GND) and a ser
 
 ## Step 1: Find the device
 
-```python
+```python copy
 from machine import I2C, Pin
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 print([hex(d) for d in i2c.scan()])
@@ -22,13 +22,13 @@ If the list is empty, check that SDA and SCL are not swapped and the board has p
 
 The PCA9685 boots in sleep mode. Register `0x00` (MODE1) controls the oscillator. Writing `0x20` sets the auto-increment bit and clears the sleep bit:
 
-```python
+```python copy
 i2c.writeto_mem(0x40, 0x00, bytes([0x20]))
 ```
 
 Read it back to confirm:
 
-```python
+```python copy
 print(hex(i2c.readfrom_mem(0x40, 0x00, 1)[0]))
 ```
 
@@ -46,7 +46,7 @@ prescale = round(25_000_000 / (4096 × 50)) − 1 = 121
 
 The prescale register can only be written while the oscillator is sleeping, so the sequence is: **sleep → write prescale → wake → restart**.
 
-```python
+```python copy
 import time
 
 i2c.writeto_mem(0x40, 0x00, bytes([0x30]))   # sleep  (bit 4 set)
@@ -70,13 +70,13 @@ pulse = 150 + (600 − 150) × degrees / 180
 
 For **90°**: `150 + 450 × 90/180 = 375` → `0x0177` → OFF_L = `0x77`, OFF_H = `0x01`
 
-```python
+```python copy
 i2c.writeto_mem(0x40, 0x06, bytes([0, 0, 0x77, 0x01]))   # 90°
 ```
 
 The servo should move to centre. Try the endpoints:
 
-```python
+```python copy
 i2c.writeto_mem(0x40, 0x06, bytes([0, 0, 0x96, 0x00]))   # 0°  (count 150 = 0x0096)
 i2c.writeto_mem(0x40, 0x06, bytes([0, 0, 0x58, 0x02]))   # 180° (count 600 = 0x0258)
 ```

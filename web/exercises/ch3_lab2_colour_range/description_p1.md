@@ -21,7 +21,7 @@ np.write()
 
 Instead of writing `8` everywhere, define it once at the top:
 
-```python
+```python copy
 NUM_PIXELS = 8
 ```
 

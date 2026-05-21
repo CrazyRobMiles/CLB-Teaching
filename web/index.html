@@ -36,6 +36,7 @@
     <button id="btn-run" class="btn btn-success" disabled>Run</button>
     <button id="btn-stop" class="btn btn-danger" disabled>Stop</button>
     <button id="btn-restart" class="btn btn-danger" disabled>Restart</button>
+    <button id="btn-start-clb" class="btn btn-primary" disabled>Start Connected Little Box</button>
     <button id="btn-show-solution" class="btn btn-ghost" disabled>Show Solution</button>
     <button id="btn-install-firmware" class="btn btn-ghost" disabled>Install Firmware</button>
   </div>
@@ -176,7 +177,8 @@
         <!-- exercise/device file tabs dynamically inserted before #editor-tabs-end -->
         <div id="editor-tabs-end">
           <button id="btn-browse-files" class="btn btn-tiny" disabled title="Browse device files">Files</button>
-          <button class="editor-tab editor-tab-static" data-editor-tab="settings">settings.json</button>
+          <button id="btn-new-file" class="btn btn-tiny" disabled title="Create new file on device">New</button>
+          <button class="editor-tab editor-tab-static hidden" data-editor-tab="settings">settings.json</button>
         </div>
       </div>
 

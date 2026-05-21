@@ -21,7 +21,7 @@ Your pin is named `"button"` in the settings. So the events are `gpio.button_low
 
 Add the `gpio` section to `app_default_settings`:
 
-```python
+```python copy
 "gpio": {
     "enabled": True,
     "input_pins": [{"name": "button", "pin": 14}],
@@ -33,13 +33,13 @@ Add the `gpio` section to `app_default_settings`:
 
 Add `"gpio"` to the dependencies list:
 
-```python
+```python copy
 "dependencies": ["indicator", "gpio"]
 ```
 
 Read the colour settings in `setup()`, after the `STATE_OK` line:
 
-```python
+```python copy
 self.on_red   = self.settings.get("on_red",   255)
 self.on_green = self.settings.get("on_green", 100)
 self.on_blue  = self.settings.get("on_blue",    0)
@@ -47,7 +47,7 @@ self.on_blue  = self.settings.get("on_blue",    0)
 
 Add the two event subscriptions to `setup_services()`:
 
-```python
+```python copy
 button_pressed = self.clb.get_event("gpio.button_low")
 if button_pressed:
     button_pressed.subscribe(self.on_button_pressed)
@@ -59,7 +59,7 @@ if button_released:
 
 Add the two handler methods to your class:
 
-```python
+```python copy
 def on_button_pressed(self, event, data):
     if self.indicator:
         self.indicator.cmd_fill(self.on_red, self.on_green, self.on_blue)
@@ -71,7 +71,7 @@ def on_button_released(self, event, data):
 
 Save. Reload:
 
-```
+```copy
 select-app Button Light
 ```
 

@@ -6,7 +6,7 @@ Type these commands in the **Console** panel. They use only `machine.Pin` and `m
 
 ## Set up the pins
 
-```python
+```python copy
 from machine import Pin, PWM
 
 in1 = Pin(2, Pin.OUT)
@@ -19,7 +19,7 @@ ena.freq(1000)
 
 ## Run forward at half speed
 
-```python
+```python copy
 in1.value(1)
 in2.value(0)
 ena.duty_u16(32768)   # 50%
@@ -29,7 +29,7 @@ ena.duty_u16(32768)   # 50%
 
 ## Run backward at full speed
 
-```python
+```python copy
 in1.value(0)
 in2.value(1)
 ena.duty_u16(65535)   # 100%
@@ -39,7 +39,7 @@ ena.duty_u16(65535)   # 100%
 
 ## Change speed without changing direction
 
-```python
+```python copy
 ena.duty_u16(16384)   # 25%
 ena.duty_u16(49151)   # 75%
 ```
@@ -48,7 +48,7 @@ ena.duty_u16(49151)   # 75%
 
 ## Coast (motor spins down freely)
 
-```python
+```python copy
 in1.value(0)
 in2.value(0)
 ena.duty_u16(0)
@@ -58,7 +58,7 @@ ena.duty_u16(0)
 
 ## Active brake (motor stops immediately)
 
-```python
+```python copy
 in1.value(1)
 in2.value(1)
 ena.duty_u16(65535)

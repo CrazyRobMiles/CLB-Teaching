@@ -32,7 +32,7 @@ This is the **interface design** step: decide what the class looks like to the u
 
 Converting a percentage to `duty_u16`:
 
-```python
+```python copy
 def _set_speed(self, percent):
     self._pwm.duty_u16(int(percent * 65535 // 100))
 ```

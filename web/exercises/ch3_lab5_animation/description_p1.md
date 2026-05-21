@@ -8,7 +8,7 @@ In Lab 4 the fade program used `time.sleep` to pace the animation. This works, b
 
 Imagine you want the LED to fade *and* respond to a button at the same time. With sleep, you might try:
 
-```python
+```python copy
 while True:
     for step in range(STEPS):
         fill(lerp_colour(a, b, step / STEPS))

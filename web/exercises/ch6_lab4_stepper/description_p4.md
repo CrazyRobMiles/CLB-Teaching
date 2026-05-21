@@ -8,19 +8,19 @@ Type these commands in the **Console** panel. The stepper manager must be in `re
 
 Move both wheels the same distance. Positive moves forward, negative moves backward.
 
-```
+```copy
 stepper.move 200
 ```
 
 Moves the robot forward 200 mm. With 69 mm wheels this is 200 / (π × 69) ≈ 0.92 wheel revolutions, or about 3780 half-steps per motor.
 
-```
+```copy
 stepper.move -100
 ```
 
 Moves backward 100 mm.
 
-```
+```copy
 stepper.move 500 5
 ```
 
@@ -32,19 +32,19 @@ Moves forward 500 mm, completing the move in 5 seconds. The second argument sets
 
 Spin in place around the midpoint between the wheels. Positive is clockwise when viewed from above (left wheel forward, right wheel backward).
 
-```
+```copy
 stepper.rotate 90
 ```
 
 Turns 90° clockwise. The manager computes arc_len = π × 110 × 90 / 360 ≈ 86 mm for each wheel.
 
-```
+```copy
 stepper.rotate -180
 ```
 
 Turns 180° counter-clockwise — a U-turn.
 
-```
+```copy
 stepper.rotate 360 4
 ```
 
@@ -56,19 +56,19 @@ One full clockwise rotation in 4 seconds.
 
 Move along a circular arc. The first argument is the radius to the robot's centre in mm; the second is the angle to sweep in degrees.
 
-```
+```copy
 stepper.arc 200 90
 ```
 
 Sweeps a 90° arc curving to the **left** with a 200 mm radius. The inner (left) wheel travels `2π × (200 − 55) × 90/360 ≈ 228 mm`; the outer (right) wheel travels `2π × (200 + 55) × 90/360 ≈ 400 mm`.
 
-```
+```copy
 stepper.arc 200 -90
 ```
 
 Same 200 mm radius but curving to the **right** — the sign of the angle reverses which side is inner and outer.
 
-```
+```copy
 stepper.arc 150 180 6
 ```
 
@@ -80,7 +80,7 @@ A 180° semicircle of radius 150 mm in 6 seconds. The robot ends up 300 mm to th
 
 Stop both motors immediately and de-energise all coils.
 
-```
+```copy
 stepper.stop
 ```
 
@@ -92,7 +92,7 @@ Use this if a move is wrong or the robot is about to fall off the table.
 
 Report whether a movement is still in progress.
 
-```
+```copy
 stepper.moving
 ```
 
@@ -124,7 +124,7 @@ Hold the robot off the ground and run `stepper.move 500 30` (500 mm over 30 seco
 
 If one motor runs backward — the robot curves or spins instead of going straight — reverse the pin order for that motor in settings:
 
-```
+```copy
 set stepper.motors[0].pins=[12,13,14,15]
 reload
 ```

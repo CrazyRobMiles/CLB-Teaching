@@ -29,13 +29,13 @@
 
 Apply the default settings for this exercise:
 
-```
+```copy
 reload
 ```
 
 Confirm the manager is ready:
 
-```
+```copy
 status
 ```
 
@@ -57,7 +57,7 @@ The manager does not take readings until you call `start`. This is deliberate: t
 
 Begin taking distance readings at the configured interval:
 
-```
+```copy
 hcsr04.start
 ```
 
@@ -65,7 +65,7 @@ hcsr04.start
 
 Print the most recent distance measurement:
 
-```
+```copy
 hcsr04.reading
 ```
 
@@ -77,7 +77,7 @@ Move your hand toward and away from the sensor and call `reading` again to see t
 
 Change the reading rate without reloading:
 
-```
+```copy
 hcsr04.set_interval 100
 ```
 
@@ -87,7 +87,7 @@ Readings every 100 ms. Use a faster interval when tracking a moving object; use 
 
 Change the threshold distance:
 
-```
+```copy
 hcsr04.set_threshold 200
 ```
 
@@ -97,7 +97,7 @@ Setting the threshold resets the crossing state — the manager re-evaluates whe
 
 Stop all readings and disable the echo interrupt:
 
-```
+```copy
 hcsr04.stop
 ```
 

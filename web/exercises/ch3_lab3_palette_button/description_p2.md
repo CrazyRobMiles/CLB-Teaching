@@ -8,7 +8,7 @@ Adding a button to cycle palettes requires care. Simply checking `button.value()
 
 The technique is to compare the current button state with the *previous* state:
 
-```python
+```python copy
 last_btn = 1          # assume not pressed at start
 while True:
     btn = button.value()

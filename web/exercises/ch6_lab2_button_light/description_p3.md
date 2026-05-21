@@ -11,7 +11,7 @@ Device managers expose their capabilities as *services* — a dictionary of name
 
 You access these from another manager using `get_service_handle()`:
 
-```python
+```python copy
 self.indicator = self.get_service_handle("indicator")
 ```
 
@@ -21,7 +21,7 @@ This returns the manager object. Calling `self.indicator.cmd_fill(255, 100, 0)` 
 
 Add the indicator section to `app_default_settings`. Your settings block should now look like this:
 
-```python
+```python copy
 app_default_settings = {
     "indicator": {
         "enabled": True,
@@ -44,7 +44,7 @@ Note two things: the `on_red`, `on_green`, `on_blue` settings define the colour 
 
 Now add `setup_services()` to your class — this goes after `setup()`:
 
-```python
+```python copy
 def setup_services(self):
     self.indicator = self.get_service_handle("indicator")
     if self.indicator:
@@ -53,7 +53,7 @@ def setup_services(self):
 
 And add `self.indicator = None` to `__init__`:
 
-```python
+```python copy
 def __init__(self, clb):
     super().__init__(clb)
     self.indicator = None
@@ -61,7 +61,7 @@ def __init__(self, clb):
 
 Save the file. Now reload the application:
 
-```
+```copy
 select-app Button Light
 ```
 
@@ -69,13 +69,13 @@ select-app Button Light
 
 Try calling the indicator service directly from the REPL:
 
-```
+```copy
 indicator.fill 255 0 0
 ```
 
 The strip should turn red. Turn it off again:
 
-```
+```copy
 indicator.fill 0 0 0
 ```
 

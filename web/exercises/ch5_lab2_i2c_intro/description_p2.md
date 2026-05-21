@@ -15,7 +15,7 @@ For Chapter 4 we use **GP0 (SDA)** and **GP1 (SCL)** on I2C0.
 
 ## Setting up I2C in MicroPython
 
-```python
+```python copy
 from machine import I2C, Pin
 
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
@@ -29,7 +29,7 @@ i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 
 `i2c.scan()` sends every possible address and returns a list of those that respond:
 
-```python
+```python copy
 devices = i2c.scan()
 print([hex(d) for d in devices])
 ```
@@ -45,7 +45,7 @@ If nothing appears, check:
 
 ## Reading and writing registers
 
-```python
+```python copy
 # Write one byte to register 0x00 of device 0x40
 i2c.writeto_mem(0x40, 0x00, bytes([0x20]))
 

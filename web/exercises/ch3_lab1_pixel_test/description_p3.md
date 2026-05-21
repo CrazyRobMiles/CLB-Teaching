@@ -43,7 +43,7 @@ At full white `(255, 255, 255)`, each NeoPixel draws about 60 mA. Eight pixels a
 
 ## Try from the console
 
-```python
+```python copy
 np[0] = (0, 40, 80)    # a steel blue
 np[1] = (80, 40, 0)    # a warm amber
 np[2] = (0, 80, 0)     # a forest green

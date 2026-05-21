@@ -25,7 +25,7 @@ a = 0,  b = 100,  t = 0.75  →  result = 75
 
 Apply the formula to each RGB channel independently:
 
-```python
+```python copy
 def lerp_colour(a, b, t):
     return (
         int(a[0] + (b[0] - a[0]) * t),
@@ -42,7 +42,7 @@ def lerp_colour(a, b, t):
 
 Before writing a program, verify your `lerp_colour` works:
 
-```python
+```python copy
 def lerp_colour(a, b, t):
     return (
         int(a[0] + (b[0] - a[0]) * t),

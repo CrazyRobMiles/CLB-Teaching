@@ -2,7 +2,7 @@
 
 To fade from colour A to colour B smoothly, loop from step 0 to STEPS, compute `t = step / STEPS`, and display `lerp_colour(A, B, t)` each pass.
 
-```python
+```python copy
 STEPS = 50    # how many frames per fade
 DELAY = 0.02  # seconds between frames → 50 × 0.02 = 1 second per fade
 
@@ -18,7 +18,7 @@ for step in range(STEPS):
 
 The full program cycles through a list of colours, fading from each one to the next:
 
-```python
+```python copy
 COLOURS = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
 
 while True:

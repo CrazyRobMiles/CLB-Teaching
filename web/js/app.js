@@ -206,12 +206,28 @@ export class App {
     document.getElementById('btn-run').addEventListener('click', () => this._onRun());
     document.getElementById('btn-stop').addEventListener('click', () => this._onStop());
     document.getElementById('btn-restart').addEventListener('click', () => this._onRestart());
+    document.getElementById('btn-start-clb').addEventListener('click', () => this._onStartCLB());
     document.getElementById('btn-show-solution').addEventListener('click', () => this._onShowSolution());
     document.getElementById('btn-install-firmware').addEventListener('click', () => this._onInstallFirmware());
     document.getElementById('btn-console-clear').addEventListener('click', () => this._consoleClear());
     document.getElementById('exercise-select').addEventListener('change', e => this._onExerciseSelected(e.target.value));
     document.getElementById('console-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') this._onConsoleInput();
+    });
+    document.getElementById('console-input').addEventListener('paste', e => {
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      if (!text.includes('\n') && !text.includes('\r')) return; // single-line paste, let browser handle it
+      e.preventDefault();
+      if (!this.repl.connected) return;
+      const lines = text.split(/\r\n|\r|\n/);
+      if (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
+      for (const line of lines) {
+        this._consoleAppend(line + '\n');
+        this.repl.sendLine(line).catch(e => this._consoleAppend(`\nSend error: ${e.message}\n`));
+      }
+    });
+    document.getElementById('console-output').addEventListener('click', () => {
+      document.getElementById('console-input').focus();
     });
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => this._switchTab(tab.dataset.tab));
@@ -226,8 +242,7 @@ export class App {
       }
     });
 
-    document.querySelector('.editor-tab-static').addEventListener('click', () =>
-      this._switchEditorTab('settings'));
+    document.getElementById('btn-new-file').addEventListener('click', () => this._onNewFile());
     document.getElementById('btn-settings-save').addEventListener('click', () => this._saveSettings());
     document.getElementById('btn-settings-reload').addEventListener('click', () => this._loadSettings());
 
@@ -265,6 +280,10 @@ export class App {
     this._initConsoleResize();
 
     this.repl.onData(text => this._consoleAppend(text));
+    this.repl.onDisconnect(() => {
+      this._setConnected(false);
+      this._consoleAppend('\nDevice disconnected.\n');
+    });
   }
 
   // ── Exercise list ─────────────────────────────────────────────────
@@ -341,6 +360,7 @@ export class App {
       btn.textContent = 'Connecting…';
       await this.repl.connect();
       this._setConnected(true);
+      this._consoleAppend('\nDevice connected.\n\n');
       if (this.currentExercise) {
         await this._pushExerciseToDevice(this.currentExercise);
       }
@@ -382,7 +402,6 @@ export class App {
     btnRun.textContent = 'Setting up…';
     try {
       await this.exercises.setupExercise(exercise);
-      await this.repl.softReset();
     } catch (e) {
       this._consoleAppend(`\nDevice setup failed: ${e.message}\n`);
     } finally {
@@ -400,15 +419,6 @@ export class App {
     for (const entry of this._deviceFileEditors) {
       if (entry.editor.getValue() !== entry.loadedContent) {
         await this._saveDeviceFile(entry.tabId);
-      }
-    }
-    if (this.currentExercise) {
-      if (this.currentExercise.meta.clb !== false) {
-        const manifest = this.exercises._buildManifest(this.currentExercise.meta);
-        await this.repl.writeFile('/app_manifest.py', manifest);
-      } else if (this.fileEditors.length > 0) {
-        const path = this.fileEditors[0].spec.device_path;
-        await this.repl.writeFile('/main.py', `exec(open('${path}').read())\n`);
       }
     }
   }
@@ -437,8 +447,21 @@ export class App {
     btnRun.textContent = 'Saving…';
     try {
       await this._doSaveAll();
-      btnRun.textContent = 'Rebooting…';
-      await this.repl.softReset();
+      let path = null;
+      if (this.fileEditors.length > 0) {
+        const activeEx = this.fileEditors.find(e => e.tabId === this._activeEditorTab)
+                      ?? this.fileEditors[0];
+        path = activeEx.spec.device_path;
+      } else {
+        const active = this._deviceFileEditors.find(e => e.tabId === this._activeEditorTab)
+                    ?? this._deviceFileEditors[0];
+        if (active) path = active.path;
+      }
+      if (path) {
+        await this.repl.interrupt();
+        await this.repl._sleep(200);
+        this.repl.sendLine(`exec(open('${path}').read())`);
+      }
     } catch (e) {
       this._consoleAppend(`\nRun failed: ${e.message}\n`);
     } finally {
@@ -446,6 +469,11 @@ export class App {
       btnRun.textContent = 'Run';
       this._updateRunControls();
     }
+  }
+
+  _onStartCLB() {
+    if (!this.repl.connected) return;
+    this.repl.sendLine("exec(open('/clb.py').read())");
   }
 
   _onStop() {
@@ -494,7 +522,7 @@ export class App {
     const line = input.value;
     input.value = '';
     this._consoleAppend(line + '\n');
-    this.repl.sendLine(line);
+    this.repl.sendLine(line).catch(e => this._consoleAppend(`\nSend error: ${e.message}\n`));
   }
 
   // ── Editor tab switching ──────────────────────────────────────────
@@ -516,16 +544,24 @@ export class App {
     document.querySelectorAll('.editor-tab-content').forEach(c =>
       c.classList.toggle('active', c.id === `editor-tab-${name}`));
 
-    if (name === 'settings') {
-      this.settingsEditor.refresh();
-      if (this.repl.connected && !this._settingsLoaded) this._loadSettings();
+    const fe = this.fileEditors.find(e => e.tabId === name);
+    if (fe) { fe.editor.refresh(); return; }
+    const dfe = this._deviceFileEditors.find(e => e.tabId === name);
+    if (dfe) { dfe.editor.refresh(); return; }
+    const st = this._solutionTabs.find(e => e.tabId === name);
+    if (st) st.editor.refresh();
+  }
+
+  _fallbackTab() {
+    if (this._deviceFileEditors.length > 0) {
+      this._switchEditorTab(this._deviceFileEditors[0].tabId);
+    } else if (this.fileEditors.length > 0) {
+      this._switchEditorTab(this.fileEditors[0].tabId);
     } else {
-      const fe = this.fileEditors.find(e => e.tabId === name);
-      if (fe) { fe.editor.refresh(); return; }
-      const dfe = this._deviceFileEditors.find(e => e.tabId === name);
-      if (dfe) { dfe.editor.refresh(); return; }
-      const st = this._solutionTabs.find(e => e.tabId === name);
-      if (st) st.editor.refresh();
+      document.querySelectorAll('.editor-tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('editor-no-exercise').classList.add('active');
+      this._activeEditorTab = null;
     }
   }
 
@@ -589,7 +625,11 @@ export class App {
     if (!this._fileBrowserOpen) return;
     this._fileBrowserOpen = false;
     document.getElementById('file-browser').classList.remove('active');
-    this._switchEditorTab(this._activeEditorTab ?? 'settings');
+    if (this._activeEditorTab) {
+      this._switchEditorTab(this._activeEditorTab);
+    } else {
+      this._fallbackTab();
+    }
   }
 
   async _browseTo(path) {
@@ -744,6 +784,12 @@ export class App {
     saveBtn.addEventListener('click', () => this._saveDeviceFile(tabId));
     toolbar.appendChild(saveBtn);
 
+    const saveAsBtn = document.createElement('button');
+    saveAsBtn.className = 'btn btn-tiny';
+    saveAsBtn.textContent = 'Save As';
+    saveAsBtn.addEventListener('click', () => this._saveDeviceFileAs(tabId));
+    toolbar.appendChild(saveAsBtn);
+
     pane.appendChild(toolbar);
 
     const textarea = document.createElement('textarea');
@@ -794,7 +840,7 @@ export class App {
     } else if (this.fileEditors.length > 0) {
       this._switchEditorTab(this.fileEditors[0].tabId);
     } else {
-      this._switchEditorTab('settings');
+      this._fallbackTab();
     }
   }
 
@@ -826,6 +872,33 @@ export class App {
     entry.tabBtn.querySelector('.tab-name').textContent = modified ? `● ${filename}` : filename;
   }
 
+  async _onNewFile() {
+    if (!this.repl.connected) return;
+    const path = prompt('New file path on device:', '/untitled.py');
+    if (!path || !path.trim()) return;
+    const normalised = path.trim().startsWith('/') ? path.trim() : '/' + path.trim();
+    try {
+      await this.repl.writeFile(normalised, '');
+      this._createDeviceFileTab(normalised, '');
+    } catch (e) {
+      this._consoleAppend(`\nCould not create file: ${e.message}\n`);
+    }
+  }
+
+  async _saveDeviceFileAs(tabId) {
+    const entry = this._deviceFileEditors.find(e => e.tabId === tabId);
+    if (!entry) return;
+    const path = prompt('Save as (new path on device):', entry.path);
+    if (!path || !path.trim() || path.trim() === entry.path) return;
+    const normalised = path.trim().startsWith('/') ? path.trim() : '/' + path.trim();
+    try {
+      await this.repl.writeFile(normalised, entry.editor.getValue());
+      this._createDeviceFileTab(normalised, entry.editor.getValue());
+    } catch (e) {
+      this._consoleAppend(`\nSave As failed: ${e.message}\n`);
+    }
+  }
+
   // ── Exercise file tabs ────────────────────────────────────────────
 
   _closeExerciseTab(tabId) {
@@ -848,7 +921,7 @@ export class App {
     } else if (this._deviceFileEditors.length > 0) {
       this._switchEditorTab(this._deviceFileEditors[0].tabId);
     } else {
-      this._switchEditorTab('settings');
+      this._fallbackTab();
     }
   }
 
@@ -949,7 +1022,7 @@ export class App {
     } else if (this._deviceFileEditors.length > 0) {
       this._switchEditorTab(this._deviceFileEditors[0].tabId);
     } else {
-      this._switchEditorTab('settings');
+      this._fallbackTab();
     }
   }
 
@@ -1101,8 +1174,8 @@ export class App {
     firmware.disabled = !connected;
 
     document.getElementById('btn-browse-files').disabled = !connected;
-    document.getElementById('btn-settings-save').disabled = !connected;
-    document.getElementById('btn-settings-reload').disabled = !connected;
+    document.getElementById('btn-new-file').disabled = !connected;
+    document.getElementById('btn-start-clb').disabled = !connected;
     this.fileEditors.forEach(entry => {
       const saveBtn = entry.element?.querySelector('.btn');
       if (saveBtn) saveBtn.disabled = !connected;
@@ -1120,7 +1193,8 @@ export class App {
 
   _updateRunControls() {
     const connected = this.repl.connected;
-    const hasFiles = this.currentExercise && this.currentExercise.files.length > 0;
+    const hasFiles = (this.currentExercise && this.currentExercise.files.length > 0)
+                     || this._deviceFileEditors.length > 0;
     document.getElementById('btn-save').disabled = !connected;
     document.getElementById('btn-run').disabled = !connected || !hasFiles;
     document.getElementById('btn-stop').disabled = !connected;

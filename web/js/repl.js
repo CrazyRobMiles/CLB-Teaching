@@ -27,6 +27,7 @@ export class MicroPythonREPL {
     this.writer = null;
     this._rxBuf = '';
     this._rxListeners = [];   // callbacks for console passthrough
+    this._disconnectListeners = [];
     this._reading = false;
     this._silent = false;     // true while in raw REPL so output isn't echoed
   }
@@ -38,9 +39,12 @@ export class MicroPythonREPL {
     await this.port.open({ baudRate: 115200 });
     this.writer = this.port.writable.getWriter();
     this._startReadLoop();
-    // Give MicroPython a moment, then interrupt any running program.
-    await this._sleep(200);
+    // Give MicroPython a moment to settle, then interrupt any running program.
+    await this._sleep(300);
     await this._sendRaw(CTRL_C + CTRL_C);
+    await this._sleep(200);
+    // Explicitly exit raw REPL in case device was left in it by a previous session.
+    await this._sendRaw(CTRL_B);
     await this._sleep(100);
   }
 
@@ -68,6 +72,14 @@ export class MicroPythonREPL {
     this._rxListeners = this._rxListeners.filter(l => l !== callback);
   }
 
+  onDisconnect(callback) {
+    this._disconnectListeners.push(callback);
+  }
+
+  offDisconnect(callback) {
+    this._disconnectListeners = this._disconnectListeners.filter(l => l !== callback);
+  }
+
   // Send a line to the friendly REPL (console input box).
   async sendLine(line) {
     await this._sendRaw(line + '\r\n');
@@ -85,11 +97,13 @@ export class MicroPythonREPL {
    * Throws on timeout or if stderr is non-empty (caller decides whether to surface).
    */
   async execute(code) {
-    await this._enterRaw();
-    await this._sendRaw(code + CTRL_D);
-    const result = await this._readRawResult();
-    await this._exitRaw();
-    return result;
+    try {
+      await this._enterRaw();
+      await this._sendRaw(code + CTRL_D);
+      return await this._readRawResult();
+    } finally {
+      await this._exitRaw();
+    }
   }
 
   /**
@@ -180,9 +194,10 @@ export class MicroPythonREPL {
   }
 
   async _exitRaw() {
-    await this._sendRaw(CTRL_B);
-    await this._sleep(50);
-    this._silent = false;
+    this._rxBuf = '';                              // drop raw-REPL residue (the trailing '>')
+    try { await this._sendRaw(CTRL_B); } catch (_) {}
+    this._silent = false;                          // un-mute BEFORE sleeping so >>> reaches UI
+    await this._sleep(100);
   }
 
   async _readRawResult() {
@@ -220,6 +235,15 @@ export class MicroPythonREPL {
         if (this._reading) console.warn('Serial read error:', e);
       } finally {
         try { this.reader?.releaseLock(); } catch (_) {}
+        // If _reading is still true the loop ended due to device removal, not a
+        // deliberate disconnect() call — clean up and notify listeners.
+        if (this._reading) {
+          this._reading = false;
+          try { this.writer?.releaseLock(); } catch (_) {}
+          try { await this.port?.close(); } catch (_) {}
+          this.port = this.reader = this.writer = null;
+          for (const cb of this._disconnectListeners) cb();
+        }
       }
     };
 

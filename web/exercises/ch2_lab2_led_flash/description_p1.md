@@ -25,7 +25,7 @@ while True:
 
 ## `time.sleep`
 
-```python
+```python copy
 import time
 time.sleep(0.5)
 ```

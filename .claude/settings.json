@@ -7,7 +7,12 @@
       "Bash(git -C \"d:/GitHub/CLB-Teaching\" show HEAD:web/exercises/ch1_lab1_getting_started/exercise.json)",
       "Bash(xxd)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('d:/GitHub/CLB-Teaching/web/exercises/ch1_lab1_getting_started/exercise.json','utf8'\\)\\); console.log\\('Valid JSON'\\)\")",
-      "Bash(node -e 'try{JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\)}catch\\(e\\){console.log\\('\\\\''FAIL: __TRACKED_VAR__'\\\\'', e.message\\)}')"
+      "Bash(node -e 'try{JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\)}catch\\(e\\){console.log\\('\\\\''FAIL: __TRACKED_VAR__'\\\\'', e.message\\)}')",
+      "PowerShell(Get-ChildItem -Recurse \"d:\\\\GitHub\\\\clb-TeachingEditor\" -Exclude node_modules | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | Sort-Object)"
+    ],
+    "additionalDirectories": [
+      "d:\\GitHub\\clb-TeachingEditor",
+      "D:\\GitHub\\MicroPython-Connected-Little-Box\\firmware"
     ]
   }
 }

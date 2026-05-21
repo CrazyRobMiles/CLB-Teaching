@@ -83,7 +83,7 @@ Managers declare their own default settings as a class attribute. When CLB loads
 
 You can change a setting live from the REPL without editing any file:
 
-```
+```copy
 set indicator.count=16
 ```
 
@@ -113,7 +113,7 @@ This lists all registered applications and asks you to choose one by name.
 
 The editor on this page has already loaded the starting file for you. It contains a minimal working application with no behaviour yet:
 
-```python
+```python copy
 from managers.base_manager import CLBAppManager
 
 class Manager(CLBAppManager):
@@ -149,13 +149,13 @@ Make a copy of this file and name it `App_button_light_manager.py`. This is the 
 
 Now load it from the REPL:
 
-```
+```copy
 select-app Button Light
 ```
 
 The device reboots. When it comes back up, check the manager status:
 
-```
+```copy
 status
 ```
 
@@ -182,7 +182,7 @@ Device managers expose their capabilities as *services* — a dictionary of name
 
 You access these from another manager using `get_service_handle()`:
 
-```python
+```python copy
 self.indicator = self.get_service_handle("indicator")
 ```
 
@@ -192,7 +192,7 @@ This returns the manager object. Calling `self.indicator.cmd_fill(255, 100, 0)` 
 
 Add the indicator section to `app_default_settings`. Your settings block should now look like this:
 
-```python
+```python copy
 app_default_settings = {
     "indicator": {
         "enabled": True,
@@ -215,7 +215,7 @@ Note two things: the `on_red`, `on_green`, `on_blue` settings define the colour 
 
 Now add `setup_services()` to your class — this goes after `setup()`:
 
-```python
+```python copy
 def setup_services(self):
     self.indicator = self.get_service_handle("indicator")
     if self.indicator:
@@ -224,7 +224,7 @@ def setup_services(self):
 
 And add `self.indicator = None` to `__init__`:
 
-```python
+```python copy
 def __init__(self, clb):
     super().__init__(clb)
     self.indicator = None
@@ -232,7 +232,7 @@ def __init__(self, clb):
 
 Save the file. Now reload the application:
 
-```
+```copy
 select-app Button Light
 ```
 
@@ -240,13 +240,13 @@ select-app Button Light
 
 Try calling the indicator service directly from the REPL:
 
-```
+```copy
 indicator.fill 255 0 0
 ```
 
 The strip should turn red. Turn it off again:
 
-```
+```copy
 indicator.fill 0 0 0
 ```
 
@@ -281,7 +281,7 @@ Your pin is named `"button"` in the settings. So the events are `gpio.button_low
 
 Add the `gpio` section to `app_default_settings`:
 
-```python
+```python copy
 "gpio": {
     "enabled": True,
     "input_pins": [{"name": "button", "pin": 14}],
@@ -293,13 +293,13 @@ Add the `gpio` section to `app_default_settings`:
 
 Add `"gpio"` to the dependencies list:
 
-```python
+```python copy
 "dependencies": ["indicator", "gpio"]
 ```
 
 Read the colour settings in `setup()`, after the `STATE_OK` line:
 
-```python
+```python copy
 self.on_red   = self.settings.get("on_red",   255)
 self.on_green = self.settings.get("on_green", 100)
 self.on_blue  = self.settings.get("on_blue",    0)
@@ -307,7 +307,7 @@ self.on_blue  = self.settings.get("on_blue",    0)
 
 Add the two event subscriptions to `setup_services()`:
 
-```python
+```python copy
 button_pressed = self.clb.get_event("gpio.button_low")
 if button_pressed:
     button_pressed.subscribe(self.on_button_pressed)
@@ -319,7 +319,7 @@ if button_released:
 
 Add the two handler methods to your class:
 
-```python
+```python copy
 def on_button_pressed(self, event, data):
     if self.indicator:
         self.indicator.cmd_fill(self.on_red, self.on_green, self.on_blue)
@@ -331,7 +331,7 @@ def on_button_released(self, event, data):
 
 Save. Reload:
 
-```
+```copy
 select-app Button Light
 ```
 
@@ -350,7 +350,7 @@ select-app Button Light
 Your application now works. These changes require only a `set` command — no code edits and no reboot:
 
 **Change the colour:**
-```
+```copy
 set App_button_light.on_red=0
 set App_button_light.on_green=0
 set App_button_light.on_blue=255
@@ -358,7 +358,7 @@ set App_button_light.on_blue=255
 Press the button. The pixels are now blue. The new values are saved to `settings.json` and will survive reboot.
 
 **Change the number of pixels:**
-```
+```copy
 set indicator.count=4
 ```
 Reboot. Only four pixels light up.

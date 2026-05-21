@@ -29,7 +29,7 @@ Some starting points:
 
 The rotary encoder manager also publishes `rotary_encoder.<name>_button_pressed` if you wire up a button (set `btn_pin` to the correct GPIO). You could subscribe to that event to toggle the indicator on and off:
 
-```python
+```python copy
 btn = self.clb.get_event("rotary_encoder.brightness_button_pressed")
 if btn:
     btn.subscribe(self.on_button)

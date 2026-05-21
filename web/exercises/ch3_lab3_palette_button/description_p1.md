@@ -8,7 +8,7 @@ A **palette** is a pre-selected set of colours that work well together — like 
 
 A palette is a list of `(r, g, b)` tuples. A collection of palettes is a list of lists:
 
-```python
+```python copy
 PALETTES = [
     # Warm fire
     [(255, 0, 0), (255, 60, 0), (255, 120, 0), (255, 180, 0),
@@ -27,7 +27,7 @@ To display palette number `i`, you write `PALETTES[i]` to the strip.
 
 Wrapping the display logic in a function keeps the main loop clean:
 
-```python
+```python copy
 def show_palette(index):
     palette = PALETTES[index]
     for i in range(NUM_PIXELS):
@@ -43,7 +43,7 @@ def show_palette(index):
 
 To advance through the palette list and wrap back to the start:
 
-```python
+```python copy
 current_palette = (current_palette + 1) % len(PALETTES)
 ```
 

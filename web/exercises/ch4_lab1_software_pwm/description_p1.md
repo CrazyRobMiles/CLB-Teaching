@@ -30,7 +30,7 @@ A motor has inertia — it cannot instantly change speed. An LED has persistence
 
 The simplest way to create a PWM signal is to toggle a GPIO pin manually:
 
-```python
+```python copy
 from machine import Pin
 import time
 

@@ -3,7 +3,7 @@
 Your application now works. These changes require only a `set` command — no code edits and no reboot:
 
 **Change the colour:**
-```
+```copy
 set App_button_light.on_red=0
 set App_button_light.on_green=0
 set App_button_light.on_blue=255
@@ -11,7 +11,7 @@ set App_button_light.on_blue=255
 Press the button. The pixels are now blue. The new values are saved to `settings.json` and will survive reboot.
 
 **Change the number of pixels:**
-```
+```copy
 set indicator.count=4
 ```
 Reboot. Only four pixels light up.

@@ -39,13 +39,13 @@ Motor index **0 is always left**, index **1 is always right**. The `pins` array 
 
 This exercise's default settings already contain the robot configuration above. Apply them:
 
-```
+```copy
 reload
 ```
 
 Then verify the manager started:
 
-```
+```copy
 status
 ```
 
@@ -63,14 +63,14 @@ If the status shows `error`, check the REPL output for a message — it usually 
 
 Adjust any value live from the console. The change is written to `settings.json` immediately and persists across reboots:
 
-```
+```copy
 set stepper.wheel_spacing_mm=115
 reload
 ```
 
 You can also adjust individual motor settings using dot notation into the JSON:
 
-```
+```copy
 set stepper.motors[0].wheel_diameter_mm=71
 reload
 ```

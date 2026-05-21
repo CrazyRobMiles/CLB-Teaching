@@ -36,7 +36,7 @@ Both use `Pin.PULL_UP` — no external resistors needed.
 
 The program needs to remember two things between button presses:
 
-```python
+```python copy
 SPEEDS    = [25, 50, 75, 100]
 speed_idx = 0      # index into SPEEDS
 forward   = True   # current direction

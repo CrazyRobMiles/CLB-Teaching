@@ -8,7 +8,7 @@ The skeleton has everything set up: PCA9685, four servos at 90°, four buttons w
 
 For each button, detect a falling edge and take the appropriate action:
 
-```python
+```python copy
 if last[0] == 1 and btns[0] == 0:   # btn_prev
     active = (active - 1) % len(servos)
     print(f"Servo {active}: {servos[active]._degrees}°")
@@ -46,7 +46,7 @@ The Pico's CPU is almost entirely idle between button presses — the PCA9685 ho
 
 In a robot arm, each `ServoDriver` instance corresponds to one joint. A higher-level class would then compose them:
 
-```python
+```python copy
 class RobotArm:
     def __init__(self, pca):
         self.base     = ServoDriver(pca, 0)

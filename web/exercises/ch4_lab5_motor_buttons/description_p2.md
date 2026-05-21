@@ -8,7 +8,7 @@ The skeleton has the `MotorDriver` class, pins, state variables, and the main lo
 
 **Speed button (falling edge on `btn_speed`):**
 
-```python
+```python copy
 if last_speed == 1 and s == 0:
     speed_idx = (speed_idx + 1) % len(SPEEDS)
     if forward:
@@ -19,7 +19,7 @@ if last_speed == 1 and s == 0:
 
 **Direction button (falling edge on `btn_dir`):**
 
-```python
+```python copy
 if last_dir == 1 and d == 0:
     forward = not forward
     if forward:
@@ -40,7 +40,7 @@ Or factor the common action into a small helper function (see the solution).
 
 **Four-motor robot:** Instantiate four `MotorDriver` objects. For a differential-drive robot (two driven wheels):
 
-```python
+```python copy
 left  = MotorDriver(2, 3, 6)
 right = MotorDriver(4, 5, 7)
 

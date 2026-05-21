@@ -61,7 +61,7 @@ Pico GND                ────────┘
 
 Before enabling the manager, confirm the trigger pin works from the REPL:
 
-```python
+```python copy
 from machine import Pin
 import time
 

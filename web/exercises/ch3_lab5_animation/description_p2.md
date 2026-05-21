@@ -8,7 +8,7 @@ The key to non-blocking animation in this lab is the Python **generator** — a 
 
 A generator function contains `yield`. When Python reaches `yield`, it pauses the function and returns to the caller. The next time `next()` is called on the generator, it continues from just after the `yield`.
 
-```python
+```python copy
 def counter():
     i = 0
     while True:
@@ -29,7 +29,7 @@ next(gen)   # returns 2
 
 An animation generator does one frame of work, then yields:
 
-```python
+```python copy
 def fade_loop(colours, steps=60):
     n = len(colours)
     pair = 0
@@ -53,7 +53,7 @@ Each call to `next(animation)` advances one frame. The animation state — `pair
 
 To switch animations cleanly, store each animation type as a **lambda** that creates a fresh generator when called:
 
-```python
+```python copy
 ANIMATIONS = [
     lambda: fade_loop([(255, 0, 0), (0, 255, 0), (0, 0, 255)]),
     lambda: solid_pulse((0, 100, 255)),
@@ -66,7 +66,7 @@ To switch: `animation = ANIMATIONS[current_anim]()` — calling the lambda creat
 
 ## The main loop
 
-```python
+```python copy
 while True:
     next(animation)       # one animation frame
 

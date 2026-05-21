@@ -6,7 +6,7 @@ Start from the skeleton in the editor. Your first job is to wire up the indicato
 
 ## Add the indicator to app_default_settings
 
-```python
+```python copy
 app_default_settings = {
     "indicator": {
         "enabled": True,
@@ -35,14 +35,14 @@ app_default_settings = {
 
 In `__init__`:
 
-```python
+```python copy
 self.indicator = None
 self.brightness = 0.5     # start halfway
 ```
 
 In `setup`, read your colour and step values from settings:
 
-```python
+```python copy
 self.red   = self.settings.get("red",   255)
 self.green = self.settings.get("green", 100)
 self.blue  = self.settings.get("blue",    0)
@@ -55,7 +55,7 @@ self.step  = self.settings.get("step",  0.05)
 
 Add a `setup_services` method:
 
-```python
+```python copy
 def setup_services(self):
     self.indicator = self.get_service_handle("indicator")
     if self.indicator:

@@ -22,7 +22,7 @@ The skeleton in the editor has the class structure and all the method signatures
 
 Once **Save & Run** completes, the two test lines at the bottom of the file will run: motor A forward at 50%, motor B backward at 75%. Then test interactively:
 
-```python
+```python copy
 motor_a.forward(25)     # slow forward
 motor_a.brake()         # immediate stop
 motor_b.forward(100)    # full speed
@@ -35,7 +35,7 @@ motor_b.stop()          # coast
 
 In Lab 5 you will copy this class into the top of the next file. In a real project you would save the class as `motor.py` on the device and import it:
 
-```python
+```python copy
 from motor import MotorDriver
 
 left  = MotorDriver(2, 3, 6)

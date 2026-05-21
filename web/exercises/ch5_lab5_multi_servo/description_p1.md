@@ -38,7 +38,7 @@ The `active` variable tracks which servo the rotate buttons affect. Servos remem
 
 `ServoDriver.nudge(delta)` in the skeleton is a one-liner: call `self.angle()` with the new position. Because `angle()` already clamps to 0–180, nudging past the end of travel is safe — the servo just stays at the limit.
 
-```python
+```python copy
 def nudge(self, delta):
     self.angle(self._degrees + delta)
 ```

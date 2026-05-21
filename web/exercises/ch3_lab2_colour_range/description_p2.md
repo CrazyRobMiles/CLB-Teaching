@@ -18,7 +18,7 @@ The skeleton in the editor has the setup code ready. Your job is to fill in the 
 
 Python's `enumerate()` gives you both the index and the value at once:
 
-```python
+```python copy
 for i, colour in enumerate(colours):
     np[i] = colour
 ```
@@ -33,7 +33,7 @@ This is equivalent to the `range(NUM_PIXELS)` version but reads more clearly.
 
 **Try a gradient:** Instead of picked colours, calculate them:
 
-```python
+```python copy
 for i in range(NUM_PIXELS):
     # ramp red up from 0 to 255 across the strip
     r = int(255 * i / (NUM_PIXELS - 1))

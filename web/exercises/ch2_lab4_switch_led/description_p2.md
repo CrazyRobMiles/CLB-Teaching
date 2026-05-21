@@ -8,7 +8,7 @@ The skeleton in the editor already imports `machine` and `time`, creates both pi
 
 Inside `while True:`, replace `pass` with:
 
-```python
+```python copy
 if switch.value() == 0:
     led.on()
 else:
@@ -24,7 +24,7 @@ time.sleep(0.01)
 
 **Invert the logic** — make the LED turn on when the button is *not* pressed:
 
-```python
+```python copy
 if switch.value() == 1:
     led.on()
 else:
@@ -33,7 +33,7 @@ else:
 
 Or more compactly, since `switch.value()` is already 0 or 1:
 
-```python
+```python copy
 led.value(switch.value())
 ```
 
@@ -41,7 +41,7 @@ led.value(switch.value())
 
 **Add a blink on press** — flash the LED rapidly while held:
 
-```python
+```python copy
 if switch.value() == 0:
     led.on()
     time.sleep(0.05)

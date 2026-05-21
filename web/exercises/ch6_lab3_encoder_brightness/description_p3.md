@@ -6,7 +6,7 @@ Now subscribe to the encoder events and update brightness on each tick.
 
 ## Add the rotary encoder to app_default_settings
 
-```python
+```python copy
 "rotary_encoder": {
     "enabled": True,
     "encoders": [
@@ -37,7 +37,7 @@ rotary_encoder.brightness_moved_anticlockwise
 
 In `setup_services`, add:
 
-```python
+```python copy
 cw = self.clb.get_event("rotary_encoder.brightness_moved_clockwise")
 if cw:
     cw.subscribe(self.on_clockwise)
@@ -51,7 +51,7 @@ if ccw:
 
 ## Write the handlers
 
-```python
+```python copy
 def on_clockwise(self, event, data):
     self.brightness = min(1.0, self.brightness + self.step)
     if self.indicator:

@@ -8,7 +8,7 @@ You can control a single servo with the Pico's hardware PWM — the same `machin
 
 Connect the servo signal wire to **GP15**. Type these in the Console:
 
-```python
+```python copy
 from machine import Pin, PWM
 
 servo = PWM(Pin(15))
@@ -27,7 +27,7 @@ duty = t_ms / 20 × 65535
 | 90° | 1.5 ms | 4915 |
 | 180° | 2.0 ms | 6554 |
 
-```python
+```python copy
 servo.duty_u16(3277)    # 0°
 servo.duty_u16(4915)    # 90°
 servo.duty_u16(6554)    # 180°
@@ -41,7 +41,7 @@ Try each value and watch the servo move.
 
 To move to a specific angle you must calculate the duty value each time. It is easy to get the maths wrong, and the numbers are not intuitive. A better interface would be:
 
-```python
+```python copy
 servo.angle(90)
 ```
 

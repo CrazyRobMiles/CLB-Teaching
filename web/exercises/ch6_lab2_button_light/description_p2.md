@@ -2,7 +2,7 @@
 
 The editor on this page has already loaded the starting file for you. It contains a minimal working application with no behaviour yet:
 
-```python
+```python copy
 from managers.base_manager import CLBAppManager
 
 class Manager(CLBAppManager):
@@ -38,13 +38,13 @@ Make a copy of this file and name it `App_button_light_manager.py`. This is the 
 
 Now load it from the REPL:
 
-```
+```copy
 select-app Button Light
 ```
 
 The device reboots. When it comes back up, check the manager status:
 
-```
+```copy
 status
 ```
 

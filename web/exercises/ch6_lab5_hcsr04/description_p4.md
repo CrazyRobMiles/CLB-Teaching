@@ -21,7 +21,7 @@ The threshold events are **edge-triggered**: they fire once when the distance cr
 
 The pattern is identical to subscribing to GPIO events in the Button Light exercise. Here is an application that lights up a NeoPixel strip when something moves within range:
 
-```python
+```python copy
 from managers.base_manager import CLBAppManager
 
 class Manager(CLBAppManager):
@@ -79,7 +79,7 @@ class Manager(CLBAppManager):
 
 If you need a continuous stream of distances — for example, to display the value on a screen or control motor speed — subscribe to `hcsr04.reading` instead:
 
-```python
+```python copy
 def setup_services(self):
     super().setup_services()
     self.clb.get_event("hcsr04.reading").subscribe(self._on_reading)
@@ -96,7 +96,7 @@ def _on_reading(self, event, data):
 
 A timeout means the sensor fired but received no echo. Register a handler if your application needs to respond to out-of-range conditions:
 
-```python
+```python copy
 self.clb.get_event("hcsr04.timeout").subscribe(self._on_timeout)
 
 def _on_timeout(self, event, data):

@@ -54,7 +54,7 @@ In practice the average current is much lower because only one or two coils fire
 
 With the stepper manager disabled, test each ULN2003 board from the REPL. The IN pin LEDs should light and the motor should make a faint click as the coil energises:
 
-```python
+```python copy
 from machine import Pin
 
 # Test left motor IN1 (GPIO 15)

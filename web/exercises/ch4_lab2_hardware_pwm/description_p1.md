@@ -20,7 +20,7 @@ Changing the compare value changes the duty cycle instantly and precisely, with 
 
 ## machine.PWM in MicroPython
 
-```python
+```python copy
 from machine import Pin, PWM
 
 led = PWM(Pin(15))   # attach hardware PWM to GP15
