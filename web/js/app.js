@@ -35,6 +35,7 @@ export class App {
     this._theme = localStorage.getItem('clb-theme') ?? 'dark';
     this._pages = [];
     this._pageIndex = 0;
+    this._restoringHistory = false;
   }
 
   async init() {
@@ -247,6 +248,8 @@ export class App {
       if (e.ctrlKey && e.key === '-')  { e.preventDefault(); this._adjustFontSize(-1); }
       if (e.ctrlKey && e.key === '0')  { e.preventDefault(); this._setFontSize(13); }
     });
+
+    window.addEventListener('popstate', e => this._onPopState(e));
 
     document.getElementById('description-content').addEventListener('click', e => {
       const btn = e.target.closest('.copy-code-btn');
@@ -1353,6 +1356,20 @@ export class App {
 
   _renderPage(index) {
     this._pageIndex = index;
+
+    if (!this._restoringHistory && this.currentExercise) {
+      const content = document.getElementById('description-content');
+      if (history.state !== null) {
+        history.replaceState({ ...history.state, scrollTop: content.scrollTop }, '');
+      }
+      const state = { exercisePath: this.currentExercise.base, pageIndex: index };
+      if (history.state === null) {
+        history.replaceState(state, '');
+      } else {
+        history.pushState(state, '');
+      }
+    }
+
     this._renderDescription(this._pages[index], this.currentExercise.base);
 
     const nav   = document.getElementById('description-nav');
@@ -1387,7 +1404,9 @@ export class App {
       delete next.dataset.nextExercise;
     }
 
-    document.getElementById('description-content').scrollTop = 0;
+    if (!this._restoringHistory) {
+      document.getElementById('description-content').scrollTop = 0;
+    }
   }
 
   _renderDescription(markdown, base) {
@@ -1660,6 +1679,24 @@ export class App {
   async _navigateToExercise(exercisePath) {
     document.getElementById('exercise-select').value = exercisePath;
     await this._onExerciseSelected(exercisePath);
+  }
+
+  async _onPopState(e) {
+    if (!e.state?.exercisePath) return;
+    const { exercisePath, pageIndex, scrollTop = 0 } = e.state;
+    this._restoringHistory = true;
+    try {
+      if (!this.currentExercise || this.currentExercise.base !== exercisePath) {
+        document.getElementById('exercise-select').value = exercisePath;
+        await this._onExerciseSelected(exercisePath);
+      }
+      if (this._pageIndex !== pageIndex) {
+        this._renderPage(pageIndex);
+      }
+      document.getElementById('description-content').scrollTop = scrollTop;
+    } finally {
+      this._restoringHistory = false;
+    }
   }
 
   // ── Whitespace overlay ────────────────────────────────────────────
