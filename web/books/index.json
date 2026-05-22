@@ -8,6 +8,20 @@
       "labs": 22
     },
     {
+      "id": "hull-pixelbot",
+      "title": "Programming the Hull Pixelbot",
+      "description": "Write sequential MicroPython programs to make the Hull Pixelbot move, light up, and react to its surroundings — no framework required. Covers NeoPixel control, stepper-motor movement, and ultrasonic distance sensing.",
+      "chapters": 3,
+      "labs": 12,
+      "code_resources": [
+        {
+          "label": "CLB-robot library (GitHub)",
+          "url": "https://github.com/CrazyRobMiles/CLB-robot",
+          "installable": true
+        }
+      ]
+    },
+    {
       "id": "connected-little-boxes",
       "title": "Connected Little Boxes",
       "description": "Use the Connected Little Box framework to build devices that respond to the world — buttons, NeoPixels, rotary encoders, stepper motors, and ultrasonic sensors, all orchestrated by the CLB manager system.",

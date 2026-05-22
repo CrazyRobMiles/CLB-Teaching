@@ -18,11 +18,16 @@
       "Bash(dir web\\\\books\\\\connected-little-boxes /B)",
       "Bash(dir \"web\\\\books\\\\python-intro\\\\ch1-hardware-basics\\\\ch1_lab1_getting_started\" /B)",
       "Bash(dir \"web\\\\books\\\\connected-little-boxes\\\\ch6-connected-little-boxes\\\\ch6_lab2_button_light\" /B)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Read(//d/GitHub/HullOS-Z/docs/**)",
+      "Bash(ls d:/GitHub/)",
+      "Read(//d/GitHub/**)",
+      "Bash(mkdir -p d:/GitHub/CLB-robot/lib d:/GitHub/CLB-robot/examples)"
     ],
     "additionalDirectories": [
       "d:\\GitHub\\clb-TeachingEditor",
-      "D:\\GitHub\\MicroPython-Connected-Little-Box\\firmware"
+      "D:\\GitHub\\MicroPython-Connected-Little-Box\\firmware",
+      "d:\\GitHub\\CLB-robot"
     ]
   }
 }

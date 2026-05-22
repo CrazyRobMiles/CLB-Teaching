@@ -1,0 +1,7 @@
+{
+  "id": "ch4_lab1_sumo_rules",
+  "title": "Lab 1: The Sumo Game",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": []
+}

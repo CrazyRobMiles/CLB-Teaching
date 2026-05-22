@@ -1,0 +1,7 @@
+{
+  "id": "ch3_lab1_reading_distance",
+  "title": "Lab 1: Reading Distance",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": ["start.py"]
+}

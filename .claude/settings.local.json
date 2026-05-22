@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\GitHub\\\\CLB-Teaching\\\\web\\\\books\\\\python-intro\" -Recurse -Directory)",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\GitHub\\\\CLB-Teaching\\\\web\\\\books\\\\python-intro\" -Recurse -Directory | Where-Object { $_.Name -notlike \"images\" } | Select-Object -ExpandProperty Name | Sort-Object)"
+    ]
+  }
+}

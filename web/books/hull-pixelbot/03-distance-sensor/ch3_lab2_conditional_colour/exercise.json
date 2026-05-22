@@ -1,0 +1,7 @@
+{
+  "id": "ch3_lab2_conditional_colour",
+  "title": "Lab 2: Conditional Colour",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": ["start.py"]
+}

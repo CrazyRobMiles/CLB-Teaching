@@ -1,0 +1,7 @@
+{
+  "id": "ch4_lab2_charging",
+  "title": "Lab 2: Charging",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": ["start.py"]
+}

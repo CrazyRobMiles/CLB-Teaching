@@ -1,0 +1,7 @@
+﻿{
+  "id": "05_lab01_servo_pwm",
+  "title": "Lab 1: Servo Motors",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": []
+}

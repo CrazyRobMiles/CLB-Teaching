@@ -1,0 +1,7 @@
+{
+  "id": "ch2_lab3_speed_control",
+  "title": "Lab 3: Speed Control",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": ["start.py"]
+}

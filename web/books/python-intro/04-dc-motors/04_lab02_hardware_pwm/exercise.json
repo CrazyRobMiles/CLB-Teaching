@@ -1,0 +1,14 @@
+﻿{
+  "id": "04_lab02_hardware_pwm",
+  "title": "Lab 2: Hardware PWM",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": [
+    {
+      "label": "ch4_lab2_hardware_pwm.py",
+      "source": "start.py",
+      "solution": "solution.py",
+      "device_path": "/ch4_lab2_hardware_pwm.py"
+    }
+  ]
+}

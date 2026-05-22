@@ -1,0 +1,7 @@
+{
+  "id": "construction_electronics_3",
+  "title": "Electronics 3",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": []
+}

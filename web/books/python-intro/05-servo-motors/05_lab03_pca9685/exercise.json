@@ -1,0 +1,7 @@
+﻿{
+  "id": "05_lab03_pca9685",
+  "title": "Lab 3: The PCA9685",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md", "description_p3.md"],
+  "edit_files": []
+}

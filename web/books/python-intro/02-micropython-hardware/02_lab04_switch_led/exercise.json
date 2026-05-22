@@ -1,0 +1,14 @@
+﻿{
+  "id": "02_lab04_switch_led",
+  "title": "Lab 4: Switch and LED",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": [
+    {
+      "label": "ch2_lab4_switch_led.py",
+      "source": "start.py",
+      "solution": "solution.py",
+      "device_path": "/ch2_lab4_switch_led.py"
+    }
+  ]
+}

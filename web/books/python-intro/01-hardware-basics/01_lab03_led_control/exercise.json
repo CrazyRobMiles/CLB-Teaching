@@ -1,0 +1,7 @@
+﻿{
+  "id": "01_lab03_led_control",
+  "title": "Lab 3: LED Control",
+  "clb": false,
+  "pages": ["description_p1.md", "description_p2.md"],
+  "edit_files": []
+}
