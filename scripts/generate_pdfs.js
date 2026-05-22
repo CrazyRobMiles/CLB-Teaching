@@ -5,9 +5,9 @@ const { marked }  = require('marked');
 const fs   = require('fs');
 const path = require('path');
 
-const EXERCISES_JSON = path.join(__dirname, '..', 'web', 'exercises', 'index.json');
-const EXERCISES_DIR  = path.join(__dirname, '..', 'web', 'exercises');
-const OUTPUT_DIR     = path.join(__dirname, '..', 'web', 'pdfs');
+const BOOKS_INDEX = path.join(__dirname, '..', 'web', 'books', 'index.json');
+const BOOKS_DIR   = path.join(__dirname, '..', 'web', 'books');
+const OUTPUT_DIR  = path.join(__dirname, '..', 'web', 'pdfs');
 
 // ── Embedded CSS ─────────────────────────────────────────────────────────────
 
@@ -108,70 +108,80 @@ ${body}
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const index = JSON.parse(fs.readFileSync(EXERCISES_JSON, 'utf-8'));
+  const { books: bookList } = JSON.parse(fs.readFileSync(BOOKS_INDEX, 'utf-8'));
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   let count = 0;
 
-  for (const entry of index) {
-    const { id, title, chapter_title } = entry;
-    const exerciseDir = path.join(EXERCISES_DIR, id);
-
-    if (!fs.existsSync(exerciseDir)) {
-      console.warn(`  skip  ${id}  (directory not found)`);
+  for (const bookMeta of bookList) {
+    const bookIndexPath = path.join(BOOKS_DIR, bookMeta.id, 'index.json');
+    if (!fs.existsSync(bookIndexPath)) {
+      console.warn(`  skip book  ${bookMeta.id}  (no index.json)`);
       continue;
     }
+    const book = JSON.parse(fs.readFileSync(bookIndexPath, 'utf-8'));
 
-    const metaPath = path.join(exerciseDir, 'exercise.json');
-    if (!fs.existsSync(metaPath)) {
-      console.warn(`  skip  ${id}  (no exercise.json)`);
-      continue;
-    }
+    for (const ch of book.chapters ?? []) {
+      for (const lab of ch.labs ?? []) {
+        const labDir = path.join(BOOKS_DIR, bookMeta.id, ch.id, lab.id);
 
-    const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
-    const pageFiles = meta.pages ?? ['description.md'];
+        if (!fs.existsSync(labDir)) {
+          console.warn(`  skip  ${lab.id}  (directory not found)`);
+          continue;
+        }
 
-    const pages = [];
-    for (const f of pageFiles) {
-      const filePath = path.join(exerciseDir, f);
-      if (fs.existsSync(filePath)) {
-        pages.push(fs.readFileSync(filePath, 'utf-8'));
-      } else {
-        console.warn(`  warn  ${id}  missing ${f}`);
+        const metaPath = path.join(labDir, 'exercise.json');
+        if (!fs.existsSync(metaPath)) {
+          console.warn(`  skip  ${lab.id}  (no exercise.json)`);
+          continue;
+        }
+
+        const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
+        const pageFiles = meta.pages ?? ['description.md'];
+
+        const pages = [];
+        for (const f of pageFiles) {
+          const filePath = path.join(labDir, f);
+          if (fs.existsSync(filePath)) {
+            pages.push(fs.readFileSync(filePath, 'utf-8'));
+          } else {
+            console.warn(`  warn  ${lab.id}  missing ${f}`);
+          }
+        }
+
+        if (pages.length === 0) {
+          console.warn(`  skip  ${lab.id}  (no description pages found)`);
+          continue;
+        }
+
+        const html = buildHtml(lab.title, ch.title, pages);
+        const outputPath = path.join(OUTPUT_DIR, `${lab.id}.pdf`);
+        const tmpPath    = path.join(labDir, '_pdf_tmp.html');
+
+        fs.writeFileSync(tmpPath, html, 'utf-8');
+        const page = await browser.newPage();
+        try {
+          await page.goto('file:///' + tmpPath.replace(/\\/g, '/'), { waitUntil: 'load' });
+          await page.pdf({
+            path: outputPath,
+            format: 'A4',
+            margin: { top: '22mm', right: '20mm', bottom: '22mm', left: '20mm' },
+            printBackground: true,
+            displayHeaderFooter: true,
+            headerTemplate: '<div></div>',
+            footerTemplate: FOOTER_TEMPLATE,
+          });
+        } finally {
+          await page.close();
+          fs.unlinkSync(tmpPath);
+        }
+
+        console.log(`  ok    ${lab.id}.pdf`);
+        count++;
       }
     }
-
-    if (pages.length === 0) {
-      console.warn(`  skip  ${id}  (no description pages found)`);
-      continue;
-    }
-
-    const html = buildHtml(title, chapter_title, pages);
-    const outputPath = path.join(OUTPUT_DIR, `${id}.pdf`);
-    const tmpPath    = path.join(exerciseDir, '_pdf_tmp.html');
-
-    fs.writeFileSync(tmpPath, html, 'utf-8');
-    const page = await browser.newPage();
-    try {
-      await page.goto('file:///' + tmpPath.replace(/\\/g, '/'), { waitUntil: 'load' });
-      await page.pdf({
-        path: outputPath,
-        format: 'A4',
-        margin: { top: '22mm', right: '20mm', bottom: '22mm', left: '20mm' },
-        printBackground: true,
-        displayHeaderFooter: true,
-        headerTemplate: '<div></div>',
-        footerTemplate: FOOTER_TEMPLATE,
-      });
-    } finally {
-      await page.close();
-      fs.unlinkSync(tmpPath);
-    }
-
-    console.log(`  ok    ${id}.pdf`);
-    count++;
   }
 
   await browser.close();

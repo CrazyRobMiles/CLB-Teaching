@@ -1,0 +1,25 @@
+{
+  "id": "connected-little-boxes",
+  "order": 2,
+  "title": "Connected Little Boxes",
+  "description": "Use the Connected Little Box framework to build devices that respond to the world — buttons, NeoPixels, rotary encoders, stepper motors, and ultrasonic sensors, all orchestrated by the CLB manager system.",
+  "code_resources": [
+    {
+      "label": "CLB Framework (GitHub)",
+      "url": "https://github.com/CrazyRobMiles/MicroPython-Connected-Little-Box"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch6-connected-little-boxes",
+      "title": "Chapter 6: Connected Little Boxes",
+      "labs": [
+        { "id": "ch6_lab1_clb_setup",          "title": "Lab 1: CLB Setup",         "desc": "Install the CLB framework and run the Hello CLB test program" },
+        { "id": "ch6_lab2_button_light",       "title": "Lab 2: Button Light",      "desc": "Light up a NeoPixel strip when a button is pressed" },
+        { "id": "ch6_lab3_encoder_brightness", "title": "Lab 3: Encoder Brightness","desc": "Use a rotary encoder to control NeoPixel brightness" },
+        { "id": "ch6_lab4_stepper",            "title": "Lab 4: Stepper Motors",    "desc": "Wire 28BYJ-48 steppers via ULN2003 boards and drive a two-wheel robot using the CLB stepper manager" },
+        { "id": "ch6_lab5_hcsr04",             "title": "Lab 5: Distance Sensor",   "desc": "Wire an HC-SR04 ultrasonic sensor and use the CLB hcsr04 manager to take distance readings and publish proximity events" }
+      ]
+    }
+  ]
+}

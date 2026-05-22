@@ -8,7 +8,16 @@
       "Bash(xxd)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('d:/GitHub/CLB-Teaching/web/exercises/ch1_lab1_getting_started/exercise.json','utf8'\\)\\); console.log\\('Valid JSON'\\)\")",
       "Bash(node -e 'try{JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''__TRACKED_VAR__'\\\\'','\\\\''utf8'\\\\''\\)\\)}catch\\(e\\){console.log\\('\\\\''FAIL: __TRACKED_VAR__'\\\\'', e.message\\)}')",
-      "PowerShell(Get-ChildItem -Recurse \"d:\\\\GitHub\\\\clb-TeachingEditor\" -Exclude node_modules | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | Sort-Object)"
+      "PowerShell(Get-ChildItem -Recurse \"d:\\\\GitHub\\\\clb-TeachingEditor\" -Exclude node_modules | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "Bash(Get-ChildItem -Path \"d:\\\\GitHub\\\\CLB-Teaching\" -Force)",
+      "Bash(Select-Object Mode, Name)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(node scripts/build_book_index.js)",
+      "Bash(dir web\\\\books /B)",
+      "Bash(dir web\\\\books\\\\python-intro /B)",
+      "Bash(dir web\\\\books\\\\connected-little-boxes /B)",
+      "Bash(dir \"web\\\\books\\\\python-intro\\\\ch1-hardware-basics\\\\ch1_lab1_getting_started\" /B)",
+      "Bash(dir \"web\\\\books\\\\connected-little-boxes\\\\ch6-connected-little-boxes\\\\ch6_lab2_button_light\" /B)"
     ],
     "additionalDirectories": [
       "d:\\GitHub\\clb-TeachingEditor",

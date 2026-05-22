@@ -418,6 +418,92 @@ html, body {
 }
 #editor-no-exercise h1 { font-size: 1.25em; font-weight: 700; color: var(--blue); margin: 0 0 8px; }
 #editor-no-exercise h2 { font-size: 1em; font-weight: 600; color: var(--yellow); margin: 20px 0 10px; }
+#editor-no-exercise h3 { font-size: 0.95em; font-weight: 600; color: var(--blue); margin: 18px 0 6px; }
+
+/* ── Book cards ──────────────────────────────────────────────────────── */
+#book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.book-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--blue);
+  border-radius: 6px;
+  padding: 16px 18px;
+  transition: border-left-color 0.12s;
+}
+.book-card:hover { border-left-color: var(--green); }
+
+.book-card-title {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.book-card-desc {
+  color: var(--dim);
+  font-size: 0.88em;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.book-card-meta {
+  font-size: 0.78em;
+  color: var(--dim);
+  margin: 0 0 12px;
+  font-style: italic;
+}
+
+.book-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Book contents (TOC) ─────────────────────────────────────────────── */
+#book-contents-title { color: var(--blue); }
+#book-contents-desc  { color: var(--dim); font-size: 0.9em; margin-top: 4px; }
+#book-contents-resources { margin-top: 10px; }
+
+/* ── Code resources ──────────────────────────────────────────────────── */
+.book-code-resources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.book-code-resources-label {
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.book-code-resources-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82em;
+  color: var(--blue);
+  text-decoration: none;
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+  padding: 2px 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.book-code-resources-link::after { content: ' ↗'; font-size: 0.85em; }
+.book-code-resources-link:hover {
+  background: var(--blue);
+  color: var(--bg);
+}
 
 
 /* ── Right panel ────────────────────────────────────────────────────── */

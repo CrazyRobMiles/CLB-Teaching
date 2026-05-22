@@ -1,8 +1,12 @@
 /**
  * App
  *
- * Orchestrates the UI: connects device, loads exercises, manages the
- * CodeMirror editor(s), drives the console panel, and handles Save & Run.
+ * Orchestrates the UI: book picker, exercise navigation, CodeMirror editor(s),
+ * console panel, Save & Run, and progress tracking.
+ *
+ * Exercise paths have the form:  books/{bookId}/{chapterId}/{labId}
+ * Progress is stored in localStorage key 'clb-book-progress' as
+ *   { [bookId]: exercisePath }
  */
 import { createProvider, loadLLMConfig, saveLLMConfig } from './llm.js';
 
@@ -21,6 +25,8 @@ export class App {
     this._activeEditorTab = null;
     this.settingsEditor = null;
     this.currentExercise = null;
+    this._currentBook = null;       // loaded book object (chapters + labs)
+    this._availableBooks = null;    // master books list (cached after first fetch)
     this._fontSize = 13;
     this._settingsLoaded = false;
     this._llmProvider = null;
@@ -32,13 +38,12 @@ export class App {
   }
 
   async init() {
-    this._homeDescriptionHTML = document.getElementById('description-content').innerHTML;
     this._applyTheme(this._theme);
     this._initMarked();
     this._initSettingsEditor();
     this._initHints();
     this._bindUI();
-    await this._populateExerciseList();
+    await this._loadBooksAndShowPicker();
   }
 
   _initMarked() {
@@ -92,7 +97,6 @@ export class App {
       const tabId   = `file-${i}`;
       const isFirst = i === 0;
 
-      // Tab button — same structure as device file tabs
       const tab = document.createElement('button');
       tab.className = 'editor-tab editor-tab-exercise' + (isFirst ? ' active' : '');
       tab.dataset.editorTab = tabId;
@@ -112,7 +116,6 @@ export class App {
 
       tabBar.insertBefore(tab, insertRef);
 
-      // Content pane — same structure as device file tabs
       const pane = document.createElement('div');
       pane.id = `editor-tab-${tabId}`;
       pane.className = 'editor-tab-content' + (isFirst ? ' active' : '');
@@ -201,7 +204,7 @@ export class App {
     });
     document.getElementById('console-input').addEventListener('paste', e => {
       const text = (e.clipboardData || window.clipboardData).getData('text');
-      if (!text.includes('\n') && !text.includes('\r')) return; // single-line paste, let browser handle it
+      if (!text.includes('\n') && !text.includes('\r')) return;
       e.preventDefault();
       if (!this.repl.connected) return;
       const lines = text.split(/\r\n|\r|\n/);
@@ -271,64 +274,219 @@ export class App {
     });
   }
 
-  // ── Exercise list ─────────────────────────────────────────────────
+  // ── Book picker ───────────────────────────────────────────────────
 
-  async _populateExerciseList() {
+  async _loadBooksAndShowPicker() {
+    if (!this._availableBooks) {
+      try {
+        const { books } = await this.exercises.loadBooksIndex();
+        this._availableBooks = books;
+      } catch (e) {
+        console.error('Could not load books index:', e);
+        return;
+      }
+    }
+
+    // Honour ?book= query string — open that book directly
+    const params = new URLSearchParams(window.location.search);
+    const bookParam = params.get('book');
+    if (bookParam) {
+      const bookMeta = this._availableBooks.find(b => b.id === bookParam);
+      if (bookMeta) {
+        await this._openBook(bookMeta);
+        return;
+      }
+    }
+
+    this._showBookPicker(this._availableBooks);
+  }
+
+  _showBookPicker(books) {
+    const container = document.getElementById('book-list');
+    container.innerHTML = '';
+
+    books.forEach(bookMeta => {
+      const savedPath = this._loadProgress(bookMeta.id);
+
+      const card = document.createElement('div');
+      card.className = 'book-card';
+
+      const title = document.createElement('h2');
+      title.className = 'book-card-title';
+      title.textContent = bookMeta.title;
+      card.appendChild(title);
+
+      if (bookMeta.description) {
+        const desc = document.createElement('p');
+        desc.className = 'book-card-desc';
+        desc.textContent = bookMeta.description;
+        card.appendChild(desc);
+      }
+
+      const meta = document.createElement('p');
+      meta.className = 'book-card-meta';
+      meta.textContent = `${bookMeta.chapters} chapters · ${bookMeta.labs} labs`;
+      card.appendChild(meta);
+
+      const btnRow = document.createElement('div');
+      btnRow.className = 'book-card-actions';
+
+      if (savedPath) {
+        const resumeBtn = document.createElement('button');
+        resumeBtn.className = 'btn btn-primary';
+        resumeBtn.textContent = 'Resume';
+        resumeBtn.addEventListener('click', () => this._resumeBook(bookMeta, savedPath));
+        btnRow.appendChild(resumeBtn);
+
+        const startBtn = document.createElement('button');
+        startBtn.className = 'btn btn-ghost';
+        startBtn.textContent = 'Start from beginning';
+        startBtn.addEventListener('click', () => this._openBook(bookMeta));
+        btnRow.appendChild(startBtn);
+      } else {
+        const startBtn = document.createElement('button');
+        startBtn.className = 'btn btn-primary';
+        startBtn.textContent = 'Start';
+        startBtn.addEventListener('click', () => this._openBook(bookMeta));
+        btnRow.appendChild(startBtn);
+      }
+
+      if (bookMeta.code_resources?.length) {
+        card.appendChild(this._renderCodeResources(bookMeta.code_resources));
+      }
+
+      card.appendChild(btnRow);
+      container.appendChild(card);
+    });
+
+    document.getElementById('book-picker').classList.remove('hidden');
+    document.getElementById('book-contents').classList.add('hidden');
+  }
+
+  _renderCodeResources(resources) {
+    const wrap = document.createElement('div');
+    wrap.className = 'book-code-resources';
+
+    const label = document.createElement('span');
+    label.className = 'book-code-resources-label';
+    label.textContent = 'Code resources:';
+    wrap.appendChild(label);
+
+    resources.forEach(r => {
+      const a = document.createElement('a');
+      a.className = 'book-code-resources-link';
+      a.href = r.url;
+      a.textContent = r.label;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      wrap.appendChild(a);
+    });
+
+    return wrap;
+  }
+
+  async _openBook(bookMeta) {
     try {
-      const list = await this.exercises.listExercises();
-      const sel = document.getElementById('exercise-select');
-      let currentChapter = null;
-      let group = null;
-
-      list.forEach(ex => {
-        if (ex.chapter !== undefined && ex.chapter !== currentChapter) {
-          currentChapter = ex.chapter;
-          group = document.createElement('optgroup');
-          group.label = ex.chapter_title ?? `Chapter ${ex.chapter}`;
-          sel.appendChild(group);
-        }
-        const opt = document.createElement('option');
-        opt.value = ex.id;
-        opt.textContent = ex.title;
-        (group ?? sel).appendChild(opt);
-      });
-      sel.disabled = false;
-      this._populateLandingPage(list);
+      const book = await this.exercises.loadBook(bookMeta.id);
+      this._currentBook = book;
+      this._populateExerciseDropdown(book);
+      this._showBookContents(book);
     } catch (e) {
-      console.error('Could not load exercise list:', e);
+      console.error('Could not load book:', e);
     }
   }
 
-  _populateLandingPage(list) {
+  async _resumeBook(bookMeta, savedPath) {
+    try {
+      const book = await this.exercises.loadBook(bookMeta.id);
+      this._currentBook = book;
+      this._populateExerciseDropdown(book);
+      await this._navigateToExercise(savedPath);
+    } catch (e) {
+      console.error('Could not resume book:', e);
+    }
+  }
+
+  _showBookContents(book) {
+    document.getElementById('book-contents-title').textContent = book.title;
+    document.getElementById('book-contents-desc').textContent = book.description ?? '';
+
+    const resContainer = document.getElementById('book-contents-resources');
+    resContainer.innerHTML = '';
+    if (book.code_resources?.length) {
+      resContainer.appendChild(this._renderCodeResources(book.code_resources));
+    }
+
+    this._populateBookContentsList(book);
+    document.getElementById('book-picker').classList.add('hidden');
+    document.getElementById('book-contents').classList.remove('hidden');
+  }
+
+  _populateBookContentsList(book) {
     const container = document.getElementById('landing-exercise-list');
-    if (!container) return;
-    let currentChapter = null;
+    container.innerHTML = '';
 
-    list.forEach(ex => {
-      if (ex.chapter !== undefined && ex.chapter !== currentChapter) {
-        currentChapter = ex.chapter;
-        const h = document.createElement('h3');
-        h.className = 'landing-chapter-heading';
-        h.textContent = ex.chapter_title ?? `Chapter ${ex.chapter}`;
-        container.appendChild(h);
-      }
+    (book.chapters ?? []).forEach(ch => {
+      const h = document.createElement('h3');
+      h.className = 'landing-chapter-heading';
+      h.textContent = ch.title;
+      container.appendChild(h);
 
-      const btn = document.createElement('button');
-      btn.className = 'landing-exercise-item';
-      btn.addEventListener('click', () => this._navigateToExercise(ex.id));
+      (ch.labs ?? []).forEach(lab => {
+        const exercisePath = `books/${book.id}/${ch.id}/${lab.id}`;
 
-      const title = document.createElement('strong');
-      title.textContent = ex.title;
-      btn.appendChild(title);
+        const btn = document.createElement('button');
+        btn.className = 'landing-exercise-item';
+        btn.addEventListener('click', () => this._navigateToExercise(exercisePath));
 
-      if (ex.desc) {
-        const desc = document.createElement('p');
-        desc.textContent = ex.desc;
-        btn.appendChild(desc);
-      }
+        const titleEl = document.createElement('strong');
+        titleEl.textContent = lab.title;
+        btn.appendChild(titleEl);
 
-      container.appendChild(btn);
+        if (lab.desc) {
+          const desc = document.createElement('p');
+          desc.textContent = lab.desc;
+          btn.appendChild(desc);
+        }
+
+        container.appendChild(btn);
+      });
     });
+  }
+
+  _populateExerciseDropdown(book) {
+    const sel = document.getElementById('exercise-select');
+    while (sel.options.length > 1) sel.remove(1);
+    sel.options[0].textContent = `— select a lab —`;
+
+    (book.chapters ?? []).forEach(ch => {
+      const group = document.createElement('optgroup');
+      group.label = ch.title;
+
+      (ch.labs ?? []).forEach(lab => {
+        const opt = document.createElement('option');
+        opt.value = `books/${book.id}/${ch.id}/${lab.id}`;
+        opt.textContent = lab.title;
+        group.appendChild(opt);
+      });
+
+      sel.appendChild(group);
+    });
+
+    sel.disabled = false;
+  }
+
+  // ── Progress tracking ─────────────────────────────────────────────
+
+  _saveProgress(bookId, exercisePath) {
+    const progress = JSON.parse(localStorage.getItem('clb-book-progress') || '{}');
+    progress[bookId] = exercisePath;
+    localStorage.setItem('clb-book-progress', JSON.stringify(progress));
+  }
+
+  _loadProgress(bookId) {
+    const progress = JSON.parse(localStorage.getItem('clb-book-progress') || '{}');
+    return progress[bookId] ?? null;
   }
 
   // ── Event handlers ────────────────────────────────────────────────
@@ -355,10 +513,10 @@ export class App {
     }
   }
 
-  async _onExerciseSelected(id) {
-    if (!id) return;
+  async _onExerciseSelected(exercisePath) {
+    if (!exercisePath) return;
     try {
-      const exercise = await this.exercises.loadExercise(id);
+      const exercise = await this.exercises.loadExercise(exercisePath);
       this.currentExercise = exercise;
       this._pages = exercise.pages;
       this._renderPage(0);
@@ -370,6 +528,10 @@ export class App {
       document.getElementById('btn-show-solution').disabled = !hasSolution;
       document.getElementById('btn-download-notes').href = `pdfs/${exercise.meta.id}.pdf`;
       this._updateRunControls();
+
+      if (this._currentBook) {
+        this._saveProgress(this._currentBook.id, exercisePath);
+      }
 
       if (this.repl.connected) {
         await this._pushExerciseToDevice(exercise);
@@ -704,7 +866,6 @@ export class App {
   // ── Device file tabs ──────────────────────────────────────────────
 
   async _openDeviceFile(path) {
-    // If already open, just switch to it.
     const existing = this._deviceFileEditors.find(e => e.path === path);
     if (existing) {
       this._closeFileBrowser();
@@ -728,7 +889,6 @@ export class App {
     const tabBar   = document.getElementById('editor-tabs');
     const insertRef = document.getElementById('editor-tabs-end');
 
-    // Tab button
     const tab = document.createElement('button');
     tab.className = 'editor-tab editor-tab-device';
     tab.dataset.editorTab = tabId;
@@ -748,7 +908,6 @@ export class App {
 
     tabBar.insertBefore(tab, insertRef);
 
-    // Content pane
     const pane = document.createElement('div');
     pane.id = `editor-tab-${tabId}`;
     pane.className = 'editor-tab-content';
@@ -886,7 +1045,6 @@ export class App {
       ? entry.spec.label.replace(/\.py$/, '') + '_solution.py'
       : 'solution.py';
 
-    // If already open, just switch to it.
     const existing = this._solutionTabs.find(t => t.label === label);
     if (existing) {
       this._switchEditorTab(existing.tabId);
@@ -1162,7 +1320,7 @@ export class App {
 
     const multiPage  = total > 1;
     const isLastPage = index === total - 1;
-    const nextExId   = this._getNextExerciseId();
+    const nextExPath = this._getNextExercisePath();
 
     prev.classList.toggle('hidden', !multiPage);
     indicator.classList.toggle('hidden', !multiPage);
@@ -1172,11 +1330,11 @@ export class App {
       prev.disabled = index === 0;
     }
 
-    if (isLastPage && nextExId) {
+    if (isLastPage && nextExPath) {
       next.classList.remove('hidden');
       next.disabled = false;
       next.textContent = 'Next Exercise →';
-      next.dataset.nextExercise = nextExId;
+      next.dataset.nextExercise = nextExPath;
     } else {
       next.classList.toggle('hidden', !multiPage);
       next.textContent = 'Next →';
@@ -1427,13 +1585,15 @@ export class App {
     this._pages = [];
     this._pageIndex = 0;
 
-    document.getElementById('description-content').innerHTML = this._homeDescriptionHTML;
     document.getElementById('description-nav').classList.add('hidden');
 
     this._clearFileEditors();
     document.querySelectorAll('.editor-tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('editor-no-exercise').classList.add('active');
+
+    // Always return to book picker (refreshed so Resume buttons reflect current progress)
+    this._loadBooksAndShowPicker();
 
     this._hintMessages = [];
     document.getElementById('hints-messages').innerHTML = '';
@@ -1444,17 +1604,17 @@ export class App {
 
   // ── Exercise navigation ───────────────────────────────────────────
 
-  _getNextExerciseId() {
+  _getNextExercisePath() {
     if (!this.currentExercise) return null;
     const sel = document.getElementById('exercise-select');
     const options = [...sel.options].filter(o => o.value);
-    const idx = options.findIndex(o => o.value === this.currentExercise.meta.id);
+    const idx = options.findIndex(o => o.value === this.currentExercise.base);
     return idx >= 0 && idx < options.length - 1 ? options[idx + 1].value : null;
   }
 
-  async _navigateToExercise(id) {
-    document.getElementById('exercise-select').value = id;
-    await this._onExerciseSelected(id);
+  async _navigateToExercise(exercisePath) {
+    document.getElementById('exercise-select').value = exercisePath;
+    await this._onExerciseSelected(exercisePath);
   }
 
   // ── Whitespace overlay ────────────────────────────────────────────

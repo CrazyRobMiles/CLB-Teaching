@@ -1,0 +1,24 @@
+{
+  "books": [
+    {
+      "id": "python-intro",
+      "title": "Introduction to Python on the Pico",
+      "description": "Learn to program the Raspberry Pi Pico with MicroPython — from wiring your first LED to controlling NeoPixel strips, DC motors, and servo motors.",
+      "chapters": 5,
+      "labs": 22
+    },
+    {
+      "id": "connected-little-boxes",
+      "title": "Connected Little Boxes",
+      "description": "Use the Connected Little Box framework to build devices that respond to the world — buttons, NeoPixels, rotary encoders, stepper motors, and ultrasonic sensors, all orchestrated by the CLB manager system.",
+      "chapters": 1,
+      "labs": 5,
+      "code_resources": [
+        {
+          "label": "CLB Framework (GitHub)",
+          "url": "https://github.com/CrazyRobMiles/MicroPython-Connected-Little-Box"
+        }
+      ]
+    }
+  ]
+}

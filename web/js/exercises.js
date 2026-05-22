@@ -1,11 +1,13 @@
 /**
  * ExerciseLoader
  *
- * Fetches exercise content from the exercises/ folder and manages
+ * Fetches book and exercise content from the books/ folder and manages
  * pushing the starting code to the device.
+ *
+ * Exercise paths have the form:  books/{bookId}/{chapterId}/{labId}
  */
 
-const EXERCISES_BASE = 'exercises';
+const BOOKS_BASE = 'books';
 
 export class ExerciseLoader {
   constructor(repl) {
@@ -14,25 +16,36 @@ export class ExerciseLoader {
   }
 
   /**
-   * Return the ordered list of exercises from exercises/index.json.
+   * Return the master book list from books/index.json.
+   * Shape: { books: [{ id, title, description, chapters, labs }] }
    */
-  async listExercises() {
-    const res = await fetch(`${EXERCISES_BASE}/index.json`);
+  async loadBooksIndex() {
+    const res = await fetch(`${BOOKS_BASE}/index.json`);
     return res.json();
   }
 
   /**
-   * Load all content for one exercise.
+   * Return the full index for one book from books/{bookId}/index.json.
+   * Shape: { id, title, description, chapters: [{ id, title, labs: [{ id, title, desc }] }] }
+   */
+  async loadBook(bookId) {
+    const res = await fetch(`${BOOKS_BASE}/${bookId}/index.json`);
+    return res.json();
+  }
+
+  /**
+   * Load all content for one exercise given its full path.
+   * exercisePath example: "books/clb-teaching/ch1-hardware-basics/ch1_lab1_getting_started"
+   *
    * Returns { meta, pages, files, tutor, base } where:
    *   pages — array of markdown strings, one per description page
    *   files — array of { spec, startCode, solutionCode }, one per edit_files entry
-   * meta.pages lists filenames; falls back to ['description.md'] if absent.
-   * Falls back to start_file/solution_file if edit_files is absent.
+   *   base  — the exercisePath (used for constructing relative asset URLs)
    */
-  async loadExercise(id) {
-    if (this._cache[id]) return this._cache[id];
+  async loadExercise(exercisePath) {
+    if (this._cache[exercisePath]) return this._cache[exercisePath];
 
-    const base = `${EXERCISES_BASE}/${id}`;
+    const base = exercisePath;
     const meta = await fetch(`${base}/exercise.json`).then(r => r.json());
 
     const pageFiles = meta.pages ?? ['description.md'];
@@ -61,7 +74,7 @@ export class ExerciseLoader {
     }));
 
     const exercise = { meta, pages, files, tutor, base };
-    this._cache[id] = exercise;
+    this._cache[exercisePath] = exercise;
     return exercise;
   }
 
