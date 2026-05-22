@@ -1,7 +1,14 @@
 {
   "id": "construction_parts_1",
-  "title": "Parts 1",
+  "title": "Hardware Required",
   "clb": false,
-  "pages": ["description_p1.md", "description_p2.md"],
-  "edit_files": []
+  "pages": [
+    "description_p1.md",
+    "description_p2.md"
+  ],
+  "edit_files": [],
+  "concept": "",
+  "circuit_description": "",
+  "phase": 0,
+  "hardware": []
 }

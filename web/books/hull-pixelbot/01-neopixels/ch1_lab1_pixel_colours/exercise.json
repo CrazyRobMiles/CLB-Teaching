@@ -2,6 +2,12 @@
   "id": "ch1_lab1_pixel_colours",
   "title": "Lab 1: Pixel Colours",
   "clb": false,
-  "pages": ["description_p1.md", "description_p2.md"],
-  "edit_files": ["start.py"]
+  "pages": [
+    "description_p1.md",
+    "description_p2.md"
+  ],
+  "edit_files": [],
+  "concept": "",
+  "circuit_description": "",
+  "hardware": []
 }

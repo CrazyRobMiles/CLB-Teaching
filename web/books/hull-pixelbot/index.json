@@ -15,55 +15,155 @@
       "id": "00-construction",
       "title": "Chapter 1: Construction",
       "labs": [
-        { "id": "construction_parts_1",       "title": "Parts 1",       "desc": "TODO" },
-        { "id": "construction_parts_2",       "title": "Parts 2",       "desc": "TODO" },
-        { "id": "construction_parts_3",       "title": "Parts 3",       "desc": "TODO" },
-        { "id": "construction_body_1",        "title": "Body 1",        "desc": "TODO" },
-        { "id": "construction_body_2",        "title": "Body 2",        "desc": "TODO" },
-        { "id": "construction_body_3",        "title": "Body 3",        "desc": "TODO" },
-        { "id": "construction_electronics_1", "title": "Electronics 1", "desc": "TODO" },
-        { "id": "construction_electronics_2", "title": "Electronics 2", "desc": "TODO" },
-        { "id": "construction_electronics_3", "title": "Electronics 3", "desc": "TODO" }
+        {
+          "id": "construction_parts_1",
+          "title": "Hardware Required",
+          "desc": "Find out what hardware you need to create a robot"
+        },
+        {
+          "id": "construction_parts_2",
+          "title": "Parts 2",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_parts_3",
+          "title": "Parts 3",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_body_1",
+          "title": "Body 1",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_body_2",
+          "title": "Body 2",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_body_3",
+          "title": "Body 3",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_electronics_1",
+          "title": "Electronics 1",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_electronics_2",
+          "title": "Electronics 2",
+          "desc": "TODO"
+        },
+        {
+          "id": "construction_electronics_3",
+          "title": "Electronics 3",
+          "desc": "TODO"
+        }
       ]
     },
     {
       "id": "01-neopixels",
       "title": "Chapter 1: NeoPixels",
       "labs": [
-        { "id": "ch1_lab1_pixel_colours",  "title": "Lab 1: Pixel Colours",   "desc": "Set up the robot library and light the pixel strip with named colours" },
-        { "id": "ch1_lab2_colour_sequence","title": "Lab 2: Colour Sequence",  "desc": "Use a list and a loop to cycle through colours with time.sleep pacing" },
-        { "id": "ch1_lab3_pixel_patterns", "title": "Lab 3: Pixel Patterns",   "desc": "Control individual pixels to build patterns and chasing effects" }
+        {
+          "id": "ch1_lab1_pixel_colours",
+          "title": "Lab 1: Pixel Colours",
+          "desc": "Set up the robot library and light the pixel strip with named colours"
+        },
+        {
+          "id": "ch1_lab2_colour_sequence",
+          "title": "Lab 2: Colour Sequence",
+          "desc": "Use a list and a loop to cycle through colours with time.sleep pacing"
+        },
+        {
+          "id": "ch1_lab3_pixel_patterns",
+          "title": "Lab 3: Pixel Patterns",
+          "desc": "Control individual pixels to build patterns and chasing effects"
+        }
       ]
     },
     {
       "id": "02-stepper-motors",
       "title": "Chapter 2: Stepper Motors",
       "labs": [
-        { "id": "ch2_lab1_basic_movement", "title": "Lab 1: Basic Movement",      "desc": "Move the robot forward, backward, and turn it on the spot" },
-        { "id": "ch2_lab2_nowait_wait",    "title": "Lab 2: Nowait and Wait",      "desc": "Start a move in the background and use wait() to synchronise later" },
-        { "id": "ch2_lab3_speed_control",  "title": "Lab 3: Speed Control",        "desc": "Use the seconds= parameter to control how long a move takes" },
-        { "id": "ch2_lab4_arc",            "title": "Lab 4: Arc Movement",          "desc": "Move the robot along curved paths using arc()" },
-        { "id": "ch2_lab5_sequences",      "title": "Lab 5: Movement Sequences",    "desc": "Combine moves, turns, and arcs to drive programmed shapes" }
+        {
+          "id": "ch2_lab1_basic_movement",
+          "title": "Lab 1: Basic Movement",
+          "desc": "Move the robot forward, backward, and turn it on the spot"
+        },
+        {
+          "id": "ch2_lab2_nowait_wait",
+          "title": "Lab 2: Nowait and Wait",
+          "desc": "Start a move in the background and use wait() to synchronise later"
+        },
+        {
+          "id": "ch2_lab3_speed_control",
+          "title": "Lab 3: Speed Control",
+          "desc": "Use the seconds= parameter to control how long a move takes"
+        },
+        {
+          "id": "ch2_lab4_arc",
+          "title": "Lab 4: Arc Movement",
+          "desc": "Move the robot along curved paths using arc()"
+        },
+        {
+          "id": "ch2_lab5_sequences",
+          "title": "Lab 5: Movement Sequences",
+          "desc": "Combine moves, turns, and arcs to drive programmed shapes"
+        }
       ]
     },
     {
       "id": "03-distance-sensor",
       "title": "Chapter 3: Distance Sensor",
       "labs": [
-        { "id": "ch3_lab1_reading_distance",    "title": "Lab 1: Reading Distance",    "desc": "Wire the HC-SR04, take readings, and print distances to the console" },
-        { "id": "ch3_lab2_conditional_colour",  "title": "Lab 2: Conditional Colour",  "desc": "Change the pixel colour based on how far away an object is" },
-        { "id": "ch3_lab3_obstacle_avoidance",  "title": "Lab 3: Obstacle Avoidance",  "desc": "Make the robot back away and turn whenever it gets too close to something" },
-        { "id": "ch3_lab4_explore",             "title": "Lab 4: Explore",             "desc": "Combine everything you have learned to give the robot a behaviour of your own design" }
+        {
+          "id": "ch3_lab1_reading_distance",
+          "title": "Lab 1: Reading Distance",
+          "desc": "Wire the HC-SR04, take readings, and print distances to the console"
+        },
+        {
+          "id": "ch3_lab2_conditional_colour",
+          "title": "Lab 2: Conditional Colour",
+          "desc": "Change the pixel colour based on how far away an object is"
+        },
+        {
+          "id": "ch3_lab3_obstacle_avoidance",
+          "title": "Lab 3: Obstacle Avoidance",
+          "desc": "Make the robot back away and turn whenever it gets too close to something"
+        },
+        {
+          "id": "ch3_lab4_explore",
+          "title": "Lab 4: Explore",
+          "desc": "Combine everything you have learned to give the robot a behaviour of your own design"
+        }
       ]
     },
     {
       "id": "04-robot-sumo",
       "title": "Chapter 4: Robot Sumo",
       "labs": [
-        { "id": "ch4_lab1_sumo_rules", "title": "Lab 1: The Sumo Game", "desc": "Learn the arena layout, rules, scoring, and the three-phase program skeleton" },
-        { "id": "ch4_lab2_charging",   "title": "Lab 2: Charging",      "desc": "Drive straight at full speed for the entire game — the simplest possible tactic" },
-        { "id": "ch4_lab3_dodging",    "title": "Lab 3: Dodging",       "desc": "Use the distance sensor to detect the opponent and swerve around them" },
-        { "id": "ch4_lab4_curving",    "title": "Lab 4: Curving",       "desc": "Approach from the side using alternating arcs, switching to a charge when close" }
+        {
+          "id": "ch4_lab1_sumo_rules",
+          "title": "Lab 1: The Sumo Game",
+          "desc": "Learn the arena layout, rules, scoring, and the three-phase program skeleton"
+        },
+        {
+          "id": "ch4_lab2_charging",
+          "title": "Lab 2: Charging",
+          "desc": "Drive straight at full speed for the entire game — the simplest possible tactic"
+        },
+        {
+          "id": "ch4_lab3_dodging",
+          "title": "Lab 3: Dodging",
+          "desc": "Use the distance sensor to detect the opponent and swerve around them"
+        },
+        {
+          "id": "ch4_lab4_curving",
+          "title": "Lab 4: Curving",
+          "desc": "Approach from the side using alternating arcs, switching to a charge when close"
+        }
       ]
     }
   ]

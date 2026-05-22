@@ -2,6 +2,12 @@
   "id": "construction_electronics_1",
   "title": "Electronics 1",
   "clb": false,
-  "pages": ["description_p1.md", "description_p2.md"],
-  "edit_files": []
+  "pages": [
+    "description_p1.md",
+    "description_p2.md"
+  ],
+  "edit_files": [],
+  "concept": "",
+  "circuit_description": "",
+  "hardware": []
 }
