@@ -11,12 +11,13 @@
       "id": "connected-little-boxes",
       "title": "Connected Little Boxes",
       "description": "Use the Connected Little Box framework to build devices that respond to the world — buttons, NeoPixels, rotary encoders, stepper motors, and ultrasonic sensors, all orchestrated by the CLB manager system.",
-      "chapters": 1,
-      "labs": 5,
+      "chapters": 5,
+      "labs": 0,
       "code_resources": [
         {
           "label": "CLB Framework (GitHub)",
-          "url": "https://github.com/CrazyRobMiles/MicroPython-Connected-Little-Box"
+          "url": "https://github.com/CrazyRobMiles/MicroPython-Connected-Little-Box",
+          "installable": true
         }
       ]
     }

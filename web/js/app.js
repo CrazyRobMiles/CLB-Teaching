@@ -196,7 +196,6 @@ export class App {
     document.getElementById('btn-restart').addEventListener('click', () => this._onRestart());
     document.getElementById('btn-start-clb').addEventListener('click', () => this._onStartCLB());
     document.getElementById('btn-show-solution').addEventListener('click', () => this._onShowSolution());
-    document.getElementById('btn-install-firmware').addEventListener('click', () => this._onInstallFirmware());
     document.getElementById('btn-console-clear').addEventListener('click', () => this._consoleClear());
     document.getElementById('exercise-select').addEventListener('change', e => this._onExerciseSelected(e.target.value));
     document.getElementById('console-input').addEventListener('keydown', e => {
@@ -380,9 +379,47 @@ export class App {
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
       wrap.appendChild(a);
+
+      if (r.installable) {
+        const installBtn = document.createElement('button');
+        installBtn.className = 'btn btn-tiny book-install-btn';
+        installBtn.textContent = 'Install to Device';
+        installBtn.disabled = !this.repl.connected;
+        installBtn.title = this.repl.connected
+          ? 'Install to connected device'
+          : 'Connect a device first';
+        installBtn.addEventListener('click', () => this._onInstallFirmware());
+        wrap.appendChild(installBtn);
+      }
     });
 
     return wrap;
+  }
+
+  async _onInstallFirmware() {
+    if (!this.repl.connected) return;
+    const confirmed = confirm(
+      'This will install the CLB firmware onto your device.\n' +
+      'Any existing files will be overwritten (except settings.json).\n\nContinue?'
+    );
+    if (!confirmed) return;
+
+    const container = document.getElementById('progress-bar-container');
+    const fill = document.getElementById('progress-bar-fill');
+    const label = document.getElementById('progress-bar-label');
+    container.classList.remove('hidden');
+
+    try {
+      await this.firmware.install((pct, msg) => {
+        fill.style.width = `${pct}%`;
+        label.textContent = msg;
+      });
+      await this.repl.softReset();
+    } catch (e) {
+      this._consoleAppend(`\nFirmware install failed: ${e.message}\n`);
+    } finally {
+      container.classList.add('hidden');
+    }
   }
 
   async _openBook(bookMeta) {
@@ -427,50 +464,81 @@ export class App {
     container.innerHTML = '';
 
     (book.chapters ?? []).forEach(ch => {
-      const h = document.createElement('h3');
-      h.className = 'landing-chapter-heading';
-      h.textContent = ch.title;
-      container.appendChild(h);
-
-      (ch.labs ?? []).forEach(lab => {
-        const exercisePath = `books/${book.id}/${ch.id}/${lab.id}`;
+      if (!ch.labs || ch.labs.length === 0) {
+        // Chapter IS the exercise — no lab subfolder
+        const exercisePath = `books/${book.id}/${ch.id}`;
 
         const btn = document.createElement('button');
         btn.className = 'landing-exercise-item';
         btn.addEventListener('click', () => this._navigateToExercise(exercisePath));
 
         const titleEl = document.createElement('strong');
-        titleEl.textContent = lab.title;
+        titleEl.textContent = ch.title;
         btn.appendChild(titleEl);
 
-        if (lab.desc) {
+        if (ch.desc) {
           const desc = document.createElement('p');
-          desc.textContent = lab.desc;
+          desc.textContent = ch.desc;
           btn.appendChild(desc);
         }
 
         container.appendChild(btn);
-      });
+      } else {
+        // Chapter contains multiple labs
+        const h = document.createElement('h3');
+        h.className = 'landing-chapter-heading';
+        h.textContent = ch.title;
+        container.appendChild(h);
+
+        ch.labs.forEach(lab => {
+          const exercisePath = `books/${book.id}/${ch.id}/${lab.id}`;
+
+          const btn = document.createElement('button');
+          btn.className = 'landing-exercise-item';
+          btn.addEventListener('click', () => this._navigateToExercise(exercisePath));
+
+          const titleEl = document.createElement('strong');
+          titleEl.textContent = lab.title;
+          btn.appendChild(titleEl);
+
+          if (lab.desc) {
+            const desc = document.createElement('p');
+            desc.textContent = lab.desc;
+            btn.appendChild(desc);
+          }
+
+          container.appendChild(btn);
+        });
+      }
     });
   }
 
   _populateExerciseDropdown(book) {
     const sel = document.getElementById('exercise-select');
     while (sel.options.length > 1) sel.remove(1);
-    sel.options[0].textContent = `— select a lab —`;
+    sel.options[0].textContent = `— select a chapter —`;
 
     (book.chapters ?? []).forEach(ch => {
-      const group = document.createElement('optgroup');
-      group.label = ch.title;
-
-      (ch.labs ?? []).forEach(lab => {
+      if (!ch.labs || ch.labs.length === 0) {
+        // Chapter IS the exercise — add it directly (no optgroup)
         const opt = document.createElement('option');
-        opt.value = `books/${book.id}/${ch.id}/${lab.id}`;
-        opt.textContent = lab.title;
-        group.appendChild(opt);
-      });
+        opt.value = `books/${book.id}/${ch.id}`;
+        opt.textContent = ch.title;
+        sel.appendChild(opt);
+      } else {
+        // Chapter contains multiple labs — group them
+        const group = document.createElement('optgroup');
+        group.label = ch.title;
 
-      sel.appendChild(group);
+        ch.labs.forEach(lab => {
+          const opt = document.createElement('option');
+          opt.value = `books/${book.id}/${ch.id}/${lab.id}`;
+          opt.textContent = lab.title;
+          group.appendChild(opt);
+        });
+
+        sel.appendChild(group);
+      }
     });
 
     sel.disabled = false;
@@ -638,32 +706,6 @@ export class App {
     this.fileEditors.forEach(entry => {
       if (entry.solutionCode) this._openSolutionTab(entry);
     });
-  }
-
-  async _onInstallFirmware() {
-    if (!this.repl.connected) return;
-    const confirmed = confirm(
-      'This will install the CLB firmware onto your device.\n' +
-      'Any existing files will be overwritten (except settings.json).\n\nContinue?'
-    );
-    if (!confirmed) return;
-
-    const container = document.getElementById('progress-bar-container');
-    const fill = document.getElementById('progress-bar-fill');
-    const label = document.getElementById('progress-bar-label');
-    container.classList.remove('hidden');
-
-    try {
-      await this.firmware.install((pct, msg) => {
-        fill.style.width = `${pct}%`;
-        label.textContent = msg;
-      });
-      await this.repl.softReset();
-    } catch (e) {
-      this._consoleAppend(`\nFirmware install failed: ${e.message}\n`);
-    } finally {
-      container.classList.add('hidden');
-    }
   }
 
   _onConsoleInput() {
@@ -1251,7 +1293,6 @@ export class App {
     const badge = document.getElementById('device-status');
     const btn = document.getElementById('btn-connect');
     const input = document.getElementById('console-input');
-    const firmware = document.getElementById('btn-install-firmware');
 
     const hasSerial = 'serial' in navigator;
     badge.textContent = connected ? 'Connected' : hasSerial ? 'Disconnected' : 'Use Chrome or Edge';
@@ -1259,11 +1300,15 @@ export class App {
     btn.textContent = connected ? 'Disconnect' : hasSerial ? 'Connect Device' : 'Serial not supported';
     btn.disabled = !hasSerial && !connected;
     input.disabled = !connected;
-    firmware.disabled = !connected;
 
     document.getElementById('btn-browse-files').disabled = !connected;
     document.getElementById('btn-new-file').disabled = !connected;
     document.getElementById('btn-start-clb').disabled = !connected;
+
+    document.querySelectorAll('.book-install-btn').forEach(btn => {
+      btn.disabled = !connected;
+      btn.title = connected ? 'Install to connected device' : 'Connect a device first';
+    });
 
     if (!connected) {
       this._closeFileBrowser();

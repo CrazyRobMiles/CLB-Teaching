@@ -124,17 +124,20 @@ async function main() {
     const book = JSON.parse(fs.readFileSync(bookIndexPath, 'utf-8'));
 
     for (const ch of book.chapters ?? []) {
-      for (const lab of ch.labs ?? []) {
-        const labDir = path.join(BOOKS_DIR, bookMeta.id, ch.id, lab.id);
+      // Chapters with no labs array have exercise files directly in the chapter folder
+      const exercises = (ch.labs && ch.labs.length > 0)
+        ? ch.labs.map(lab => ({ dir: path.join(BOOKS_DIR, bookMeta.id, ch.id, lab.id), label: lab.title, chapterTitle: ch.title }))
+        : [{ dir: path.join(BOOKS_DIR, bookMeta.id, ch.id), label: ch.title, chapterTitle: null }];
 
-        if (!fs.existsSync(labDir)) {
-          console.warn(`  skip  ${lab.id}  (directory not found)`);
+      for (const ex of exercises) {
+        if (!fs.existsSync(ex.dir)) {
+          console.warn(`  skip  ${ex.dir}  (directory not found)`);
           continue;
         }
 
-        const metaPath = path.join(labDir, 'exercise.json');
+        const metaPath = path.join(ex.dir, 'exercise.json');
         if (!fs.existsSync(metaPath)) {
-          console.warn(`  skip  ${lab.id}  (no exercise.json)`);
+          console.warn(`  skip  ${ex.dir}  (no exercise.json)`);
           continue;
         }
 
@@ -143,22 +146,22 @@ async function main() {
 
         const pages = [];
         for (const f of pageFiles) {
-          const filePath = path.join(labDir, f);
+          const filePath = path.join(ex.dir, f);
           if (fs.existsSync(filePath)) {
             pages.push(fs.readFileSync(filePath, 'utf-8'));
           } else {
-            console.warn(`  warn  ${lab.id}  missing ${f}`);
+            console.warn(`  warn  ${meta.id}  missing ${f}`);
           }
         }
 
         if (pages.length === 0) {
-          console.warn(`  skip  ${lab.id}  (no description pages found)`);
+          console.warn(`  skip  ${meta.id}  (no description pages found)`);
           continue;
         }
 
-        const html = buildHtml(lab.title, ch.title, pages);
-        const outputPath = path.join(OUTPUT_DIR, `${lab.id}.pdf`);
-        const tmpPath    = path.join(labDir, '_pdf_tmp.html');
+        const html = buildHtml(ex.label, ex.chapterTitle, pages);
+        const outputPath = path.join(OUTPUT_DIR, `${meta.id}.pdf`);
+        const tmpPath    = path.join(ex.dir, '_pdf_tmp.html');
 
         fs.writeFileSync(tmpPath, html, 'utf-8');
         const page = await browser.newPage();
@@ -178,7 +181,7 @@ async function main() {
           fs.unlinkSync(tmpPath);
         }
 
-        console.log(`  ok    ${lab.id}.pdf`);
+        console.log(`  ok    ${meta.id}.pdf`);
         count++;
       }
     }

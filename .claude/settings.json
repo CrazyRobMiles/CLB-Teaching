@@ -17,7 +17,8 @@
       "Bash(dir web\\\\books\\\\python-intro /B)",
       "Bash(dir web\\\\books\\\\connected-little-boxes /B)",
       "Bash(dir \"web\\\\books\\\\python-intro\\\\ch1-hardware-basics\\\\ch1_lab1_getting_started\" /B)",
-      "Bash(dir \"web\\\\books\\\\connected-little-boxes\\\\ch6-connected-little-boxes\\\\ch6_lab2_button_light\" /B)"
+      "Bash(dir \"web\\\\books\\\\connected-little-boxes\\\\ch6-connected-little-boxes\\\\ch6_lab2_button_light\" /B)",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "d:\\GitHub\\clb-TeachingEditor",

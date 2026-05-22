@@ -10,7 +10,7 @@
     "description_p4.md"
   ],
   "edit_files": [],
-  "circuit_description": "Two 28BYJ-48 steppers on ULN2003 driver boards. Left motor: GPIO 12–15. Right motor: GPIO 8–11. Motor VCC from VBUS (5 V).",
+  "circuit_description": "Two 28BYJ-48 steppers on ULN2003 driver boards. Left motor: GPIO 12â€“15. Right motor: GPIO 8â€“11. Motor VCC from VBUS (5 V).",
   "default_settings": {
     "stepper": {
       "enabled": true,
@@ -22,3 +22,4 @@
     }
   }
 }
+

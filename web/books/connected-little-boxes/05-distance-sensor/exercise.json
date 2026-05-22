@@ -10,7 +10,7 @@
     "description_p4.md"
   ],
   "edit_files": [],
-  "circuit_description": "HC-SR04 ultrasonic sensor. TRIG on GPIO 5 (direct). ECHO on GPIO 18 via voltage divider: 1 kΩ from ECHO to GPIO, 2 kΩ from GPIO to GND.",
+  "circuit_description": "HC-SR04 ultrasonic sensor. TRIG on GPIO 5 (direct). ECHO on GPIO 18 via voltage divider: 1 kÎ© from ECHO to GPIO, 2 kÎ© from GPIO to GND.",
   "default_settings": {
     "hcsr04": {
       "enabled": true,
@@ -21,3 +21,4 @@
     }
   }
 }
+
