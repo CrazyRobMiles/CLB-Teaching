@@ -25,11 +25,31 @@ export class FirmwareInstaller {
   }
 
   /**
-   * Fetch the list of firmware files from the GitHub API for the pinned version.
-   * Returns [{ path, download_url }]
+   * Fetch the list of firmware files for the pinned version.
+   * In the Electron desktop app, window.electronFirmware is set by the
+   * electron-bridge and points to the locally bundled snapshot so the
+   * install works with no network access.  Otherwise falls back to GitHub.
+   * Returns [{ devicePath, rawUrl }]
    */
   async fetchFileList() {
     const cfg = await this.loadConfig();
+
+    // Electron offline path — use bundled firmware snapshot
+    if (window.electronFirmware) {
+      const { manifest, fileBase } = window.electronFirmware;
+      const res = await fetch(manifest);
+      if (!res.ok) throw new Error(`Local firmware manifest error: ${res.status}`);
+      const data = await res.json();
+      return data.tree
+        .filter(item => item.type === 'blob' && item.path.startsWith(cfg.firmware_path + '/'))
+        .filter(item => !cfg.exclude.some(ex => item.path.endsWith(ex)))
+        .map(item => ({
+          devicePath: '/' + item.path.slice(cfg.firmware_path.length + 1),
+          rawUrl: `${fileBase}/${item.path.slice(cfg.firmware_path.length + 1)}`,
+        }));
+    }
+
+    // Browser / online path — fetch from GitHub API
     const url = `https://api.github.com/repos/${cfg.repo}/git/trees/${cfg.version}?recursive=1`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
