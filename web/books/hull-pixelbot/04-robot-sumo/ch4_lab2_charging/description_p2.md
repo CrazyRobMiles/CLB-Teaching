@@ -18,6 +18,8 @@ Open `start.py`. It contains the countdown and game loop skeleton.
 
 ## Testing
 
+Before testing in the arena, save your program as `main.py` on the Pico (**File → Save As → MicroPython device → main.py**). Unplug the USB cable and connect a battery pack — the robot will start automatically on power-up. While you still have the cable connected you can stop the program at any time with **Ctrl + C** in Thonny.
+
 Place your robot at one end of the arena with no opponent. Switch it on and measure where it ends up after 30 seconds. It should be at or beyond the far wall if the arena is 600 mm or shorter.
 
 Then try it against an opponent robot running the same charging program. Watch what happens in the head-on collision — do the robots stall, or does one push the other back?

@@ -18,6 +18,8 @@ Open `start.py`. It contains the countdown and game loop skeleton.
 
 ## Testing
 
+Before testing in the arena, save your program as `main.py` on the Pico (**File → Save As → MicroPython device → main.py**). Unplug the USB cable and connect a battery pack — the robot will start automatically on power-up. While you still have the cable connected you can stop the program at any time with **Ctrl + C** in Thonny.
+
 Run the curving program in the empty arena first and watch the path the robot traces. Mark where it ends up after the full game duration. Does it cover more width than a charging robot? Does it end up further into the opponent's half?
 
 Then add the opponent. Because the curving robot approaches from angles, its forward-facing sensor will sometimes not be pointing at the opponent — test whether the close-range charge trigger fires at the right moment.

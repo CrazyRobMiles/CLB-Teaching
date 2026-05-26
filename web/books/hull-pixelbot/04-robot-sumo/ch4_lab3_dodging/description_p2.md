@@ -18,6 +18,8 @@ Open `start.py`. It contains the countdown and game loop skeleton.
 
 ## Testing
 
+Before testing in the arena, save your program as `main.py` on the Pico (**File → Save As → MicroPython device → main.py**). Unplug the USB cable and connect a battery pack — the robot will start automatically on power-up. While you still have the cable connected you can stop the program at any time with **Ctrl + C** in Thonny.
+
 Test with the opponent robot switched off and placed in the centre of the arena. The dodger should detect it, swerve, and continue past to reach the far wall. If it misses, adjust the dodge angle or step.
 
 Then test against a charging opponent. A charging opponent creates a moving target — does your dodge threshold need to be larger to give enough reaction time?

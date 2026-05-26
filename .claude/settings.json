@@ -22,12 +22,36 @@
       "Read(//d/GitHub/HullOS-Z/docs/**)",
       "Bash(ls d:/GitHub/)",
       "Read(//d/GitHub/**)",
-      "Bash(mkdir -p d:/GitHub/CLB-robot/lib d:/GitHub/CLB-robot/examples)"
+      "Bash(mkdir -p d:/GitHub/CLB-robot/lib d:/GitHub/CLB-robot/examples)",
+      "Bash(Get-ChildItem -Path \"d:\\\\GitHub\\\\CLB-Teaching\" -Depth 2)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(xargs head -50)",
+      "Bash(npm install *)",
+      "Bash(node scripts/vendor.js)",
+      "Bash(node scripts/snapshot.js)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python -c ' *)",
+      "Bash(gh auth *)",
+      "Bash(npm start *)",
+      "Bash(node -e \"const e = require\\('electron'\\); console.log\\(typeof e, Object.keys\\(e || {}\\).slice\\(0,10\\)\\); const p = require\\('electron/main'\\); console.log\\('main exports:', Object.keys\\(p||{}\\).slice\\(0,10\\)\\);\")",
+      "Bash(node_modules/.bin/electron --version)",
+      "Bash(python -c \"import json; d=json.load\\(open\\('node_modules/electron/package.json'\\)\\); print\\(d['version']\\)\")",
+      "Bash(node_modules/.bin/electron --eval \"const e = require\\('electron'\\); console.log\\(JSON.stringify\\(Object.keys\\(e\\)\\)\\)\")",
+      "Bash(node_modules/electron/dist/electron.exe --version)",
+      "Bash(python -c \"import struct; f=open\\(r'D:\\\\GitHub\\\\CLB-Teaching-Desktop\\\\node_modules\\\\electron\\\\dist\\\\electron.exe','rb'\\); h=f.read\\(4\\); print\\('magic:', h.hex\\(\\), 'is PE:', h[:2]==b'MZ'\\)\")",
+      "PowerShell(Start-Sleep -Seconds 3; Get-Process | Where-Object { $_.Id -eq 583252 } | Select-Object Name, Id, CPU 2>&1)",
+      "PowerShell(cd \"D:\\\\GitHub\\\\CLB-Teaching-Desktop\"; $orig = \\(Get-Content package.json | ConvertFrom-Json\\).main; $pkg = Get-Content package.json -Raw | ConvertFrom-Json; $pkg.main = \"test-main.js\"; $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json -Encoding utf8; $p = Start-Process -FilePath \".\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" -ArgumentList \".\" -RedirectStandardError \"e.txt\" -PassThru -Wait; Get-Content \"e.txt\"; $pkg.main = $orig; $pkg | ConvertTo-Json -Depth 10 | Set-Content package.json -Encoding utf8; Remove-Item \"e.txt\",\"test-main.js\" -ErrorAction SilentlyContinue)",
+      "PowerShell(cd \"D:\\\\GitHub\\\\CLB-Teaching-Desktop\"; $pkg = Get-Content package.json -Raw | ConvertFrom-Json; $saved = $pkg.main; $pkg.main = \"test-main.js\"; $pkg | ConvertTo-Json -Depth 10 | Out-File package.json -Encoding utf8; $p = Start-Process \".\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" \".\" -RedirectStandardError e.txt -Wait -PassThru; Get-Content e.txt; $pkg.main = $saved; $pkg | ConvertTo-Json -Depth 10 | Out-File package.json -Encoding utf8; Remove-Item e.txt,test-main.js -EA SilentlyContinue)",
+      "PowerShell(cd \"D:\\\\GitHub\\\\CLB-Teaching-Desktop\"; $env:ELECTRON_RUN_AS_NODE = $null; Start-Process \".\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" \".\" -PassThru | Select-Object Id)",
+      "PowerShell(cd \"D:\\\\GitHub\\\\CLB-Teaching-Desktop\"; $env:ELECTRON_RUN_AS_NODE = $null; $p = Start-Process \".\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" -ArgumentList \".\" -RedirectStandardError \"e.txt\" -PassThru; Start-Sleep 4; if \\($p.HasExited\\) { Write-Host \"Exited: $\\($p.ExitCode\\)\"; Get-Content e.txt -EA SilentlyContinue } else { Write-Host \"Running \\(PID $\\($p.Id\\)\\)\"; $p.Kill\\(\\) }; Remove-Item e.txt -EA SilentlyContinue)",
+      "Bash(dir /S /B d:\\\\GitHub\\\\CLB-Teaching\\\\*robot.py)"
     ],
     "additionalDirectories": [
       "d:\\GitHub\\clb-TeachingEditor",
       "D:\\GitHub\\MicroPython-Connected-Little-Box\\firmware",
-      "d:\\GitHub\\CLB-robot"
+      "d:\\GitHub\\CLB-robot",
+      "D:\\GitHub\\CLB-Teaching-Desktop"
     ]
   }
 }
