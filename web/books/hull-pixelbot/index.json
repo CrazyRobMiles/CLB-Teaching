@@ -165,6 +165,17 @@
           "desc": "Approach from the side using alternating arcs, switching to a charge when close"
         }
       ]
+    },
+    {
+      "id": "05-reference",
+      "title": "Reference",
+      "labs": [
+        {
+          "id": "robot_reference",
+          "title": "Robot Library Reference",
+          "desc": "A complete reference for all robot library functions — movement, pixels, distance sensor, and utilities"
+        }
+      ]
     }
   ]
 }
